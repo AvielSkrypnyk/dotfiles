@@ -4,6 +4,15 @@
 # qBittorrent (machine-specific)
 common/.config/qBittorrent/
 
+# iTerm2 runtime files
+macos/.config/iterm2/sockets/
+macos/.config/iterm2/tmp/
+macos/.config/iterm2/*.lock
+macos/.config/iterm2/AppSupport/
+
+# code navigation / tool metadata
+common/.config/.codemap/
+
 # Things you explicitly DO NOT WANT
 common/.config/sunshine/
 common/.config/menus/
