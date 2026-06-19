@@ -39,7 +39,7 @@ dotfiles/
 Clone the repository:
 
 ```sh
-git clone https://github.com/yourusername/dotfiles.git ~/dotfiles
+git clone https://github.com/AvielSkrypnyk/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ```
 
