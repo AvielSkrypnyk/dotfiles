@@ -1,1 +1,22 @@
+# macOS
+.DS_Store
+
+# qBittorrent (machine-specific)
 common/.config/qBittorrent/
+
+# Things you explicitly DO NOT WANT
+common/.config/sunshine/
+common/.config/menus/
+common/.config/github-copilot/
+common/.config/StardewValley/
+common/.config/thunar/
+common/.config/xfce4/
+
+# caches
+**/.cache/
+**/cache/
+
+# temp
+*.log
+*.tmp
+*.swp
