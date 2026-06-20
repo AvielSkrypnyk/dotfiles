@@ -6,7 +6,7 @@ neofetch
 eval "$(starship init zsh)"
 
 # Scripts path
-export PATH="$HOME/dotfiles/common/scripts:$PATH"
+export PATH="$HOME/dotfiles/common/bin:$PATH"
 
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH:/Users/avielskrypnyk/Library/Python/3.9/lib/python/site-packages

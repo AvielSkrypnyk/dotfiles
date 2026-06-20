@@ -170,7 +170,7 @@ cmd + shift - l : skhd -k "ctrl + cmd - q"
 
 # change wallpaper (randomly select from folder)
 #TODO there is a one downside. I can't get inside of WallpaperAgent which stores the wallpapers, so it works only for all monitors, NOT for each space
-cmd + shift - w : ~/.config/skhd/wallpaper-switcher.sh
+cmd + shift - w : wallpaper-switcher ~/Documents/Wallpapers/catpuccin_wallpapers
 
 # focus window change
 cmd + ctrl - right : yabai -m window --focus east

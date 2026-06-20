@@ -7,12 +7,22 @@ Personal configuration files managed with GNU Stow.
 ```text
 dotfiles/
   common/
+    bin/
+      qobuz-meta
+      wallpaper-switcher
+
     scripts/
       flac/
         qobuz-meta/
-          main.py
-          requirements.txt
+          qobuz-meta
           README.md
+          requirements.txt
+
+      macos/
+        wallpaper-switcher/
+          wallpaper-switcher
+          README.md
+
     .config/
       btop/
       htop/
@@ -32,13 +42,17 @@ dotfiles/
       iterm2/
 ```
 
-- `common` contains configs used across systems
+- `common` contains configs and reusable scripts
 - `macos` contains macOS-specific configs
+
+---
 
 ## Requirements
 
 - Git
 - GNU Stow
+
+---
 
 ## Installation
 
@@ -49,27 +63,42 @@ git clone https://github.com/AvielSkrypnyk/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ```
 
-Apply the configurations:
+Apply configurations:
 
 ```sh
 stow common
 stow macos
 ```
 
-## Notes
+---
 
-- This setup uses symlinks managed by GNU Stow
-- Only manually maintained configurations are tracked
-- Machine-specific or generated files are excluded
+## PATH Setup
+
+Make scripts available globally:
+
+```sh
+export PATH="$HOME/dotfiles/common/bin:$PATH"
+```
+
+---
 
 ## Scripts
 
-Collection of small CLI utilities located in `common/scripts`.
+Collection of small CLI utilities.
 
 ### flac
 
-- `qobuz-meta` — processes `.flac` files and embeds metadata
+- [qobuz-meta](common/scripts/flac/qobuz-meta/README.md) — processes `.flac` files and embeds metadata
 
-For detailed usage and setup instructions, see:
+### macos
 
-`common/scripts/flac/qobuz-meta/README.md`
+- [wallpaper-switcher](common/scripts/macos/wallpaper-switcher/README.md) — random wallpaper setter
+
+---
+
+## Notes
+
+- Scripts are exposed via `common/bin`
+- `scripts/` contains source code, `bin/` contains executables
+- Structure is designed for scalability and reuse
+- Machine-specific data is excluded

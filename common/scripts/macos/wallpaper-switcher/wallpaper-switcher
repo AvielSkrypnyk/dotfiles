@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+WALLPAPER_DIR="${1:-${WALLPAPER_DIR:-$HOME/Pictures/Wallpapers}}"
+
+if [ ! -d "$WALLPAPER_DIR" ]; then
+  echo "Error: directory does not exist: $WALLPAPER_DIR"
+  exit 1
+fi
+
+# Pure portable random (no dependencies)
+pick_random() {
+  awk 'BEGIN{srand()} {a[NR]=$0} END{if (NR>0) print a[int(rand()*NR)+1]}'
+}
+
+WALLPAPER_PATH=$(find "$WALLPAPER_DIR" \
+  -type f \
+  ! -path "*/.*" \
+  \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \) \
+  | pick_random)
+
+if [ -z "$WALLPAPER_PATH" ]; then
+  osascript -e 'display notification "No wallpapers found"'
+  exit 1
+fi
+
+WALLPAPER_NAME=$(basename "$WALLPAPER_PATH")
+
+osascript <<EOF
+tell application "System Events"
+  tell every desktop
+    set picture to "$WALLPAPER_PATH"
+  end tell
+end tell
+display notification "$WALLPAPER_NAME" with title "Wallpaper changed"
+EOF
