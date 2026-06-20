@@ -7,6 +7,12 @@ Personal configuration files managed with GNU Stow.
 ```text
 dotfiles/
   common/
+    scripts/
+      flac/
+        qobuz-meta/
+          main.py
+          requirements.txt
+          README.md
     .config/
       btop/
       htop/
@@ -26,8 +32,8 @@ dotfiles/
       iterm2/
 ```
 
-- `common` contains configs used across systems.
-- `macos` contains macOS-specific configs.
+- `common` contains configs used across systems
+- `macos` contains macOS-specific configs
 
 ## Requirements
 
@@ -52,6 +58,18 @@ stow macos
 
 ## Notes
 
-- This setup uses symlinks managed by GNU Stow.
-- Only manually maintained configurations are tracked.
-- Machine-specific or generated files are excluded.
+- This setup uses symlinks managed by GNU Stow
+- Only manually maintained configurations are tracked
+- Machine-specific or generated files are excluded
+
+## Scripts
+
+Collection of small CLI utilities located in `common/scripts`.
+
+### flac
+
+- `qobuz-meta` — processes `.flac` files and embeds metadata
+
+For detailed usage and setup instructions, see:
+
+`common/scripts/flac/qobuz-meta/README.md`
