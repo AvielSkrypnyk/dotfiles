@@ -145,12 +145,105 @@ alt - t : yabai -m window --toggle float --grid 4:4:1:1:2:2
 # alt - p : yabai -m window --toggle sticky --toggle pip
 
 
-# change layout of desktop
-ctrl + alt - z : yabai -m space --layout bsp
-ctrl + alt - x : yabai -m space --layout float
+# ----------------------------------
+# Reload
+# ----------------------------------
 
-# move window
-alt + cmd - left : yabai -m window --warp west  
+alt - o         : skhd --reload
+alt + shift - o : yabai --restart-service
+
+# ----------------------------------
+# Focus Windows
+# ----------------------------------
+
+alt - h : yabai -m window --focus west
+alt - j : yabai -m window --focus south
+alt - k : yabai -m window --focus north
+alt - l : yabai -m window --focus east
+
+alt + shift - 0x21 : yabai -m window --focus prev
+alt + shift - 0x1E : yabai -m window --focus next
+
+# ----------------------------------
+# Move Windows
+# ----------------------------------
+
+alt + shift - h      : yabai -m window --warp west
+alt + shift - j      : yabai -m window --warp south
+alt + shift - k      : yabai -m window --warp north
+alt + shift - l      : yabai -m window --warp east
+alt + shift - return : yabai -m window --swap first
+
+# ----------------------------------
+# Stack Windows
+# ----------------------------------
+
+alt - left  : yabai -m window --stack west
+alt - down  : yabai -m window --stack south
+alt - up    : yabai -m window --stack north
+alt - right : yabai -m window --stack east
+
+alt - 0x21 : yabai -m window --focus stack.prev
+alt - 0x1E : yabai -m window --focus stack.next
+
+# ----------------------------------
+# Resize
+# ----------------------------------
+
+alt - 0x1B         : yabai -m window --resize left:-40:0
+alt - 0x18         : yabai -m window --resize left:40:0
+
+alt + shift - 0x1B : yabai -m window --resize bottom:0:40
+alt + shift - 0x18 : yabai -m window --resize bottom:0:-40
+
+# ----------------------------------
+# Layouts
+# ----------------------------------
+
+alt - x : yabai -m space --mirror x-axis
+alt - y : yabai -m space --mirror y-axis
+
+# ----------------------------------
+# Floating / Monocle
+# ----------------------------------
+
+alt + shift - f : yabai -m window --toggle zoom-fullscreen
+
+# ----------------------------------
+# Retile
+# ----------------------------------
+
+alt + shift - r : yabai -m space --balance
+
+# ----------------------------------
+# Monitors
+# ----------------------------------
+
+ctrl + alt - 0x21 : yabai -m display --focus prev
+ctrl + alt - 0x1E : yabai -m display --focus next
+
+ctrl + cmd - 0x21 : yabai -m window --display prev; yabai -m display --focus prev
+ctrl + cmd - 0x1E : yabai -m window --display next; yabai -m display --focus next
+
+# ----------------------------------
+# Applications
+# ----------------------------------
+
+alt - return    : open -na "iTerm"
+cmd + shift - f : open -na "Firefox"
+
+# ----------------------------------
+# Window Actions
+# ----------------------------------
+
+alt - q : yabai -m window --close
+alt - m : yabai -m window --minimize
+
+# ----------------------------------
+# Lock Screen
+# ----------------------------------
+
+cmd + shift - l : skhd -k "ctrl + cmd - q"  
 alt + cmd - down : yabai -m window --warp south
 alt + cmd - up : yabai -m window --warp north
 alt + cmd - right : yabai -m window --warp east

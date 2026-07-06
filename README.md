@@ -52,6 +52,8 @@ dotfiles/
 │   └── .config/
 │       ├── yabai/
 │       ├── skhd/
+│       │   ├── skhdrc
+│       │   └── README.md
 │       ├── raycast/
 │       └── iterm2/
 │
@@ -68,8 +70,7 @@ dotfiles/
         │   ├── applications.json
         │   └── komorebi.bar.json
         │
-        └── whkd/
-            └── whkdrc
+        └── whkdrc
 ```
 
 ## Overview
@@ -227,6 +228,7 @@ Collection of small CLI utilities.
 ### macOS
 
 - [wallpaper-switcher](macos/scripts/wallpaper-switcher/README.md) - random wallpaper setter
+- [skhd](macos/.config/skhd/README.md) - hotkey daemon driving the yabai window manager
 
 ### windows
 

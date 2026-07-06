@@ -1,0 +1,45 @@
+.shell powershell
+
+# ----------------------------------
+# Floating
+# ----------------------------------
+
+alt + t : komorebic toggle-float
+
+# ----------------------------------
+# Layouts
+# ----------------------------------
+
+ctrl + alt + z : komorebic change-layout bsp
+ctrl + alt + x : komorebic toggle-tiling
+
+# ----------------------------------
+# Move Windows
+# ----------------------------------
+
+alt + win + left  : komorebic move left
+alt + win + down  : komorebic move down
+alt + win + up    : komorebic move up
+alt + win + right : komorebic move right
+
+# ----------------------------------
+# Applications
+# ----------------------------------
+
+win + shift + return : wt
+win + shift + f      : start firefox
+
+# ----------------------------------
+# Lock Screen
+# ----------------------------------
+
+win + shift + l : rundll32.exe user32.dll,LockWorkStation
+
+# ----------------------------------
+# Focus Windows
+# ----------------------------------
+
+win + ctrl + left  : komorebic focus left
+win + ctrl + down  : komorebic focus down
+win + ctrl + up    : komorebic focus up
+win + ctrl + right : komorebic focus right
