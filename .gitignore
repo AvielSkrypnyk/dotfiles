@@ -24,6 +24,7 @@ macos/.config/iterm2/AppSupport
 
 # code navigation / tool metadata
 common/.config/.codemap/
+.vscode
 
 # Things you explicitly DO NOT WANT
 common/.config/sunshine/

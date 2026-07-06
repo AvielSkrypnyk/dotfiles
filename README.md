@@ -1,70 +1,175 @@
 # Dotfiles
 
-Personal configuration files managed with GNU Stow.
+Personal configuration files managed with GNU Stow on macOS/Linux and native Windows junctions on Windows.
 
 ## Structure
 
 ```text
 dotfiles/
-  common/
-    bin/
-      qobuz-meta
-
-    scripts/
-      flac/
-        qobuz-meta/
-          qobuz-meta
-          README.md
-          requirements.txt
-
-    .config/
-      btop/
-      htop/
-      neofetch/
-      spicetify/
-      cava/
-    .zshrc
-    .zshenv
-    .zprofile
-    .gitconfig
-
-  macos/
-    bin/
-      wallpaper-switcher
-
-    scripts/
-      wallpaper-switcher/
-        wallpaper-switcher
-        README.md
-
-    .config/
-      yabai/
-      skhd/
-      raycast/
-      iterm2/
-
-  windows/
-    scripts/
-      komorebi/
-        start-komorebi.bat
-        README.md
-        requirements.txt
+├── bootstrap/
+│   ├── install-linux.sh
+│   ├── install-macos.sh
+│   └── install.ps1
+│
+├── common/
+│   ├── bin/
+│   │   └── qobuz-meta
+│   │
+│   ├── scripts/
+│   │   └── flac/
+│   │       └── qobuz-meta/
+│   │           ├── qobuz-meta
+│   │           ├── README.md
+│   │           └── requirements.txt
+│   │
+│   ├── .config/
+│   │   ├── btop/
+│   │   ├── htop/
+│   │   ├── fastfetch/
+│   │   ├── neofetch/
+│   │   ├── cava/
+│   │   ├── spicetify/
+│   │   ├── nvim/
+│   │   └── starship.toml
+│   │
+│   ├── .zshrc
+│   ├── .zshenv
+│   └── .zprofile
+│
+├── linux/
+│   ├── bin/
+│   └── .config/
+│
+├── macos/
+│   ├── bin/
+│   │   └── wallpaper-switcher
+│   │
+│   ├── scripts/
+│   │   └── wallpaper-switcher/
+│   │       ├── wallpaper-switcher
+│   │       └── README.md
+│   │
+│   └── .config/
+│       ├── yabai/
+│       ├── skhd/
+│       ├── raycast/
+│       └── iterm2/
+│
+└── windows/
+    ├── scripts/
+    │   └── komorebi/
+    │       ├── start-komorebi.ps1
+    │       ├── README.md
+    │       └── requirements.txt
+    │
+    └── .config/
+        ├── komorebi/
+        │   ├── komorebi.json
+        │   ├── applications.json
+        │   └── komorebi.bar.json
+        │
+        └── whkd/
+            └── whkdrc
 ```
 
-- `common` contains cross-platform configs and reusable scripts
-- `macos` contains macOS-specific configs and scripts
-- `windows` contains Windows-specific configs and scripts
+## Overview
+
+- `common` contains shared configurations and utilities
+- `linux` contains Linux-specific configurations
+- `macos` contains macOS-specific configurations
+- `windows` contains Windows-specific configurations
+- `bootstrap` contains machine provisioning scripts
 
 ---
 
-## Requirements
+## Quick Install
 
-- Git
-- GNU Stow
+### Linux
+
+Supports:
+
+- Ubuntu
+- Debian
+- Fedora
+- Arch Linux
+
+```sh
+curl -fsSL \
+https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/install-linux.sh \
+| bash
+```
+
+### macOS
+
+```sh
+curl -fsSL \
+https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/install-macos.sh \
+| bash
+```
+
+### Windows
+
+```powershell
+irm `
+https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/install.ps1 `
+| iex
+```
 
 ---
 
-## Installation
+## What Gets Installed
+
+### Shell
+
+- zsh
+- oh-my-zsh
+- starship
+- zsh-autosuggestions
+- zsh-syntax-highlighting
+
+### Terminal Utilities
+
+- git
+- curl
+- wget
+- stow
+- fastfetch
+- btop
+- htop
+
+### Fonts
+
+- Hack Nerd Font
+
+### macOS
+
+- Homebrew
+- yabai
+- skhd
+
+### Windows
+
+- PowerShell 7
+- Windows Terminal
+- komorebi
+- whkd
+
+## Git Configuration
+
+Git user information is configured during bootstrap.
+
+If no Git configuration exists, the installer will prompt for:
+
+```text
+Git user name
+Git email
+```
+
+The values are written to the local machine and are not stored in this repository.
+
+---
+
+## Manual Installation
 
 Clone the repository:
 
@@ -73,24 +178,40 @@ git clone https://github.com/AvielSkrypnyk/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ```
 
-Apply configurations (macOS / Linux):
+### macOS
 
 ```sh
 stow common
-stow macos    # or: stow linux later
+stow macos
 ```
 
-> Windows: copy scripts manually — Stow symlinks need Developer Mode or admin.
+### Linux
+
+```sh
+stow common
+stow linux
+```
+
+### Windows
+
+Run:
+
+```powershell
+.\bootstrap\install.ps1
+```
 
 ---
 
-## PATH Setup
+## PATH
 
-Make scripts available globally (macOS / Linux):
+The following directories are automatically added when available:
 
-```sh
-export PATH="$HOME/dotfiles/common/bin:$HOME/dotfiles/macos/bin:$PATH"
-# linux bin will be added later: $HOME/dotfiles/linux/bin
+```text
+$HOME/bin
+$HOME/.local/bin
+$HOME/dotfiles/common/bin
+$HOME/dotfiles/macos/bin
+$HOME/dotfiles/linux/bin
 ```
 
 ---
@@ -101,21 +222,24 @@ Collection of small CLI utilities.
 
 ### flac
 
-- [qobuz-meta](common/scripts/flac/qobuz-meta/README.md) — processes `.flac` files and embeds metadata
+- [qobuz-meta](common/scripts/flac/qobuz-meta/README.md) - processes `.flac` files and embeds metadata
 
-### macos
+### macOS
 
-- [wallpaper-switcher](macos/scripts/wallpaper-switcher/README.md) — random wallpaper setter
+- [wallpaper-switcher](macos/scripts/wallpaper-switcher/README.md) - random wallpaper setter
 
 ### windows
 
-- [komorebi](windows/scripts/komorebi/README.md) — tiling window manager config
+- [komorebi](windows/scripts/komorebi/README.md) - helper script for komorebi startup manual
 
 ---
 
 ## Notes
 
-- Scripts are exposed via each package's `bin`
-- `scripts/` contains source code, `bin/` contains executables
-- Structure is designed for scalability and reuse
-- Machine-specific data is excluded
+- `bin/` contains executables exposed through PATH
+- `scripts/` contains source code and supporting files
+- `.config/` mirrors the final configuration layout
+- GNU Stow is used on macOS and Linux
+- Windows uses junctions and hard links instead of symbolic links
+- Starship automatically loads `~/.config/starship.toml`
+- New machines can be provisioned using a single bootstrap command

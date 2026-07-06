@@ -1,0 +1,22 @@
+[
+  {
+    "kind": "Exe",
+    "id": "Calculator.exe",
+    "floating": true
+  },
+  {
+    "kind": "Exe",
+    "id": "Legcord.exe",
+    "floating": true
+  },
+  {
+    "kind": "Exe",
+    "id": "steam.exe",
+    "floating": true
+  },
+  {
+    "kind": "Exe",
+    "id": "Battle.net.exe",
+    "floating": true
+  }
+]
