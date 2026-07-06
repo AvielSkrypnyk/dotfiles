@@ -308,7 +308,7 @@ catch {
 if (Test-Path "$HOME\.gitconfig") {
 
     try {
-        git config*--global user.name 2>$null | Out-N*ll
+        git config --global user.name 2>$null | Out-Null
     }
     catch {
 
