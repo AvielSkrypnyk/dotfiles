@@ -32,8 +32,8 @@ function Show-Banner {
     }
 
     Write-Host ""
-    Write-Host "$ColorBlue         $Subtitle$ColorReset"
-    Write-Host "$ColorText            by $AuthorName$ColorReset"
+    Write-Host "$ColorBlue$Subtitle$ColorReset"
+    Write-Host "${ColorText}by $AuthorName$ColorReset"
     Write-Host ""
     Write-Host "$ColorPeach--------------------------------------------------$ColorReset"
     Write-Host ""

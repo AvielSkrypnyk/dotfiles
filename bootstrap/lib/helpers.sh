@@ -31,8 +31,8 @@ show_banner() {
         '/_/   \_\_/ |_|\___|_| |___/ |____/ \___/ \__|___/'
 
     echo
-    printf "${COLOR_BLUE}         %s${COLOR_RESET}\n" "$subtitle"
-    printf "${COLOR_TEXT}            by %s${COLOR_RESET}\n" "$AUTHOR_NAME"
+    printf "${COLOR_BLUE}%s${COLOR_RESET}\n" "$subtitle"
+    printf "${COLOR_TEXT}by %s${COLOR_RESET}\n" "$AUTHOR_NAME"
     echo
     printf "${COLOR_PEACH}--------------------------------------------------${COLOR_RESET}\n"
     echo
