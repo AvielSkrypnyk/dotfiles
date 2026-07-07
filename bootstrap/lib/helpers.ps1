@@ -14,11 +14,11 @@ $ColorReset = "$([char]27)[0m"
 $AuthorName = "Aviel Skrypnyk"
 
 $BannerArt = @(
-    '     _        _      _ _       ____        _       '
-    '    / \__   _(_) ___| ( )___  |  _ \  ___ | |_ ___ '
-    '   / _ \ \ / / |/ _ \ |// __| | | | |/ _ \| __/ __|'
-    '  / ___ \ V /| |  __/ | \__ \ | |_| | (_) | |_\__ \'
-    ' /_/   \_\_/ |_|\___|_| |___/ |____/ \___/ \__|___/'
+    '    _        _      _ _       ____        _       '
+    '   / \__   _(_) ___| ( )___  |  _ \  ___ | |_ ___ '
+    '  / _ \ \ / / |/ _ \ |// __| | | | |/ _ \| __/ __|'
+    ' / ___ \ V /| |  __/ | \__ \ | |_| | (_) | |_\__ \'
+    '/_/   \_\_/ |_|\___|_| |___/ |____/ \___/ \__|___/'
 )
 
 function Show-Banner {
@@ -35,7 +35,7 @@ function Show-Banner {
     Write-Host "$ColorBlue         $Subtitle$ColorReset"
     Write-Host "$ColorText            by $AuthorName$ColorReset"
     Write-Host ""
-    Write-Host "$ColorPeach---------------------------------------------------$ColorReset"
+    Write-Host "$ColorPeach--------------------------------------------------$ColorReset"
     Write-Host ""
 }
 
@@ -81,7 +81,7 @@ function Show-Done {
     param([string]$Message)
 
     Write-Host ""
-    Write-Host "$ColorPeach---------------------------------------------------$ColorReset"
+    Write-Host "$ColorPeach--------------------------------------------------$ColorReset"
     Write-Host ""
     Write-Host "$ColorGreen[DONE]$ColorReset $Message"
     Write-Host ""

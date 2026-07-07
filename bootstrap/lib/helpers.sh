@@ -24,17 +24,17 @@ show_banner() {
     # the network). printf reuses the format for each line arg; %s keeps the
     # backslashes literal. Avoids a heredoc, which doesn't survive eval.
     printf "${COLOR_PEACH}%s${COLOR_RESET}\n" \
-        '     _        _      _ _       ____        _       ' \
-        '    / \__   _(_) ___| ( )___  |  _ \  ___ | |_ ___ ' \
-        '   / _ \ \ / / |/ _ \ |// __| | | | |/ _ \| __/ __|' \
-        '  / ___ \ V /| |  __/ | \__ \ | |_| | (_) | |_\__ \' \
-        ' /_/   \_\_/ |_|\___|_| |___/ |____/ \___/ \__|___/'
+        '    _        _      _ _       ____        _       ' \
+        '   / \__   _(_) ___| ( )___  |  _ \  ___ | |_ ___ ' \
+        '  / _ \ \ / / |/ _ \ |// __| | | | |/ _ \| __/ __|' \
+        ' / ___ \ V /| |  __/ | \__ \ | |_| | (_) | |_\__ \' \
+        '/_/   \_\_/ |_|\___|_| |___/ |____/ \___/ \__|___/'
 
     echo
     printf "${COLOR_BLUE}         %s${COLOR_RESET}\n" "$subtitle"
     printf "${COLOR_TEXT}            by %s${COLOR_RESET}\n" "$AUTHOR_NAME"
     echo
-    printf "${COLOR_PEACH}---------------------------------------------------${COLOR_RESET}\n"
+    printf "${COLOR_PEACH}--------------------------------------------------${COLOR_RESET}\n"
     echo
 }
 
@@ -72,7 +72,7 @@ run_with_spinner() {
 
 show_done() {
     echo
-    printf "${COLOR_PEACH}---------------------------------------------------${COLOR_RESET}\n"
+    printf "${COLOR_PEACH}--------------------------------------------------${COLOR_RESET}\n"
     echo
     printf "${COLOR_GREEN}[DONE]${COLOR_RESET} %s\n" "$1"
     echo
