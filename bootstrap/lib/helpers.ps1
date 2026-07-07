@@ -13,8 +13,6 @@ $ColorReset = "$([char]27)[0m"
 
 $AuthorName = "Aviel Skrypnyk"
 
-# ASCII logo, kept inline so it always shows (even when helpers are fetched
-# over the network with no files on disk)
 $BannerArt = @(
     '     _        _      _ _       ____        _       '
     '    / \__   _(_) ___| ( )___  |  _ \  ___ | |_ ___ '
@@ -37,7 +35,7 @@ function Show-Banner {
     Write-Host "$ColorBlue         $Subtitle$ColorReset"
     Write-Host "$ColorText            by $AuthorName$ColorReset"
     Write-Host ""
-    Write-Host "$ColorPeach  ---------------------------------------------------$ColorReset"
+    Write-Host "$ColorPeach---------------------------------------------------$ColorReset"
     Write-Host ""
 }
 
@@ -54,7 +52,7 @@ function Invoke-WithSpinner {
         [object[]]$ArgumentList
     )
 
-    $Frames = '|', '/', '-', '\'
+    $Frames = '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'
 
     # Run the work in the background so we can animate while it executes
     $Job = Start-Job -ScriptBlock $Action -ArgumentList $ArgumentList
@@ -63,8 +61,8 @@ function Invoke-WithSpinner {
     while ($Job.State -eq 'Running') {
         $Frame = $Frames[$Index % $Frames.Length]
         # \r rewrites the same line each tick to animate in place
-        Write-Host -NoNewline "`r$ColorPeach $Frame$ColorReset $Message"
-        Start-Sleep -Milliseconds 120
+        Write-Host -NoNewline "`r$ColorPeach$Frame$ColorReset $Message"
+        Start-Sleep -Milliseconds 100
         $Index++
     }
 
@@ -72,10 +70,10 @@ function Invoke-WithSpinner {
     Remove-Job $Job -Force
 
     if ($Ok) {
-        Write-Host "`r$ColorGreen [OK]$ColorReset $Message"
+        Write-Host "`r$ColorGreen✓$ColorReset $Message"
     }
     else {
-        Write-Host "`r$ColorPeach [!!]$ColorReset $Message"
+        Write-Host "`r$ColorPeach✗$ColorReset $Message"
     }
 }
 
@@ -83,8 +81,8 @@ function Show-Done {
     param([string]$Message)
 
     Write-Host ""
-    Write-Host "$ColorPeach  ---------------------------------------------------$ColorReset"
+    Write-Host "$ColorPeach---------------------------------------------------$ColorReset"
     Write-Host ""
-    Write-Host "$ColorGreen  [DONE]$ColorReset $Message"
+    Write-Host "$ColorGreen[DONE]$ColorReset $Message"
     Write-Host ""
 }

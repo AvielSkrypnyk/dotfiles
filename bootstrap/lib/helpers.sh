@@ -34,7 +34,7 @@ show_banner() {
     printf "${COLOR_BLUE}         %s${COLOR_RESET}\n" "$subtitle"
     printf "${COLOR_TEXT}            by %s${COLOR_RESET}\n" "$AUTHOR_NAME"
     echo
-    printf "${COLOR_PEACH}  ---------------------------------------------------${COLOR_RESET}\n"
+    printf "${COLOR_PEACH}---------------------------------------------------${COLOR_RESET}\n"
     echo
 }
 
@@ -52,27 +52,28 @@ run_with_spinner() {
     "$@" >/dev/null 2>&1 &
     local pid=$!
 
-    local frames='|/-\'
+    local frames=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+    local n=${#frames[@]}
     local i=0
 
     # Redraw the same line each tick while the command runs
     while kill -0 "$pid" 2>/dev/null; do
-        i=$(( (i + 1) % 4 ))
-        printf "\r${COLOR_PEACH} %s${COLOR_RESET} %s" "${frames:$i:1}" "$message"
-        sleep 0.12
+        printf "\r${COLOR_PEACH}%s${COLOR_RESET} %s" "${frames[i]}" "$message"
+        i=$(( (i + 1) % n ))
+        sleep 0.1
     done
 
     if wait "$pid"; then
-        printf "\r${COLOR_GREEN} [OK]${COLOR_RESET} %s\n" "$message"
+        printf "\r${COLOR_GREEN}✓${COLOR_RESET} %s\n" "$message"
     else
-        printf "\r${COLOR_PEACH} [!!]${COLOR_RESET} %s\n" "$message"
+        printf "\r${COLOR_PEACH}✗${COLOR_RESET} %s\n" "$message"
     fi
 }
 
 show_done() {
     echo
-    printf "${COLOR_PEACH}  ---------------------------------------------------${COLOR_RESET}\n"
+    printf "${COLOR_PEACH}---------------------------------------------------${COLOR_RESET}\n"
     echo
-    printf "${COLOR_GREEN}  [DONE]${COLOR_RESET} %s\n" "$1"
+    printf "${COLOR_GREEN}[DONE]${COLOR_RESET} %s\n" "$1"
     echo
 }
