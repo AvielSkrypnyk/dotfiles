@@ -14,21 +14,23 @@ COLOR_RESET='\033[0m'
 
 AUTHOR_NAME="Aviel Skrypnyk"
 
-# Directory of this library (banner.txt lives alongside)
-HELPERS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 show_banner() {
     local subtitle="$1"
-    local banner_file="$HELPERS_DIR/banner.txt"
 
     clear
     echo
 
-    if [ -f "$banner_file" ]; then
-        while IFS= read -r line; do
-            printf "${COLOR_PEACH}%s${COLOR_RESET}\n" "$line"
-        done < "$banner_file"
-    fi
+    # ASCII logo, kept inline so it always shows (even when helpers are fetched
+    # over the network with no files on disk). Quoted heredoc = no escaping.
+    while IFS= read -r line; do
+        printf "${COLOR_PEACH}%s${COLOR_RESET}\n" "$line"
+    done <<'BANNER'
+     _        _      _ _       ____        _       
+    / \__   _(_) ___| ( )___  |  _ \  ___ | |_ ___ 
+   / _ \ \ / / |/ _ \ |// __| | | | |/ _ \| __/ __|
+  / ___ \ V /| |  __/ | \__ \ | |_| | (_) | |_\__ \
+ /_/   \_\_/ |_|\___|_| |___/ |____/ \___/ \__|___/
+BANNER
 
     echo
     printf "${COLOR_BLUE}         %s${COLOR_RESET}\n" "$subtitle"

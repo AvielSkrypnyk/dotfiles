@@ -13,22 +13,24 @@ $ColorReset = "$([char]27)[0m"
 
 $AuthorName = "Aviel Skrypnyk"
 
-# Directory of this library (banner.txt lives alongside)
-$HelpersDir = $PSScriptRoot
+# ASCII logo, kept inline so it always shows (even when helpers are fetched
+# over the network with no files on disk)
+$BannerArt = @(
+    '     _        _      _ _       ____        _       '
+    '    / \__   _(_) ___| ( )___  |  _ \  ___ | |_ ___ '
+    '   / _ \ \ / / |/ _ \ |// __| | | | |/ _ \| __/ __|'
+    '  / ___ \ V /| |  __/ | \__ \ | |_| | (_) | |_\__ \'
+    ' /_/   \_\_/ |_|\___|_| |___/ |____/ \___/ \__|___/'
+)
 
 function Show-Banner {
     param([string]$Subtitle)
 
-    # No banner file when helpers were fetched over the network; skip the art
-    $BannerFile = if ($HelpersDir) { Join-Path $HelpersDir "banner.txt" }
-
     Clear-Host
     Write-Host ""
 
-    if ($BannerFile -and (Test-Path $BannerFile)) {
-        Get-Content $BannerFile | ForEach-Object {
-            Write-Host "$ColorPeach$_$ColorReset"
-        }
+    foreach ($Line in $BannerArt) {
+        Write-Host "$ColorPeach$Line$ColorReset"
     }
 
     Write-Host ""
