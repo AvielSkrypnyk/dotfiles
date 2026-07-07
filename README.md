@@ -7,6 +7,11 @@ Personal configuration files managed with GNU Stow on macOS/Linux and native Win
 ```text
 dotfiles/
 ├── bootstrap/
+│   ├── lib/
+│   │   ├── banner.txt
+│   │   ├── helpers.ps1
+│   │   └── helpers.sh
+│   │
 │   ├── install-linux.sh
 │   ├── install-macos.sh
 │   └── install.ps1

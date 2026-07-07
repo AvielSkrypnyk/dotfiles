@@ -5,7 +5,18 @@ $Dotfiles = "$HOME\dotfiles"
 # Shared helpers
 # ------------------------------------
 
-. (Join-Path $PSScriptRoot "lib\helpers.ps1")
+# Use the local helpers when cloned; otherwise fetch them over the network
+# so the piped "irm | iex" install keeps working.
+$Helpers = if ($PSScriptRoot) { Join-Path $PSScriptRoot "lib\helpers.ps1" }
+
+if ($Helpers -and (Test-Path $Helpers)) {
+    . $Helpers
+}
+else {
+    Invoke-Expression (
+        Invoke-RestMethod "https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/lib/helpers.ps1"
+    )
+}
 
 Show-Banner "Windows dotfiles bootstrap"
 

@@ -9,11 +9,16 @@ DOTFILES="$HOME/dotfiles"
 # Shared helpers
 # ------------------------------------
 
-# Absolute path of this script's own directory, so it can be run from anywhere
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Use the local helpers when cloned; otherwise fetch them over the network
+# so the piped "curl | bash" install keeps working.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"
 
-# shellcheck source=lib/helpers.sh
-. "$SCRIPT_DIR/lib/helpers.sh"
+if [ -f "$SCRIPT_DIR/lib/helpers.sh" ]; then
+    # shellcheck source=lib/helpers.sh
+    . "$SCRIPT_DIR/lib/helpers.sh"
+else
+    eval "$(curl -fsSL https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/lib/helpers.sh)"
+fi
 
 show_banner "Linux dotfiles bootstrap"
 
@@ -82,7 +87,7 @@ fi
 
 mkdir -p "$HOME/.local/share/fonts"
 
-# Temp workspace for the font download
+# Unique temp dir for the download; extracted fonts go to the user font path
 TMP_DIR=$(mktemp -d)
 
 run_with_spinner "Downloading Hack Nerd Font" \
@@ -176,7 +181,7 @@ stow linux
 # Default Shell
 # ------------------------------------
 
-# Make zsh the default login shell; ignore failure (e.g. non-interactive)
+# Set zsh as the default login shell; ignore failure (e.g. non-interactive)
 chsh -s "$(which zsh)" || true
 
 show_done "Aviel's Dots are ready."

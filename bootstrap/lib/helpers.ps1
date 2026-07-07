@@ -19,12 +19,13 @@ $HelpersDir = $PSScriptRoot
 function Show-Banner {
     param([string]$Subtitle)
 
-    $BannerFile = Join-Path $HelpersDir "banner.txt"
+    # No banner file when helpers were fetched over the network; skip the art
+    $BannerFile = if ($HelpersDir) { Join-Path $HelpersDir "banner.txt" }
 
     Clear-Host
     Write-Host ""
 
-    if (Test-Path $BannerFile) {
+    if ($BannerFile -and (Test-Path $BannerFile)) {
         Get-Content $BannerFile | ForEach-Object {
             Write-Host "$ColorPeach$_$ColorReset"
         }
