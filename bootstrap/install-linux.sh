@@ -174,6 +174,15 @@ fi
 
 cd "$DOTFILES"
 
+# Oh My Zsh and zsh create default dotfiles that would block stow; back up
+# any real (non-symlink) copies so stow can link ours in
+for file in .zshrc .zshenv .zprofile; do
+    target="$HOME/$file"
+    if [ -e "$target" ] && [ ! -L "$target" ]; then
+        mv "$target" "$target.bak"
+    fi
+done
+
 stow common
 stow linux
 
