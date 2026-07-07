@@ -1,7 +1,15 @@
 $Repo = "https://github.com/AvielSkrypnyk/dotfiles.git"
 $Dotfiles = "$HOME\dotfiles"
 
-Write-Host "Installing packages..." -ForegroundColor Cyan
+# ------------------------------------
+# Shared helpers
+# ------------------------------------
+
+. (Join-Path $PSScriptRoot "lib\helpers.ps1")
+
+Show-Banner "Windows dotfiles bootstrap"
+
+Show-Loading "Installing packages..."
 
 $Packages = @(
     "Git.Git",
@@ -14,11 +22,14 @@ $Packages = @(
 )
 
 foreach ($Package in $Packages) {
-    winget install `
-        --id $Package `
-        --silent `
-        --accept-package-agreements `
-        --accept-source-agreements
+    Invoke-WithSpinner "Installing $Package" {
+        param($Id)
+        winget install `
+            --id $Id `
+            --silent `
+            --accept-package-agreements `
+            --accept-source-agreements
+    } -ArgumentList $Package
 }
 
 # ------------------------------------
@@ -57,6 +68,8 @@ function New-DotfileLink {
 
     try {
 
+        # Link the config into place: folders use a junction, files a hard link
+        # (a plain symlink would need admin or developer mode on Windows)
         if ((Get-Item $Source).PSIsContainer) {
 
             New-Item `
@@ -179,6 +192,7 @@ if (Test-Path $SettingsPath) {
 
     try {
 
+        # Merge our theme into the existing settings instead of overwriting them
         $Settings =
             Get-Content $SettingsPath -Raw |
             ConvertFrom-Json
@@ -249,6 +263,7 @@ if (Test-Path $SettingsPath) {
             }) `
             -Force
 
+        # -Depth 100 keeps the whole settings tree intact when saving back
         $Settings |
             ConvertTo-Json -Depth 100 |
             Set-Content $SettingsPath
@@ -273,18 +288,24 @@ try {
     $Startup =
     "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
 
+    # WScript.Shell (Windows Script Host COM) is used to create a .lnk shortcut.
+    # This ensures Komorebi launches automatically at login
     $Shell = New-Object -ComObject WScript.Shell
 
     $Shortcut =
         $Shell.CreateShortcut("$Startup\Komorebi.lnk")
 
-    $Shortcut.TargetPath = "pwsh.exe"
+    $Shortcut.TargetPath = "conhost.exe"
 
+    # Launch hidden via conhost --headless so no console window shows
     $Shortcut.Arguments =
-        "-ExecutionPolicy Bypass -File `"$HOME\dotfiles\windows\scripts\komorebi\start-komorebi.ps1`""
+        "--headless pwsh.exe -ExecutionPolicy Bypass -File `"$HOME\dotfiles\windows\scripts\komorebi\start-komorebi.ps1`""
 
     $Shortcut.WorkingDirectory =
         "$HOME\dotfiles"
+
+    # 7 = minimized, a fallback so the window stays hidden if conhost doesn't
+    $Shortcut.WindowStyle = 7
 
     $Shortcut.Save()
 
@@ -293,6 +314,55 @@ try {
 catch {
 
     Write-Host "[WARN] Failed to configure Komorebi autostart" `
+        -ForegroundColor Yellow
+
+    Write-Host "Manually create a shortcut in:" `
+        -ForegroundColor Cyan
+
+    Write-Host "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
+}
+
+# ------------------------------------
+# whkd Autostart
+# ------------------------------------
+
+try {
+
+    $Startup =
+    "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
+
+    $WhkdPath =
+        (Get-Command whkd.exe -ErrorAction SilentlyContinue).Source
+
+    # Fall back to the bare name (resolved via PATH) if lookup failed
+    if (-not $WhkdPath) {
+        $WhkdPath = "whkd.exe"
+    }
+
+    $Shell = New-Object -ComObject WScript.Shell
+
+    $Shortcut =
+        $Shell.CreateShortcut("$Startup\whkd.lnk")
+
+    # Launch hidden via conhost --headless so no console window shows
+    $Shortcut.TargetPath = "conhost.exe"
+
+    $Shortcut.Arguments =
+        "--headless `"$WhkdPath`""
+
+    $Shortcut.WorkingDirectory =
+        "$HOME\dotfiles"
+
+    # 7 = minimized, a fallback so the window stays hidden if conhost doesn't
+    $Shortcut.WindowStyle = 7
+
+    $Shortcut.Save()
+
+    Write-Host "[OK] whkd autostart configured" -ForegroundColor Green
+}
+catch {
+
+    Write-Host "[WARN] Failed to configure whkd autostart" `
         -ForegroundColor Yellow
 
     Write-Host "Manually create a shortcut in:" `
@@ -345,6 +415,6 @@ else {
 # Done
 # ------------------------------------
 
+Show-Done "Aviel's Dots are ready."
+Write-Host "$ColorBlue         Restart Windows Terminal and PowerShell.$ColorReset"
 Write-Host ""
-Write-Host "Bootstrap completed." -ForegroundColor Green
-Write-Host "Restart Windows Terminal and PowerShell." -ForegroundColor Cyan
