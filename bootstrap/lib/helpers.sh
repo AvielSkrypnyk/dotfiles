@@ -20,17 +20,15 @@ show_banner() {
     clear
     echo
 
-    # ASCII logo, kept inline so it always shows (even when helpers are fetched
-    # over the network with no files on disk). Quoted heredoc = no escaping.
-    while IFS= read -r line; do
-        printf "${COLOR_PEACH}%s${COLOR_RESET}\n" "$line"
-    done <<'BANNER'
-     _        _      _ _       ____        _       
-    / \__   _(_) ___| ( )___  |  _ \  ___ | |_ ___ 
-   / _ \ \ / / |/ _ \ |// __| | | | |/ _ \| __/ __|
-  / ___ \ V /| |  __/ | \__ \ | |_| | (_) | |_\__ \
- /_/   \_\_/ |_|\___|_| |___/ |____/ \___/ \__|___/
-BANNER
+    # ASCII logo, inline so it always shows (even when helpers are fetched over
+    # the network). printf reuses the format for each line arg; %s keeps the
+    # backslashes literal. Avoids a heredoc, which doesn't survive eval.
+    printf "${COLOR_PEACH}%s${COLOR_RESET}\n" \
+        '     _        _      _ _       ____        _       ' \
+        '    / \__   _(_) ___| ( )___  |  _ \  ___ | |_ ___ ' \
+        '   / _ \ \ / / |/ _ \ |// __| | | | |/ _ \| __/ __|' \
+        '  / ___ \ V /| |  __/ | \__ \ | |_| | (_) | |_\__ \' \
+        ' /_/   \_\_/ |_|\___|_| |___/ |____/ \___/ \__|___/'
 
     echo
     printf "${COLOR_BLUE}         %s${COLOR_RESET}\n" "$subtitle"
