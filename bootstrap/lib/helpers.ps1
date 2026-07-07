@@ -32,8 +32,14 @@ function Show-Banner {
     }
 
     Write-Host ""
-    Write-Host "$ColorBlue$Subtitle$ColorReset"
-    Write-Host "${ColorText}by $AuthorName$ColorReset"
+
+    # Center the two lines under the 50-wide logo
+    $By = "by $AuthorName"
+    $SubPad = [math]::Floor((50 - $Subtitle.Length) / 2)
+    $ByPad = [math]::Floor((50 - $By.Length) / 2)
+    Write-Host "$ColorBlue$(' ' * $SubPad)$Subtitle$ColorReset"
+    Write-Host "$ColorText$(' ' * $ByPad)$By$ColorReset"
+
     Write-Host ""
     Write-Host "$ColorPeach--------------------------------------------------$ColorReset"
     Write-Host ""

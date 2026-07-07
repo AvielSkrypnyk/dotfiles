@@ -31,8 +31,10 @@ show_banner() {
         '/_/   \_\_/ |_|\___|_| |___/ |____/ \___/ \__|___/'
 
     echo
-    printf "${COLOR_BLUE}%s${COLOR_RESET}\n" "$subtitle"
-    printf "${COLOR_TEXT}by %s${COLOR_RESET}\n" "$AUTHOR_NAME"
+    # Center the two lines under the 50-wide logo
+    local by="by $AUTHOR_NAME"
+    printf "${COLOR_BLUE}%*s%s${COLOR_RESET}\n" "$(( (50 - ${#subtitle}) / 2 ))" "" "$subtitle"
+    printf "${COLOR_TEXT}%*s%s${COLOR_RESET}\n" "$(( (50 - ${#by}) / 2 ))" "" "$by"
     echo
     printf "${COLOR_PEACH}--------------------------------------------------${COLOR_RESET}\n"
     echo
