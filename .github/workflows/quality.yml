@@ -39,7 +39,9 @@ jobs:
             - name: Analyze scripts
               shell: pwsh
               run: |
-                Invoke-ScriptAnalyzer -Path . -Recurse
+                $issues = Invoke-ScriptAnalyzer -Path . -Recurse -Severity Error
+                $issues | Format-Table -AutoSize
+                if ($issues) { exit 1 }
     
     shellcheck:
         name: ShellCheck
@@ -49,7 +51,7 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Run ShellCheck
-              uses: ludeeus/action-shellcheck@master
+              uses: ludeeus/action-shellcheck@2.0.0
 
     gitleaks:
         name: Gitleaks
