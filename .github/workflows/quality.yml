@@ -1,0 +1,82 @@
+name: Quality
+
+on:
+  push:
+    branches:
+        - main
+        - dev
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+    shfmt:
+        name: Check Format
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup shfmt
+              uses: mfinelli/setup-shfmt@v3
+            
+            - name: Check formatting
+              run: shfmt -d .
+
+    powershell:
+        name: PowerShell Analyzer
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install PSScriptAnalyzer
+              shell: pwsh
+              run: | 
+                Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
+
+            - name: Analyze scripts
+              shell: pwsh
+              run: |
+                Invoke-ScriptAnalyzer -Path . -Recurse
+    
+    shellcheck:
+        name: ShellCheck
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Run ShellCheck
+              uses: ludeeus/action-shellcheck@master
+
+    gitleaks:
+        name: Gitleaks
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Scan for secrets
+              uses: gitleaks/gitleaks-action@v2
+
+    yamllint:
+        name: YAML Lint
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Lint YAML
+              uses: ibiqlik/action-yamllint@v3
+
+    markdown:
+        name: Markdown Lint
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Lint Markdown
+              uses: DavidAnson/markdownlint-cli2-action@v18
