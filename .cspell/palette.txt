@@ -1,0 +1,13 @@
+# Catppuccin / theme palette words
+catppuccin
+macchiato
+mocha
+gruvbox
+rosewater
+flamingo
+mauve
+sapphire
+lavender
+mantle
+crust
+subtext
