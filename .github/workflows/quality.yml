@@ -22,9 +22,9 @@ jobs:
 
       - name: Install shellcheck and shfmt
         run: |
-          # Ubuntu images already include apt, so install only the shell linter.
+          # Ubuntu images already include apt, so install only the shell linting tools.
           sudo apt-get update
-          sudo apt-get install -y shellcheck
+          sudo apt-get install -y shellcheck shfmt
 
       - name: Lint bootstrap bash scripts
         run: |

@@ -15,67 +15,67 @@ COLOR_RESET='\033[0m'
 AUTHOR_NAME="Aviel Skrypnyk"
 
 show_banner() {
-    local subtitle="$1"
+  local subtitle="$1"
 
-    clear
-    echo
+  clear
+  echo
 
-    # ASCII logo, inline so it always shows (even when helpers are fetched over
-    # the network). printf reuses the format for each line arg; %s keeps the
-    # backslashes literal. Avoids a heredoc, which doesn't survive eval.
-    printf "${COLOR_PEACH}%s${COLOR_RESET}\n" \
-        '    _        _      _ _       ____        _       ' \
-        '   / \__   _(_) ___| ( )___  |  _ \  ___ | |_ ___ ' \
-        '  / _ \ \ / / |/ _ \ |// __| | | | |/ _ \| __/ __|' \
-        ' / ___ \ V /| |  __/ | \__ \ | |_| | (_) | |_\__ \' \
-        '/_/   \_\_/ |_|\___|_| |___/ |____/ \___/ \__|___/'
+  # ASCII logo, inline so it always shows (even when helpers are fetched over
+  # the network). printf reuses the format for each line arg; %s keeps the
+  # backslashes literal. Avoids a heredoc, which doesn't survive eval.
+  printf "${COLOR_PEACH}%s${COLOR_RESET}\n" \
+    '    _        _      _ _       ____        _       ' \
+    '   / \__   _(_) ___| ( )___  |  _ \  ___ | |_ ___ ' \
+    '  / _ \ \ / / |/ _ \ |// __| | | | |/ _ \| __/ __|' \
+    ' / ___ \ V /| |  __/ | \__ \ | |_| | (_) | |_\__ \' \
+    '/_/   \_\_/ |_|\___|_| |___/ |____/ \___/ \__|___/'
 
-    echo
-    # Center the two lines under the 50-wide logo
-    local by="by $AUTHOR_NAME"
-    printf "${COLOR_BLUE}%*s%s${COLOR_RESET}\n" "$(( (50 - ${#subtitle}) / 2 ))" "" "$subtitle"
-    printf "${COLOR_TEXT}%*s%s${COLOR_RESET}\n" "$(( (50 - ${#by}) / 2 ))" "" "$by"
-    echo
-    printf "${COLOR_PEACH}--------------------------------------------------${COLOR_RESET}\n"
-    echo
+  echo
+  # Center the two lines under the 50-wide logo
+  local by="by $AUTHOR_NAME"
+  printf "${COLOR_BLUE}%*s%s${COLOR_RESET}\n" "$(((50 - ${#subtitle}) / 2))" "" "$subtitle"
+  printf "${COLOR_TEXT}%*s%s${COLOR_RESET}\n" "$(((50 - ${#by}) / 2))" "" "$by"
+  echo
+  printf "${COLOR_PEACH}--------------------------------------------------${COLOR_RESET}\n"
+  echo
 }
 
 show_loading() {
-    printf "${COLOR_PEACH}::${COLOR_RESET} %s\n" "$1"
+  printf "${COLOR_PEACH}::${COLOR_RESET} %s\n" "$1"
 }
 
 # Run a command in the background with an animated spinner.
 # Only use for non-interactive steps: output is hidden, so it must
 # never wrap something that prompts (e.g. sudo).
 run_with_spinner() {
-    local message="$1"
-    shift
+  local message="$1"
+  shift
 
-    "$@" >/dev/null 2>&1 &
-    local pid=$!
+  "$@" >/dev/null 2>&1 &
+  local pid=$!
 
-    local frames=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
-    local n=${#frames[@]}
-    local i=0
+  local frames=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+  local n=${#frames[@]}
+  local i=0
 
-    # Redraw the same line each tick while the command runs
-    while kill -0 "$pid" 2>/dev/null; do
-        printf "\r${COLOR_PEACH}%s${COLOR_RESET} %s" "${frames[i]}" "$message"
-        i=$(( (i + 1) % n ))
-        sleep 0.1
-    done
+  # Redraw the same line each tick while the command runs
+  while kill -0 "$pid" 2>/dev/null; do
+    printf "\r${COLOR_PEACH}%s${COLOR_RESET} %s" "${frames[i]}" "$message"
+    i=$(((i + 1) % n))
+    sleep 0.1
+  done
 
-    if wait "$pid"; then
-        printf "\r${COLOR_GREEN}✓${COLOR_RESET} %s\n" "$message"
-    else
-        printf "\r${COLOR_PEACH}✗${COLOR_RESET} %s\n" "$message"
-    fi
+  if wait "$pid"; then
+    printf "\r${COLOR_GREEN}✓${COLOR_RESET} %s\n" "$message"
+  else
+    printf "\r${COLOR_PEACH}✗${COLOR_RESET} %s\n" "$message"
+  fi
 }
 
 show_done() {
-    echo
-    printf "${COLOR_PEACH}--------------------------------------------------${COLOR_RESET}\n"
-    echo
-    printf "${COLOR_GREEN}[DONE]${COLOR_RESET} %s\n" "$1"
-    echo
+  echo
+  printf "${COLOR_PEACH}--------------------------------------------------${COLOR_RESET}\n"
+  echo
+  printf "${COLOR_GREEN}[DONE]${COLOR_RESET} %s\n" "$1"
+  echo
 }
