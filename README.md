@@ -1,6 +1,7 @@
 # Dotfiles
 
-Personal configuration files managed with GNU Stow on macOS/Linux and native Windows junctions on Windows.
+Personal configuration files managed with GNU Stow on macOS/Linux
+and native Windows junctions on Windows.
 
 ## Structure
 
@@ -100,7 +101,8 @@ Supports:
 
 ```sh
 curl -fsSL \
-https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/install-linux.sh \
+"https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/"\
+"install-linux.sh" \
 | bash
 ```
 
@@ -108,15 +110,18 @@ https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/install-
 
 ```sh
 curl -fsSL \
-https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/install-macos.sh \
+"https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/"\
+"install-macos.sh" \
 | bash
 ```
 
 ### Windows
 
 ```powershell
-irm `
-https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/install.ps1 `
+irm (
+  "https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/" +
+  "install.ps1"
+)
 | iex
 ```
 
@@ -146,13 +151,13 @@ https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/install.
 
 - Hack Nerd Font
 
-### macOS
+### Packages for macOS
 
 - Homebrew
 - yabai
 - skhd
 
-### Windows
+### Packages for Windows
 
 - PowerShell 7
 - Windows Terminal
@@ -183,21 +188,21 @@ git clone https://github.com/AvielSkrypnyk/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ```
 
-### macOS
+### Manual macOS setup
 
 ```sh
 stow common
 stow macos
 ```
 
-### Linux
+### Manual Linux setup
 
 ```sh
 stow common
 stow linux
 ```
 
-### Windows
+### Manual Windows setup
 
 Run:
 
@@ -227,16 +232,20 @@ Collection of small CLI utilities.
 
 ### flac
 
-- [qobuz-meta](common/scripts/flac/qobuz-meta/README.md) - processes `.flac` files and embeds metadata
+- [qobuz-meta](common/scripts/flac/qobuz-meta/README.md) -
+  processes `.flac` files and embeds metadata
 
-### macOS
+### macOS scripts
 
-- [wallpaper-switcher](macos/scripts/wallpaper-switcher/README.md) - random wallpaper setter
-- [skhd](macos/.config/skhd/README.md) - hotkey daemon driving the yabai window manager
+- [wallpaper-switcher](macos/scripts/wallpaper-switcher/README.md) -
+  random wallpaper setter
+- [skhd](macos/.config/skhd/README.md) -
+  hotkey daemon driving the yabai window manager
 
-### windows
+### Windows scripts
 
-- [komorebi](windows/scripts/komorebi/README.md) - helper script for komorebi startup manual
+- [komorebi](windows/scripts/komorebi/README.md) -
+  helper script for komorebi startup manual
 
 ---
 

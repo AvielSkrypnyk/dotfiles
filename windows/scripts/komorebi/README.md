@@ -13,7 +13,7 @@ Works without a keybinding daemon (no whkd / AHK).
 It does the following:
 
 - Starts the `komorebi` process
-- Sets a border width and accent colour (catppuccin-macchiatto peach)
+- Sets a border width and accent colour (catppuccin-macchiato peach)
 - Applies container and workspace padding
 - Runs as a single batch file
 

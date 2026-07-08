@@ -1,0 +1,94 @@
+---
+name: Quality
+
+# Quote 'on' to avoid yamllint truthy-key warnings.
+'on':
+  pull_request:
+  push:
+    branches:
+      - main
+      - dev
+
+permissions:
+  contents: read
+
+jobs:
+  shell-scripts:
+    name: Shell Scripts
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck and shfmt
+        run: |
+          # Ubuntu images already include apt, so install only the shell linting tools.
+          sudo apt-get update
+          sudo apt-get install -y shellcheck shfmt
+
+      - name: Lint bootstrap bash scripts
+        run: |
+          # Keep shell lint focused on real bootstrap scripts, not dotfiles syntax.
+          find bootstrap -type f -name "*.sh" -print0 | xargs -0 shellcheck -S warning -x
+
+      - name: Check bootstrap bash formatting
+        run: |
+          # Formatting check for the same script scope as shellcheck.
+          find bootstrap -type f -name "*.sh" -print0 | xargs -0 shfmt -i 2 -ci -d
+
+  powershell-scripts:
+    name: PowerShell Scripts
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
+
+      - name: Analyze PowerShell scripts
+        shell: pwsh
+        run: |
+          # Restrict analysis to Windows scripts to avoid false positives elsewhere.
+          $issues = Invoke-ScriptAnalyzer -Path windows -Recurse -Severity Error
+          $issues | Format-Table -AutoSize
+          if ($issues) { exit 1 }
+
+  yaml-workflows:
+    name: YAML Workflows
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint workflow YAML only
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          # Dotfiles often have non-standard YAML in docs; only lint CI workflows.
+          file_or_dir: .github/workflows
+          config_data: |
+            extends: default
+            rules:
+              # Optional in GitHub workflow YAML, so keep this relaxed.
+              document-start: disable
+              # Avoid line-wrap churn in workflow command blocks.
+              line-length: disable
+
+  spellcheck:
+    name: Spellcheck (non-blocking)
+    runs-on: ubuntu-latest
+    # Spelling feedback is useful, but should not block script changes.
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check spelling in docs and scripts
+        uses: codespell-project/actions-codespell@v2
+        with:
+          path: README.md,bootstrap,common,macos,windows
+          skip: "*.lock,*.json"
+          # Project-specific terms that are valid but look like misspellings.
+          ignore_words_list: "dotfiles,zsh,ohmyzsh,skhd,yabai,komorebi,qobuz,pwsh,macos,fastfetch,stow"
