@@ -14,10 +14,10 @@ DOTFILES="$HOME/dotfiles"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"
 
 if [ -f "$SCRIPT_DIR/lib/helpers.sh" ]; then
-    # shellcheck source=lib/helpers.sh
-    . "$SCRIPT_DIR/lib/helpers.sh"
+  # shellcheck source=lib/helpers.sh
+  . "$SCRIPT_DIR/lib/helpers.sh"
 else
-    eval "$(curl -fsSL https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/lib/helpers.sh)"
+  eval "$(curl -fsSL https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/lib/helpers.sh)"
 fi
 
 show_banner "macOS dotfiles bootstrap"
@@ -30,8 +30,8 @@ show_loading "Installing packages..."
 
 if ! command -v brew >/dev/null 2>&1; then
 
-    # Install Homebrew, the macOS package manager (unattended)
-    /bin/bash -c \
+  # Install Homebrew, the macOS package manager (unattended)
+  /bin/bash -c \
     "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 fi
@@ -43,17 +43,17 @@ brew tap homebrew/cask-fonts
 # ------------------------------------
 
 brew install \
-    git \
-    stow \
-    zsh \
-    starship \
-    btop \
-    fastfetch \
-    yabai \
-    skhd
+  git \
+  stow \
+  zsh \
+  starship \
+  btop \
+  fastfetch \
+  yabai \
+  skhd
 
 brew install --cask \
-    font-hack-nerd-font
+  font-hack-nerd-font
 
 # ------------------------------------
 # Oh My Zsh
@@ -61,9 +61,9 @@ brew install --cask \
 
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
 
-    # Install Oh My Zsh, but don't let it switch the shell or relaunch,
-    # so this script keeps running to the end
-    RUNZSH=no CHSH=no \
+  # Install Oh My Zsh, but don't let it switch the shell or relaunch,
+  # so this script keeps running to the end
+  RUNZSH=no CHSH=no \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 fi
@@ -76,17 +76,17 @@ fi
 ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 
 if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
-    run_with_spinner "Installing zsh-autosuggestions" \
+  run_with_spinner "Installing zsh-autosuggestions" \
     git clone \
-        https://github.com/zsh-users/zsh-autosuggestions \
-        "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+    https://github.com/zsh-users/zsh-autosuggestions \
+    "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
 fi
 
 if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
-    run_with_spinner "Installing zsh-syntax-highlighting" \
+  run_with_spinner "Installing zsh-syntax-highlighting" \
     git clone \
-        https://github.com/zsh-users/zsh-syntax-highlighting \
-        "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+    https://github.com/zsh-users/zsh-syntax-highlighting \
+    "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
 fi
 
 # ------------------------------------
@@ -95,9 +95,9 @@ fi
 
 # Remove any existing copy so every run starts from a clean clone
 if [ -d "$DOTFILES" ]; then
-    show_loading "Existing $DOTFILES found, removing for a fresh clone"
-    cd "$HOME"
-    rm -rf "$DOTFILES"
+  show_loading "Existing $DOTFILES found, removing for a fresh clone"
+  cd "$HOME"
+  rm -rf "$DOTFILES"
 fi
 
 run_with_spinner "Cloning dotfiles" git clone --depth=1 "$REPO" "$DOTFILES"
@@ -112,21 +112,21 @@ GIT_EMAIL="$(git config --global user.email 2>/dev/null || true)"
 
 if [ -z "$GIT_NAME" ] || [ -z "$GIT_EMAIL" ]; then
 
-    echo ""
-    echo "Git configuration"
+  echo ""
+  echo "Git configuration"
 
-    read -rp "Git user name: " GIT_NAME
-    read -rp "Git email: " GIT_EMAIL
+  read -rp "Git user name: " GIT_NAME
+  read -rp "Git email: " GIT_EMAIL
 
-    git config --global user.name "$GIT_NAME"
-    git config --global user.email "$GIT_EMAIL"
-    git config --global init.defaultBranch main
+  git config --global user.name "$GIT_NAME"
+  git config --global user.email "$GIT_EMAIL"
+  git config --global init.defaultBranch main
 
-    echo "Git configured."
+  echo "Git configured."
 
 else
 
-    echo "Git already configured."
+  echo "Git already configured."
 
 fi
 
@@ -139,10 +139,10 @@ cd "$DOTFILES"
 # Oh My Zsh and zsh create default dotfiles that would block stow; back up
 # any real (non-symlink) copies so stow can link ours in
 for file in .zshrc .zshenv .zprofile; do
-    target="$HOME/$file"
-    if [ -e "$target" ] && [ ! -L "$target" ]; then
-        mv "$target" "$target.bak"
-    fi
+  target="$HOME/$file"
+  if [ -e "$target" ] && [ ! -L "$target" ]; then
+    mv "$target" "$target.bak"
+  fi
 done
 
 stow common

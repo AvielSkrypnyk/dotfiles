@@ -72,5 +72,5 @@ Wallpapers/
 Example of mine config:
 
 ```sh
-cmd + shift - w : wallpaper-switcher ~/Documents/Wallpapers/catpuccin_wallpapers
+cmd + shift - w : wallpaper-switcher ~/Documents/Wallpapers/catppuccin_wallpapers
 ```
