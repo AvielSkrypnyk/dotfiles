@@ -133,12 +133,17 @@ if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
 fi
 
 # ------------------------------------
-# Clone Dotfiles
+# Clone Dotfiles (always fresh)
 # ------------------------------------
 
-if [ ! -d "$DOTFILES" ]; then
-    run_with_spinner "Cloning dotfiles" git clone "$REPO" "$DOTFILES"
+# Remove any existing copy so every run starts from a clean clone
+if [ -d "$DOTFILES" ]; then
+    show_loading "Existing $DOTFILES found, removing for a fresh clone"
+    cd "$HOME"
+    rm -rf "$DOTFILES"
 fi
+
+run_with_spinner "Cloning dotfiles" git clone --depth=1 "$REPO" "$DOTFILES"
 
 # ------------------------------------
 # Git Configuration

@@ -44,12 +44,17 @@ foreach ($Package in $Packages) {
 }
 
 # ------------------------------------
-# Clone dotfiles
+# Clone dotfiles (always fresh)
 # ------------------------------------
 
-if (!(Test-Path $Dotfiles)) {
-    git clone $Repo $Dotfiles
+# Remove any existing copy so every run starts from a clean clone
+if (Test-Path $Dotfiles) {
+    Show-Loading "Existing $Dotfiles found, removing for a fresh clone"
+    Set-Location $HOME
+    Remove-Item $Dotfiles -Recurse -Force
 }
+
+git clone --depth 1 $Repo $Dotfiles
 
 # ------------------------------------
 # Link helper
