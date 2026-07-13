@@ -276,8 +276,8 @@ Theme    -> Catppuccin Macchiato (Peach)
 
 <!-- STATS -->
 ```text
-Commits     : Loading...
-Open PRs    : Loading...
-Last Update : Loading...
+Commits     : 30
+Open PRs    : 1
+Last Update : 2026-07-13
 ```
 <!-- /STATS -->
