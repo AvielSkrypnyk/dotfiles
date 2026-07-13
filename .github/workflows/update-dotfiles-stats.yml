@@ -17,7 +17,9 @@ permissions:
 
 jobs:
   build:
-    if: ${{ !startsWith(github.ref_name, 'chore/update-dotfiles-stats') }}
+    if: >-
+      ${{ !startsWith(github.ref_name, 'chore/update-dotfiles-stats') &&
+      (github.event_name != 'push' || github.event.head_commit.message != 'chore: update repository stats') }}
     runs-on: ubuntu-latest
 
     steps:
