@@ -9,6 +9,7 @@ concurrency:
     branches-ignore:
       - main
       - chore/update-dotfiles-stats
+      - chore/update-dotfiles-stats-**
     paths-ignore:
       - README.md
 
@@ -79,7 +80,7 @@ jobs:
           add-paths: README.md
           commit-message: "chore: update repository stats"
           base: "main"
-          branch: "chore/update-dotfiles-stats-${{ github.ref_name }}"
+          branch: "chore/update-dotfiles-stats"
           delete-branch: true
           title: "chore: update repository stats"
           body: |
