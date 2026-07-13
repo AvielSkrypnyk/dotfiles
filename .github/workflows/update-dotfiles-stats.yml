@@ -79,7 +79,7 @@ jobs:
           add-paths: README.md
           commit-message: "chore: update repository stats"
           base: "main"
-          branch: "chore/update-dotfiles-stats"
+          branch: "chore/update-dotfiles-stats-${{ github.ref_name }}"
           delete-branch: true
           title: "chore: update repository stats"
           body: |
