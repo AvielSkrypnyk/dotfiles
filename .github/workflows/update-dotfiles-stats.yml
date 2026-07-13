@@ -6,19 +6,17 @@ concurrency:
 
 'on':
   push:
-    branches:
+    branches-ignore:
       - main
-      - dev
-    paths:
-      - .github/workflows/update-dotfiles-stats.yml
-
-  schedule:
-    - cron: "0 0 * * *"
+      - chore/update-dotfiles-stats
+    paths-ignore:
+      - README.md
 
   workflow_dispatch:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   build:
@@ -29,6 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: main
 
       - name: Collect statistics
         env:
@@ -72,14 +71,23 @@ jobs:
 
           mv README.new README.md
 
-      - name: Commit changes
+      - name: Create pull request with stats update
+        id: create_pr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ github.token }}
+          add-paths: README.md
+          commit-message: "chore: update repository stats"
+          base: "main"
+          branch: "chore/update-dotfiles-stats-${{ github.ref_name }}"
+          delete-branch: true
+          title: "chore: update repository stats"
+          body: |
+            Automated README stats refresh from GitHub Actions.
+
+      - name: Enable auto-merge
+        if: steps.create_pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@users.noreply.github.com"
-
-          git add README.md
-
-          git diff --cached --quiet && exit 0
-
-          git commit -m "chore: update repository stats"
-          git push
+          gh pr merge --auto --squash "${{ steps.create_pr.outputs.pull-request-number }}"
