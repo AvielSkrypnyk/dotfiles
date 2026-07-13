@@ -17,7 +17,9 @@ permissions:
 
 jobs:
   build:
-    if: ${{ !startsWith(github.ref_name, 'chore/update-dotfiles-stats') }}
+    if: >-
+      ${{ !startsWith(github.ref_name, 'chore/update-dotfiles-stats') &&
+      (github.event_name != 'push' || github.event.head_commit.message != 'chore: update repository stats') }}
     runs-on: ubuntu-latest
 
     steps:
@@ -25,21 +27,41 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: main
+          ref: ${{ github.ref_name }}
 
       - name: Collect statistics
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+
+          # Keep commit count aligned with main, then account for this branch's upcoming squash merge commit.
+          git fetch origin main --quiet
+
           UPDATED=$(gh repo view "${{ github.repository }}" \
             --json pushedAt -q '.pushedAt')
 
-          PRS=$(gh pr list \
+          # Exclude the current branch PR so this metric reflects other open PRs.
+          CURRENT_BRANCH_PR=$(gh pr list \
             --state open \
+            --head "$BRANCH_NAME" \
             --json number \
-            --jq 'length')
+            --jq '.[0].number // empty')
 
-          COMMITS=$(git rev-list --count HEAD)
+          if [ -n "$CURRENT_BRANCH_PR" ]; then
+            PRS=$(gh pr list \
+              --state open \
+              --json number \
+              --jq "[.[] | select(.number != $CURRENT_BRANCH_PR)] | length")
+          else
+            PRS=$(gh pr list \
+              --state open \
+              --json number \
+              --jq 'length')
+          fi
+
+          # Show the expected post-merge total seen on main.
+          COMMITS=$(( $(git rev-list --count origin/main) + 1 ))
 
           cat > stats.txt << EOF
           \`\`\`text
@@ -51,6 +73,7 @@ jobs:
 
       - name: Update README
         run: |
+          # Replace only the STATS block content and keep all other README lines untouched.
           awk '
           BEGIN { in_block=0 }
           /<!-- STATS -->/ {
@@ -74,6 +97,9 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ github.token }}
+          committer: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          sign-commits: true
           add-paths: README.md
           commit-message: "chore: update repository stats"
           base: "main"
