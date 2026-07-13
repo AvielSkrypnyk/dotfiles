@@ -27,6 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: main
 
       - name: Collect statistics
         env:
@@ -77,6 +78,7 @@ jobs:
           token: ${{ github.token }}
           add-paths: README.md
           commit-message: "chore: update repository stats"
+          base: "main"
           branch: "chore/update-dotfiles-stats"
           delete-branch: true
           title: "chore: update repository stats"
