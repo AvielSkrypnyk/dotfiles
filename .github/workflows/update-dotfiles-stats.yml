@@ -85,9 +85,13 @@ jobs:
           body: |
             Automated README stats refresh from GitHub Actions.
 
-      - name: Enable auto-merge
+      - name: Merge PR when possible
         if: steps.create_pr.outputs.pull-request-number != ''
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr merge --auto --squash "${{ steps.create_pr.outputs.pull-request-number }}"
+          PR_NUMBER="${{ steps.create_pr.outputs.pull-request-number }}"
+
+          # Try repository auto-merge first; if it's disabled, attempt immediate merge.
+          gh pr merge --auto --squash "$PR_NUMBER" || \
+            gh pr merge --squash --delete-branch "$PR_NUMBER"
