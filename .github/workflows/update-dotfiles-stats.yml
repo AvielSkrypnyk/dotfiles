@@ -97,6 +97,9 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ github.token }}
+          committer: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          sign-commits: true
           add-paths: README.md
           commit-message: "chore: update repository stats"
           base: "main"
