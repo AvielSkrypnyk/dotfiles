@@ -19,6 +19,7 @@ concurrency:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   build:
@@ -72,14 +73,14 @@ jobs:
 
           mv README.new README.md
 
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@users.noreply.github.com"
-
-          git add README.md
-
-          git diff --cached --quiet && exit 0
-
-          git commit -m "chore: update repository stats"
-          git push
+      - name: Create pull request with stats update
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ github.token }}
+          add-paths: README.md
+          commit-message: "chore: update repository stats"
+          branch: "chore/update-dotfiles-stats"
+          delete-branch: true
+          title: "chore: update repository stats"
+          body: |
+            Automated README stats refresh from GitHub Actions.
