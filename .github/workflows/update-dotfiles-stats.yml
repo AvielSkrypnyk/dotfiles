@@ -13,12 +13,12 @@ concurrency:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   build:
     if: >-
       ${{ !startsWith(github.ref_name, 'chore/update-dotfiles-stats') &&
-      github.ref_name != 'main' &&
       (github.event_name != 'push' || github.event.head_commit.message != 'chore: update repository stats') }}
     runs-on: ubuntu-latest
 
@@ -33,15 +33,37 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+
+          # Keep commit count aligned with main, then account for this branch's upcoming squash merge commit.
+          git fetch origin main --quiet
+
           UPDATED=$(gh repo view "${{ github.repository }}" \
             --json pushedAt -q '.pushedAt')
 
-          PRS=$(gh pr list \
+          CURRENT_BRANCH_PR=$(gh pr list \
             --state open \
+            --head "$BRANCH_NAME" \
             --json number \
-            --jq 'length')
+            --jq '.[0].number // empty')
 
-          COMMITS=$(git rev-list --count HEAD)
+          if [ -n "$CURRENT_BRANCH_PR" ]; then
+            PRS=$(gh pr list \
+              --state open \
+              --json number \
+              --jq "[.[] | select(.number != $CURRENT_BRANCH_PR)] | length")
+          else
+            PRS=$(gh pr list \
+              --state open \
+              --json number \
+              --jq 'length')
+          fi
+
+          COMMITS=$(git rev-list --count origin/main)
+
+          if [ "$BRANCH_NAME" != "main" ]; then
+            COMMITS=$((COMMITS + 1))
+          fi
 
           cat > stats.txt << EOF
           \`\`\`text
@@ -71,13 +93,27 @@ jobs:
 
           mv README.new README.md
 
-      - name: Commit stats update to source branch
+      - name: Create pull request with stats update
+        id: create_pr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ github.token }}
+          add-paths: README.md
+          commit-message: "chore: update repository stats"
+          base: "main"
+          branch: "chore/update-dotfiles-stats"
+          delete-branch: true
+          title: "chore: update repository stats"
+          body: |
+            Automated README stats refresh from GitHub Actions.
+
+      - name: Merge PR when possible
+        if: steps.create_pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          PR_NUMBER="${{ steps.create_pr.outputs.pull-request-number }}"
 
-          git add README.md
-          git diff --cached --quiet && exit 0
-
-          git commit -m "chore: update repository stats"
-          git push origin "HEAD:${{ github.ref_name }}"
+          # Try repository auto-merge first; if it's disabled, attempt immediate merge.
+          gh pr merge --auto --squash "$PR_NUMBER" || \
+            gh pr merge --squash --delete-branch "$PR_NUMBER"
