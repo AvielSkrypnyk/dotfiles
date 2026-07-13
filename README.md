@@ -264,24 +264,20 @@ Collection of small CLI utilities.
 ## Environment
 
 ```text
- Windows  → PowerShell + Komorebi
- macOS    → iTerm2 + Yabai + skhd
- Linux    → Kitty
+Windows  -> PowerShell + Komorebi
+macOS    -> iTerm2 + Yabai + skhd
+Linux    -> Kitty
 
- Editor   → Neovim
- Prompt   → Starship
-󰋊 Theme    → Catppuccin Macchiato
-󰝗 Accent   → Peach
+Shared   -> Neovim + Starship
+Theme    -> Catppuccin Macchiato (Peach)
 ```
 
 ## Repository
 
 <!-- STATS -->
 ```text
-⭐ Stars      : 0
-⑂ Forks      : 0
-📝 Commits    : 0
-🔀 Open PRs   : 0
-📅 Updated    : 2026-07-13
+Commits     : Loading...
+Open PRs    : Loading...
+Last Update : Loading...
 ```
 <!-- /STATS -->

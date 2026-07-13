@@ -1,5 +1,9 @@
 name: Update Dotfiles Stats
 
+concurrency:
+  group: update-dotfiles-stats
+  cancel-in-progress: true
+
 'on':
   schedule:
     - cron: "0 0 * * *"
@@ -15,24 +19,28 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Collect statistics
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          STARS=$(gh repo view "${{ github.repository }}" --json stargazerCount -q '.stargazerCount')
-          FORKS=$(gh repo view "${{ github.repository }}" --json forkCount -q '.forkCount')
-          UPDATED=$(gh repo view "${{ github.repository }}" --json pushedAt -q '.pushedAt')
-          PRS=$(gh pr list --state open --json number --jq 'length')
+          UPDATED=$(gh repo view "${{ github.repository }}" \
+            --json pushedAt -q '.pushedAt')
+
+          PRS=$(gh pr list \
+            --state open \
+            --json number \
+            --jq 'length')
+
           COMMITS=$(git rev-list --count HEAD)
 
           cat > stats.txt << EOF
           \`\`\`text
-          ⭐ Stars      : $STARS
-           ⑂ Forks      : $FORKS
-          📝 Commits    : $COMMITS
-          🔀 Open PRs   : $PRS
-          📅 Updated    : ${UPDATED%%T*}
+          Commits     : $COMMITS
+          Open PRs    : $PRS
+          Last Update : ${UPDATED%%T*}
           \`\`\`
           EOF
 
