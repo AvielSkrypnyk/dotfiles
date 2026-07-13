@@ -6,14 +6,11 @@ concurrency:
 
 'on':
   push:
-    branches:
+    branches-ignore:
       - main
-      - dev
-    paths:
-      - .github/workflows/update-dotfiles-stats.yml
-
-  schedule:
-    - cron: "0 0 * * *"
+      - chore/update-dotfiles-stats
+    paths-ignore:
+      - README.md
 
   workflow_dispatch:
 
@@ -74,6 +71,7 @@ jobs:
           mv README.new README.md
 
       - name: Create pull request with stats update
+        id: create_pr
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ github.token }}
@@ -84,3 +82,10 @@ jobs:
           title: "chore: update repository stats"
           body: |
             Automated README stats refresh from GitHub Actions.
+
+      - name: Enable auto-merge
+        if: steps.create_pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr merge --auto --squash "${{ steps.create_pr.outputs.pull-request-number }}"
