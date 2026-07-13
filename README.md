@@ -258,3 +258,30 @@ Collection of small CLI utilities.
 - Windows uses junctions and hard links instead of symbolic links
 - Starship automatically loads `~/.config/starship.toml`
 - New machines can be provisioned using a single bootstrap command
+
+---
+
+## Environment
+
+```text
+ Windows  → PowerShell + Komorebi
+ macOS    → iTerm2 + Yabai + skhd
+ Linux    → Kitty
+
+ Editor   → Neovim
+ Prompt   → Starship
+󰋊 Theme    → Catppuccin Macchiato
+󰝗 Accent   → Peach
+```
+
+## Repository
+
+<!-- STATS -->
+```text
+⭐ Stars      : 0
+⑂ Forks      : 0
+📝 Commits    : 0
+🔀 Open PRs   : 0
+📅 Updated    : 2026-07-13
+```
+<!-- /STATS -->

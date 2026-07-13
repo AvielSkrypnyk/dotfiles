@@ -1,0 +1,69 @@
+name: Update Dotfiles Stats
+
+'on':
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Collect statistics
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          STARS=$(gh repo view "${{ github.repository }}" --json stargazerCount -q '.stargazerCount')
+          FORKS=$(gh repo view "${{ github.repository }}" --json forkCount -q '.forkCount')
+          UPDATED=$(gh repo view "${{ github.repository }}" --json pushedAt -q '.pushedAt')
+          PRS=$(gh pr list --state open --json number --jq 'length')
+          COMMITS=$(git rev-list --count HEAD)
+
+          cat > stats.txt << EOF
+          \`\`\`text
+          ⭐ Stars      : $STARS
+           ⑂ Forks      : $FORKS
+          📝 Commits    : $COMMITS
+          🔀 Open PRs   : $PRS
+          📅 Updated    : ${UPDATED%%T*}
+          \`\`\`
+          EOF
+
+      - name: Update README
+        run: |
+          awk '
+          BEGIN { in_block=0 }
+          /<!-- STATS -->/ {
+            print
+            system("cat stats.txt")
+            in_block=1
+            next
+          }
+          /<!-- \/STATS -->/ {
+            in_block=0
+            print
+            next
+          }
+          !in_block
+          ' README.md > README.new
+
+          mv README.new README.md
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+
+          git add README.md
+
+          git diff --cached --quiet && exit 0
+
+          git commit -m "chore: update repository stats"
+          git push
