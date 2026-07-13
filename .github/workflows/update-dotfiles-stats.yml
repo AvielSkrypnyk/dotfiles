@@ -13,12 +13,12 @@ concurrency:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   build:
     if: >-
       ${{ !startsWith(github.ref_name, 'chore/update-dotfiles-stats') &&
+      github.ref_name != 'main' &&
       (github.event_name != 'push' || github.event.head_commit.message != 'chore: update repository stats') }}
     runs-on: ubuntu-latest
 
@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: main
+          ref: ${{ github.ref_name }}
 
       - name: Collect statistics
         env:
@@ -71,27 +71,13 @@ jobs:
 
           mv README.new README.md
 
-      - name: Create pull request with stats update
-        id: create_pr
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ github.token }}
-          add-paths: README.md
-          commit-message: "chore: update repository stats"
-          base: "main"
-          branch: "chore/update-dotfiles-stats"
-          delete-branch: true
-          title: "chore: update repository stats"
-          body: |
-            Automated README stats refresh from GitHub Actions.
-
-      - name: Merge PR when possible
-        if: steps.create_pr.outputs.pull-request-number != ''
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Commit stats update to source branch
         run: |
-          PR_NUMBER="${{ steps.create_pr.outputs.pull-request-number }}"
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
 
-          # Try repository auto-merge first; if it's disabled, attempt immediate merge.
-          gh pr merge --auto --squash "$PR_NUMBER" || \
-            gh pr merge --squash --delete-branch "$PR_NUMBER"
+          git add README.md
+          git diff --cached --quiet && exit 0
+
+          git commit -m "chore: update repository stats"
+          git push origin "HEAD:${{ github.ref_name }}"
