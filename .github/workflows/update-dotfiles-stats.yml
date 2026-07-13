@@ -9,6 +9,7 @@ concurrency:
     branches-ignore:
       - main
       - chore/update-dotfiles-stats
+      - chore/update-dotfiles-stats-**
     paths-ignore:
       - README.md
 
@@ -79,15 +80,19 @@ jobs:
           add-paths: README.md
           commit-message: "chore: update repository stats"
           base: "main"
-          branch: "chore/update-dotfiles-stats-${{ github.ref_name }}"
+          branch: "chore/update-dotfiles-stats"
           delete-branch: true
           title: "chore: update repository stats"
           body: |
             Automated README stats refresh from GitHub Actions.
 
-      - name: Enable auto-merge
+      - name: Merge PR when possible
         if: steps.create_pr.outputs.pull-request-number != ''
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr merge --auto --squash "${{ steps.create_pr.outputs.pull-request-number }}"
+          PR_NUMBER="${{ steps.create_pr.outputs.pull-request-number }}"
+
+          # Try repository auto-merge first; if it's disabled, attempt immediate merge.
+          gh pr merge --auto --squash "$PR_NUMBER" || \
+            gh pr merge --squash --delete-branch "$PR_NUMBER"
