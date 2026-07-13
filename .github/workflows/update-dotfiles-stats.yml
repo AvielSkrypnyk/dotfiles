@@ -6,10 +6,6 @@ concurrency:
 
 'on':
   push:
-    branches-ignore:
-      - main
-      - chore/update-dotfiles-stats
-      - chore/update-dotfiles-stats-**
     paths-ignore:
       - README.md
 
@@ -21,6 +17,7 @@ permissions:
 
 jobs:
   build:
+    if: ${{ !startsWith(github.ref_name, 'chore/update-dotfiles-stats') }}
     runs-on: ubuntu-latest
 
     steps:
