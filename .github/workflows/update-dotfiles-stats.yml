@@ -41,6 +41,7 @@ jobs:
           UPDATED=$(gh repo view "${{ github.repository }}" \
             --json pushedAt -q '.pushedAt')
 
+          # Exclude the current branch PR so this metric reflects other open PRs.
           CURRENT_BRANCH_PR=$(gh pr list \
             --state open \
             --head "$BRANCH_NAME" \
@@ -59,11 +60,8 @@ jobs:
               --jq 'length')
           fi
 
-          COMMITS=$(git rev-list --count origin/main)
-
-          if [ "$BRANCH_NAME" != "main" ]; then
-            COMMITS=$((COMMITS + 1))
-          fi
+          # Show the expected post-merge total seen on main.
+          COMMITS=$(( $(git rev-list --count origin/main) + 1 ))
 
           cat > stats.txt << EOF
           \`\`\`text
@@ -75,6 +73,7 @@ jobs:
 
       - name: Update README
         run: |
+          # Replace only the STATS block content and keep all other README lines untouched.
           awk '
           BEGIN { in_block=0 }
           /<!-- STATS -->/ {
