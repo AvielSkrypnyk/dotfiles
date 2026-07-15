@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""Generate the README structure tree block.
+
+The output intentionally inserts spacer lines between siblings to improve
+readability in dense trees.
+"""
+
 from pathlib import Path
 
 ROOTS = ["bootstrap", "common", "linux", "macos", "windows"]
@@ -9,20 +15,28 @@ def sorted_entries(path: Path):
     return sorted(entries, key=lambda p: (not p.is_dir(), p.name.lower(), p.name))
 
 
+def entry_label(path: Path) -> str:
+    return path.name + "/" if path.is_dir() else path.name
+
+
+def spacer_line(prefix: str) -> str:
+    # Keep spacer depth aligned with the current tree prefix.
+    return prefix + "│"
+
+
 def walk(path: Path, prefix: str):
     entries = sorted_entries(path)
     for i, entry in enumerate(entries):
         last = i == len(entries) - 1
         connector = "└── " if last else "├── "
-        name = entry.name + "/" if entry.is_dir() else entry.name
-        print(prefix + connector + name)
+        print(prefix + connector + entry_label(entry))
 
         if entry.is_dir():
             walk(entry, prefix + ("    " if last else "│   "))
 
         # Add a spacer line between siblings for readability.
         if not last:
-            print(prefix + "│")
+            print(spacer_line(prefix))
 
 
 def main():

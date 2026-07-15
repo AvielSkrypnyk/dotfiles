@@ -55,8 +55,8 @@ jobs:
           \`\`\`
           EOF
 
-            # Rebuild the README structure snapshot from tracked dotfiles folders.
-            python3 .github/scripts/generate_structure_tree.py > structure.txt
+          # Rebuild the README structure snapshot from tracked dotfiles folders.
+          python3 .github/scripts/generate_structure_tree.py > structure.txt
 
       - name: Update README blocks
         run: |
