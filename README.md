@@ -5,6 +5,7 @@ and native Windows junctions on Windows.
 
 ## Structure
 
+<!-- STRUCTURE -->
 ```text
 dotfiles/
 ├── bootstrap/
@@ -55,7 +56,25 @@ dotfiles/
 │   │           ├── qobuz-meta
 │   │           ├── README.md
 │   │           └── requirements.txt
-│   ├── .zprofile
+│   │
+│   ├── .config/
+│   │   ├── btop/
+│   │   ├── htop/
+│   │   ├── fastfetch/
+│   │   ├── neofetch/
+│   │   ├── cava/
+│   │   ├── spicetify/
+│   │   ├── nvim/
+│   │   ├── kitty/
+│   │   │   ├── kitty.conf
+│   │   │   └── themes/
+│   │   │       ├── frappe.conf
+│   │   │       ├── latte.conf
+│   │   │       ├── macchiato.conf
+│   │   │       └── mocha.conf
+│   │   └── starship.toml
+│   │
+│   ├── .zshrc
 │   ├── .zshenv
 │   └── .zshrc
 ├── linux/
@@ -65,6 +84,7 @@ dotfiles/
 │           ├── hyprland.lua.save
 │           ├── monitors.conf
 │           └── workspaces.conf
+│
 ├── macos/
 │   ├── .config/
 │   │   ├── skhd/
@@ -90,6 +110,7 @@ dotfiles/
             ├── requirements.txt
             └── start-komorebi.ps1
 ```
+    <!-- /STRUCTURE -->
 
 ## Overview
 

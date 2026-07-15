@@ -6,6 +6,8 @@ concurrency:
 
 'on':
   push:
+    branches-ignore:
+      - main
     paths-ignore:
       - README.md
 
@@ -73,7 +75,7 @@ jobs:
 
       - name: Update README
         run: |
-          # Replace only the STATS block content and keep all other README lines untouched.
+          # Only refresh the STATS block in this workflow.
           awk '
           BEGIN { in_block=0 }
           /<!-- STATS -->/ {
