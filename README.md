@@ -11,13 +11,9 @@ dotfiles/
 ├── bootstrap/
 │   ├── lib/
 │   │   ├── helpers.ps1
-│   │   │
 │   │   └── helpers.sh
-│   │
 │   ├── install-linux.sh
-│   │
 │   ├── install-macos.sh
-│   │
 │   └── install.ps1
 │
 ├── common/
@@ -25,34 +21,23 @@ dotfiles/
 │   │   ├── btop/
 │   │   │   ├── themes/
 │   │   │   │   ├── catppuccin_frappe.theme
-│   │   │   │   │
 │   │   │   │   ├── catppuccin_latte.theme
-│   │   │   │   │
 │   │   │   │   ├── catppuccin_macchiato.theme
-│   │   │   │   │
 │   │   │   │   └── catppuccin_mocha.theme
-│   │   │   │
 │   │   │   └── btop.conf
 │   │   │
 │   │   ├── cava/
 │   │   │   ├── shaders/
 │   │   │   │   ├── bar_spectrum.frag
-│   │   │   │   │
 │   │   │   │   ├── eye_of_phi.frag
-│   │   │   │   │
 │   │   │   │   ├── northern_lights.frag
-│   │   │   │   │
 │   │   │   │   ├── pass_through.vert
-│   │   │   │   │
 │   │   │   │   ├── spectrogram.frag
-│   │   │   │   │
 │   │   │   │   └── winamp_line_style_spectrum.frag
 │   │   │   │
 │   │   │   ├── themes/
 │   │   │   │   ├── solarized_dark
-│   │   │   │   │
 │   │   │   │   └── tricolor
-│   │   │   │
 │   │   │   └── config
 │   │   │
 │   │   ├── htop/
@@ -61,18 +46,13 @@ dotfiles/
 │   │   ├── kitty/
 │   │   │   ├── themes/
 │   │   │   │   ├── frappe.conf
-│   │   │   │   │
 │   │   │   │   ├── latte.conf
-│   │   │   │   │
 │   │   │   │   ├── macchiato.conf
-│   │   │   │   │
 │   │   │   │   └── mocha.conf
-│   │   │   │
 │   │   │   └── kitty.conf
 │   │   │
 │   │   ├── neofetch/
 │   │   │   └── config.conf
-│   │   │
 │   │   └── starship.toml
 │   │
 │   ├── bin/
@@ -82,33 +62,24 @@ dotfiles/
 │   │   └── flac/
 │   │       └── qobuz-meta/
 │   │           ├── qobuz-meta
-│   │           │
 │   │           ├── README.md
-│   │           │
 │   │           └── requirements.txt
-│   │
 │   ├── .zprofile
-│   │
 │   ├── .zshenv
-│   │
 │   └── .zshrc
 │
 ├── linux/
 │   └── .config/
 │       └── hypr/
 │           ├── hyprland.lua
-│           │
 │           ├── hyprland.lua.save
-│           │
 │           ├── monitors.conf
-│           │
 │           └── workspaces.conf
 │
 ├── macos/
 │   ├── .config/
 │   │   ├── skhd/
 │   │   │   ├── README.md
-│   │   │   │
 │   │   │   └── skhdrc
 │   │   │
 │   │   └── yabai/
@@ -120,24 +91,19 @@ dotfiles/
 │   └── scripts/
 │       └── wallpaper-switcher/
 │           ├── README.md
-│           │
 │           └── wallpaper-switcher
 │
 └── windows/
     ├── .config/
     │   ├── komorebi/
     │   │   ├── applications.json
-    │   │   │
     │   │   └── komorebi.json
-    │   │
     │   └── whkdrc
     │
     └── scripts/
         └── komorebi/
             ├── README.md
-            │
             ├── requirements.txt
-            │
             └── start-komorebi.ps1
 ```
 <!-- /STRUCTURE -->
@@ -340,7 +306,7 @@ Theme    -> Catppuccin Macchiato (Peach)
 
 <!-- STATS -->
 ```text
-Commits     : 56
+Commits     : 58
 Open PRs    : 0
 Last Update : 2026-07-15
 ```
