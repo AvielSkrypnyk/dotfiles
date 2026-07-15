@@ -5,6 +5,7 @@ and native Windows junctions on Windows.
 
 ## Structure
 
+<!-- STRUCTURE -->
 ```text
 dotfiles/
 ├── bootstrap/
@@ -35,6 +36,13 @@ dotfiles/
 │   │   ├── cava/
 │   │   ├── spicetify/
 │   │   ├── nvim/
+│   │   ├── kitty/
+│   │   │   ├── kitty.conf
+│   │   │   └── themes/
+│   │   │       ├── frappe.conf
+│   │   │       ├── latte.conf
+│   │   │       ├── macchiato.conf
+│   │   │       └── mocha.conf
 │   │   └── starship.toml
 │   │
 │   ├── .zshrc
@@ -44,6 +52,11 @@ dotfiles/
 ├── linux/
 │   ├── bin/
 │   └── .config/
+│       └── hypr/
+│           ├── hyprland.lua
+│           ├── hyprland.lua.save
+│           ├── monitors.conf
+│           └── workspaces.conf
 │
 ├── macos/
 │   ├── bin/
@@ -77,6 +90,7 @@ dotfiles/
         │
         └── whkdrc
 ```
+    <!-- /STRUCTURE -->
 
 ## Overview
 
