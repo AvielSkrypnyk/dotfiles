@@ -1,12 +1,12 @@
-name: Update Dotfiles Stats
+name: Sync README On Main
 
 concurrency:
-  group: update-dotfiles-stats
+  group: sync-readme-on-main
   cancel-in-progress: true
 
 'on':
   push:
-    branches-ignore:
+    branches:
       - main
     paths-ignore:
       - README.md
@@ -18,10 +18,9 @@ permissions:
   pull-requests: write
 
 jobs:
-  build:
+  sync:
     if: >-
-      ${{ !startsWith(github.ref_name, 'chore/update-dotfiles-stats') &&
-      (github.event_name != 'push' || github.event.head_commit.message != 'chore: update repository stats') }}
+      ${{ github.event_name != 'push' || github.event.head_commit.message != 'chore: sync readme metadata' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -29,40 +28,21 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.ref_name }}
+          ref: main
 
-      - name: Collect statistics
+      - name: Build README metadata
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          BRANCH_NAME="${{ github.ref_name }}"
-
-          # Keep commit count aligned with main, then account for this branch's upcoming squash merge commit.
-          git fetch origin main --quiet
-
           UPDATED=$(gh repo view "${{ github.repository }}" \
             --json pushedAt -q '.pushedAt')
 
-          # Exclude the current branch PR so this metric reflects other open PRs.
-          CURRENT_BRANCH_PR=$(gh pr list \
+          PRS=$(gh pr list \
             --state open \
-            --head "$BRANCH_NAME" \
             --json number \
-            --jq '.[0].number // empty')
+            --jq 'length')
 
-          if [ -n "$CURRENT_BRANCH_PR" ]; then
-            PRS=$(gh pr list \
-              --state open \
-              --json number \
-              --jq "[.[] | select(.number != $CURRENT_BRANCH_PR)] | length")
-          else
-            PRS=$(gh pr list \
-              --state open \
-              --json number \
-              --jq 'length')
-          fi
-
-          # Show the expected post-merge total seen on main.
+          # The sync PR itself adds one commit after merge.
           COMMITS=$(( $(git rev-list --count origin/main) + 1 ))
 
           cat > stats.txt << EOF
@@ -73,8 +53,6 @@ jobs:
           \`\`\`
           EOF
 
-      - name: Generate structure tree
-        run: |
           # Rebuild the README structure snapshot from tracked dotfiles folders.
           python3 - << 'PY' > structure.txt
           from pathlib import Path
@@ -97,12 +75,9 @@ jobs:
 
           print("```text")
           print("dotfiles/")
-          for i, root_name in enumerate(roots):
+          present_roots = [r for r in roots if Path(r).exists()]
+          for root_name in present_roots:
               root = Path(root_name)
-              if not root.exists():
-                  continue
-              # Connector alignment is based on the roots that are present.
-              present_roots = [r for r in roots if Path(r).exists()]
               last_root = root_name == present_roots[-1]
               connector = "└── " if last_root else "├── "
               print(connector + root_name + "/")
@@ -110,7 +85,7 @@ jobs:
           print("```")
           PY
 
-      - name: Update README
+      - name: Update README blocks
         run: |
           # Replace only generated blocks and keep all other README lines untouched.
           awk '
@@ -128,7 +103,6 @@ jobs:
           }
           !in_block
           ' README.md > README.new
-
           mv README.new README.md
 
           awk '
@@ -146,10 +120,9 @@ jobs:
           }
           !in_block
           ' README.md > README.new
-
           mv README.new README.md
 
-      - name: Create pull request with stats update
+      - name: Create pull request
         id: create_pr
         uses: peter-evans/create-pull-request@v7
         with:
@@ -158,13 +131,13 @@ jobs:
           author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           sign-commits: true
           add-paths: README.md
-          commit-message: "chore: update repository stats"
+          commit-message: "chore: sync readme metadata"
           base: "main"
-          branch: "chore/update-dotfiles-stats"
+          branch: "chore/sync-readme-main"
           delete-branch: true
-          title: "chore: update repository stats"
+          title: "chore: sync readme metadata"
           body: |
-            Automated README stats refresh from GitHub Actions.
+            Automated README structure and stats refresh after main changes.
 
       - name: Merge PR when possible
         if: steps.create_pr.outputs.pull-request-number != ''
