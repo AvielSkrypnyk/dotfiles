@@ -73,64 +73,9 @@ jobs:
           \`\`\`
           EOF
 
-      - name: Generate structure tree
-        run: |
-          # Rebuild the README structure snapshot from tracked dotfiles folders.
-          python3 - << 'PY' > structure.txt
-          from pathlib import Path
-
-          roots = ["bootstrap", "common", "linux", "macos", "windows"]
-
-          def sorted_entries(path: Path):
-              entries = [p for p in path.iterdir() if p.name != ".git"]
-              return sorted(entries, key=lambda p: (not p.is_dir(), p.name.lower(), p.name))
-
-          def walk(path: Path, prefix: str):
-              entries = sorted_entries(path)
-              for i, entry in enumerate(entries):
-                  last = i == len(entries) - 1
-                  connector = "└── " if last else "├── "
-                  name = entry.name + "/" if entry.is_dir() else entry.name
-                  print(prefix + connector + name)
-                  if entry.is_dir():
-                      walk(entry, prefix + ("    " if last else "│   "))
-
-          print("```text")
-          print("dotfiles/")
-          for i, root_name in enumerate(roots):
-              root = Path(root_name)
-              if not root.exists():
-                  continue
-              # Connector alignment is based on the roots that are present.
-              present_roots = [r for r in roots if Path(r).exists()]
-              last_root = root_name == present_roots[-1]
-              connector = "└── " if last_root else "├── "
-              print(connector + root_name + "/")
-              walk(root, "    " if last_root else "│   ")
-          print("```")
-          PY
-
       - name: Update README
         run: |
-          # Replace only generated blocks and keep all other README lines untouched.
-          awk '
-          BEGIN { in_block=0 }
-          /<!-- STRUCTURE -->/ {
-            print
-            system("cat structure.txt")
-            in_block=1
-            next
-          }
-          /<!-- \/STRUCTURE -->/ {
-            in_block=0
-            print
-            next
-          }
-          !in_block
-          ' README.md > README.new
-
-          mv README.new README.md
-
+          # Only refresh the STATS block in this workflow.
           awk '
           BEGIN { in_block=0 }
           /<!-- STATS -->/ {
