@@ -11,103 +11,133 @@ dotfiles/
 ├── bootstrap/
 │   ├── lib/
 │   │   ├── helpers.ps1
+│   │   │
 │   │   └── helpers.sh
+│   │
 │   ├── install-linux.sh
+│   │
 │   ├── install-macos.sh
+│   │
 │   └── install.ps1
+│
 ├── common/
 │   ├── .config/
 │   │   ├── btop/
 │   │   │   ├── themes/
 │   │   │   │   ├── catppuccin_frappe.theme
+│   │   │   │   │
 │   │   │   │   ├── catppuccin_latte.theme
+│   │   │   │   │
 │   │   │   │   ├── catppuccin_macchiato.theme
+│   │   │   │   │
 │   │   │   │   └── catppuccin_mocha.theme
+│   │   │   │
 │   │   │   └── btop.conf
+│   │   │
 │   │   ├── cava/
 │   │   │   ├── shaders/
 │   │   │   │   ├── bar_spectrum.frag
+│   │   │   │   │
 │   │   │   │   ├── eye_of_phi.frag
+│   │   │   │   │
 │   │   │   │   ├── northern_lights.frag
+│   │   │   │   │
 │   │   │   │   ├── pass_through.vert
+│   │   │   │   │
 │   │   │   │   ├── spectrogram.frag
+│   │   │   │   │
 │   │   │   │   └── winamp_line_style_spectrum.frag
+│   │   │   │
 │   │   │   ├── themes/
 │   │   │   │   ├── solarized_dark
+│   │   │   │   │
 │   │   │   │   └── tricolor
+│   │   │   │
 │   │   │   └── config
+│   │   │
 │   │   ├── htop/
 │   │   │   └── htoprc
+│   │   │
 │   │   ├── kitty/
 │   │   │   ├── themes/
 │   │   │   │   ├── frappe.conf
+│   │   │   │   │
 │   │   │   │   ├── latte.conf
+│   │   │   │   │
 │   │   │   │   ├── macchiato.conf
+│   │   │   │   │
 │   │   │   │   └── mocha.conf
+│   │   │   │
 │   │   │   └── kitty.conf
+│   │   │
 │   │   ├── neofetch/
 │   │   │   └── config.conf
+│   │   │
 │   │   └── starship.toml
+│   │
 │   ├── bin/
 │   │   └── qobuz-meta
+│   │
 │   ├── scripts/
 │   │   └── flac/
 │   │       └── qobuz-meta/
 │   │           ├── qobuz-meta
+│   │           │
 │   │           ├── README.md
+│   │           │
 │   │           └── requirements.txt
 │   │
-│   ├── .config/
-│   │   ├── btop/
-│   │   ├── htop/
-│   │   ├── fastfetch/
-│   │   ├── neofetch/
-│   │   ├── cava/
-│   │   ├── spicetify/
-│   │   ├── nvim/
-│   │   ├── kitty/
-│   │   │   ├── kitty.conf
-│   │   │   └── themes/
-│   │   │       ├── frappe.conf
-│   │   │       ├── latte.conf
-│   │   │       ├── macchiato.conf
-│   │   │       └── mocha.conf
-│   │   └── starship.toml
+│   ├── .zprofile
 │   │
-│   ├── .zshrc
 │   ├── .zshenv
+│   │
 │   └── .zshrc
+│
 ├── linux/
 │   └── .config/
 │       └── hypr/
 │           ├── hyprland.lua
+│           │
 │           ├── hyprland.lua.save
+│           │
 │           ├── monitors.conf
+│           │
 │           └── workspaces.conf
 │
 ├── macos/
 │   ├── .config/
 │   │   ├── skhd/
 │   │   │   ├── README.md
+│   │   │   │
 │   │   │   └── skhdrc
+│   │   │
 │   │   └── yabai/
 │   │       └── yabairc
+│   │
 │   ├── bin/
 │   │   └── wallpaper-switcher
+│   │
 │   └── scripts/
 │       └── wallpaper-switcher/
 │           ├── README.md
+│           │
 │           └── wallpaper-switcher
+│
 └── windows/
     ├── .config/
     │   ├── komorebi/
     │   │   ├── applications.json
+    │   │   │
     │   │   └── komorebi.json
+    │   │
     │   └── whkdrc
+    │
     └── scripts/
         └── komorebi/
             ├── README.md
+            │
             ├── requirements.txt
+            │
             └── start-komorebi.ps1
 ```
 <!-- /STRUCTURE -->
@@ -310,7 +340,7 @@ Theme    -> Catppuccin Macchiato (Peach)
 
 <!-- STATS -->
 ```text
-Commits     : 53
+Commits     : 55
 Open PRs    : 0
 Last Update : 2026-07-15
 ```
