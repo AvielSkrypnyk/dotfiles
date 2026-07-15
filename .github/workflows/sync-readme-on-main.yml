@@ -74,6 +74,9 @@ jobs:
                   print(prefix + connector + name)
                   if entry.is_dir():
                       walk(entry, prefix + ("    " if last else "│   "))
+                if not last:
+                  # Add a spacer line between siblings for readability.
+                  print(prefix + "│")
 
           print("```text")
           print("dotfiles/")
@@ -85,6 +88,8 @@ jobs:
               connector = "└── " if last_root else "├── "
               print(connector + root_name + "/")
               walk(root, "    " if last_root else "│   ")
+              if not last_root:
+                print("│")
           print("```")
           PY
 

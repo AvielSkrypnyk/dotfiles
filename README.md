@@ -90,7 +90,7 @@ dotfiles/
         │
         └── whkdrc
 ```
-    <!-- /STRUCTURE -->
+  <!-- /STRUCTURE -->
 
 ## Overview
 
