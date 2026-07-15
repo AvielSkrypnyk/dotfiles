@@ -11,71 +11,84 @@ dotfiles/
 │   ├── lib/
 │   │   ├── helpers.ps1
 │   │   └── helpers.sh
-│   │
 │   ├── install-linux.sh
 │   ├── install-macos.sh
 │   └── install.ps1
-│
 ├── common/
+│   ├── .config/
+│   │   ├── btop/
+│   │   │   ├── themes/
+│   │   │   │   ├── catppuccin_frappe.theme
+│   │   │   │   ├── catppuccin_latte.theme
+│   │   │   │   ├── catppuccin_macchiato.theme
+│   │   │   │   └── catppuccin_mocha.theme
+│   │   │   └── btop.conf
+│   │   ├── cava/
+│   │   │   ├── shaders/
+│   │   │   │   ├── bar_spectrum.frag
+│   │   │   │   ├── eye_of_phi.frag
+│   │   │   │   ├── northern_lights.frag
+│   │   │   │   ├── pass_through.vert
+│   │   │   │   ├── spectrogram.frag
+│   │   │   │   └── winamp_line_style_spectrum.frag
+│   │   │   ├── themes/
+│   │   │   │   ├── solarized_dark
+│   │   │   │   └── tricolor
+│   │   │   └── config
+│   │   ├── htop/
+│   │   │   └── htoprc
+│   │   ├── kitty/
+│   │   │   ├── themes/
+│   │   │   │   ├── frappe.conf
+│   │   │   │   ├── latte.conf
+│   │   │   │   ├── macchiato.conf
+│   │   │   │   └── mocha.conf
+│   │   │   └── kitty.conf
+│   │   ├── neofetch/
+│   │   │   └── config.conf
+│   │   └── starship.toml
 │   ├── bin/
 │   │   └── qobuz-meta
-│   │
 │   ├── scripts/
 │   │   └── flac/
 │   │       └── qobuz-meta/
 │   │           ├── qobuz-meta
 │   │           ├── README.md
 │   │           └── requirements.txt
-│   │
-│   ├── .config/
-│   │   ├── btop/
-│   │   ├── htop/
-│   │   ├── fastfetch/
-│   │   ├── neofetch/
-│   │   ├── cava/
-│   │   ├── spicetify/
-│   │   ├── nvim/
-│   │   └── starship.toml
-│   │
-│   ├── .zshrc
+│   ├── .zprofile
 │   ├── .zshenv
-│   └── .zprofile
-│
+│   └── .zshrc
 ├── linux/
-│   ├── bin/
 │   └── .config/
-│
+│       └── hypr/
+│           ├── hyprland.lua
+│           ├── hyprland.lua.save
+│           ├── monitors.conf
+│           └── workspaces.conf
 ├── macos/
+│   ├── .config/
+│   │   ├── skhd/
+│   │   │   ├── README.md
+│   │   │   └── skhdrc
+│   │   └── yabai/
+│   │       └── yabairc
 │   ├── bin/
 │   │   └── wallpaper-switcher
-│   │
-│   ├── scripts/
-│   │   └── wallpaper-switcher/
-│   │       ├── wallpaper-switcher
-│   │       └── README.md
-│   │
-│   └── .config/
-│       ├── yabai/
-│       ├── skhd/
-│       │   ├── skhdrc
-│       │   └── README.md
-│       ├── raycast/
-│       └── iterm2/
-│
+│   └── scripts/
+│       └── wallpaper-switcher/
+│           ├── README.md
+│           └── wallpaper-switcher
 └── windows/
-    ├── scripts/
-    │   └── komorebi/
-    │       ├── start-komorebi.ps1
-    │       ├── README.md
-    │       └── requirements.txt
-    │
-    └── .config/
-        ├── komorebi/
-        │   ├── komorebi.json
-        │   ├── applications.json
-        │   └── komorebi.bar.json
-        │
-        └── whkdrc
+    ├── .config/
+    │   ├── komorebi/
+    │   │   ├── applications.json
+    │   │   └── komorebi.json
+    │   └── whkdrc
+    └── scripts/
+        └── komorebi/
+            ├── README.md
+            ├── requirements.txt
+            └── start-komorebi.ps1
 ```
 
 ## Overview
@@ -276,7 +289,7 @@ Theme    -> Catppuccin Macchiato (Peach)
 
 <!-- STATS -->
 ```text
-Commits     : 44
+Commits     : 45
 Open PRs    : 0
 Last Update : 2026-07-15
 ```
