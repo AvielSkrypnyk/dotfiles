@@ -1,9 +1,9 @@
 {
     "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    
     // Made by Aviel Skrypnyk
-    // Fingerprint placeholder: <your-fingerprint-here>
-    // Recommended GitHub location for this fingerprint:
-    // https://github.com/<your-username>/<your-username> (profile README)
+    // Repository:
+    // https://github.com/AvielSkrypnyk/dotfiles
 
     "display": {
         "separator": "  ",
