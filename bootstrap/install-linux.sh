@@ -36,6 +36,9 @@ if command -v apt >/dev/null 2>&1; then
     zsh \
     btop \
     htop \
+    kitty \
+    cava \
+    neofetch \
     fastfetch \
     unzip
 
@@ -49,6 +52,9 @@ elif command -v dnf >/dev/null 2>&1; then
     zsh \
     btop \
     htop \
+    kitty \
+    cava \
+    neofetch \
     fastfetch \
     unzip
 
@@ -62,6 +68,9 @@ elif command -v pacman >/dev/null 2>&1; then
     zsh \
     btop \
     htop \
+    kitty \
+    cava \
+    neofetch \
     fastfetch \
     unzip
 
@@ -189,6 +198,7 @@ for file in .zshrc .zshenv .zprofile; do
 done
 
 stow common
+stow unix
 stow linux
 
 # ------------------------------------

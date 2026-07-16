@@ -43,14 +43,6 @@ dotfiles/
 │   │   ├── htop/
 │   │   │   └── htoprc
 │   │   │
-│   │   ├── kitty/
-│   │   │   ├── themes/
-│   │   │   │   ├── frappe.conf
-│   │   │   │   ├── latte.conf
-│   │   │   │   ├── macchiato.conf
-│   │   │   │   └── mocha.conf
-│   │   │   └── kitty.conf
-│   │   │
 │   │   ├── neofetch/
 │   │   │   └── config.conf
 │   │   └── starship.toml
@@ -93,6 +85,16 @@ dotfiles/
 │           ├── README.md
 │           └── wallpaper-switcher
 │
+├── unix/
+│   └── .config/
+│       └── kitty/
+│           ├── themes/
+│           │   ├── frappe.conf
+│           │   ├── latte.conf
+│           │   ├── macchiato.conf
+│           │   └── mocha.conf
+│           └── kitty.conf
+│
 └── windows/
     ├── .config/
     │   ├── komorebi/
@@ -111,6 +113,7 @@ dotfiles/
 ## Overview
 
 - `common` contains shared configurations and utilities
+- `unix` contains Linux/macOS shared configurations
 - `linux` contains Linux-specific configurations
 - `macos` contains macOS-specific configurations
 - `windows` contains Windows-specific configurations
@@ -177,6 +180,10 @@ irm (
 - btop
 - htop
 
+### Linux/macOS Shared Packages
+
+- kitty
+
 ### Fonts
 
 - Hack Nerd Font
@@ -222,6 +229,7 @@ cd ~/dotfiles
 
 ```sh
 stow common
+stow unix
 stow macos
 ```
 
@@ -229,6 +237,7 @@ stow macos
 
 ```sh
 stow common
+stow unix
 stow linux
 ```
 
