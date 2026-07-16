@@ -126,29 +126,19 @@ Supports:
 - Arch Linux
 
 ```sh
-curl -fsSL \
-"https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/"\
-"install-linux.sh" \
-| bash
+curl -fsSL https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/install-linux.sh | bash
 ```
 
 ### macOS
 
 ```sh
-curl -fsSL \
-"https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/"\
-"install-macos.sh" \
-| bash
+curl -fsSL https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/install-macos.sh | bash
 ```
 
 ### Windows
 
 ```powershell
-irm (
-  "https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/" +
-  "install.ps1"
-)
-| iex
+irm https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/install.ps1 | iex
 ```
 
 ---
