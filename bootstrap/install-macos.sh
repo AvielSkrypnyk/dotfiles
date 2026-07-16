@@ -48,11 +48,15 @@ brew install \
   zsh \
   starship \
   btop \
+  htop \
+  cava \
+  neofetch \
   fastfetch \
   yabai \
   skhd
 
 brew install --cask \
+  kitty \
   font-hack-nerd-font
 
 # ------------------------------------
@@ -146,6 +150,7 @@ for file in .zshrc .zshenv .zprofile; do
 done
 
 stow common
+stow unix
 stow macos
 
 # ------------------------------------

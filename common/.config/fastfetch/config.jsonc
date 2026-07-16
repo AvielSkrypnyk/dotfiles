@@ -1,0 +1,135 @@
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    // Made by Aviel Skrypnyk
+    // Fingerprint placeholder: <your-fingerprint-here>
+    // Recommended GitHub location for this fingerprint:
+    // https://github.com/<your-username>/<your-username> (profile README)
+
+    "display": {
+        "separator": "  ",
+        "key": {
+            "width": 13
+        }
+    },
+
+    "logo": {
+        "type": "builtin",
+        "height": 16,
+        "width": 30,
+        "padding": {
+            "top": 1,
+            "left": 2,
+            "right": 3
+        }
+    },
+
+    "modules": [
+        {
+            "type": "custom",
+            "format": "\u001b[38;2;202;211;245m┌────────────────────── System ──────────────────────┐\u001b[0m"
+        },
+        {
+            "type": "title",
+            "key": "\u001b[38;2;245;169;127mUser"
+        },
+        {
+            "type": "os",
+            "key": "\u001b[38;2;245;169;127mOS"
+        },
+        {
+            "type": "host",
+            "key": "\u001b[38;2;245;169;127mHost"
+        },
+        {
+            "type": "kernel",
+            "key": "\u001b[38;2;245;169;127mKernel"
+        },
+        {
+            "type": "uptime",
+            "key": "\u001b[38;2;245;169;127mUptime"
+        },
+        {
+            "type": "datetime",
+            "key": "\u001b[38;2;245;169;127mDate"
+        },
+        {
+            "type": "packages",
+            "key": "\u001b[38;2;245;169;127mPackages"
+        },
+        {
+            "type": "shell",
+            "key": "\u001b[38;2;245;169;127mShell"
+        },
+        {
+            "type": "terminal",
+            "key": "\u001b[38;2;245;169;127mTerminal"
+        },
+        {
+            "type": "de",
+            "key": "\u001b[38;2;245;169;127mDE"
+        },
+        {
+            "type": "wm",
+            "key": "\u001b[38;2;245;169;127mWM"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[38;2;202;211;245m└─────────────────────────────────────────────────────┘\u001b[0m"
+        },
+
+        "break",
+
+        {
+            "type": "custom",
+            "format": "\u001b[38;2;202;211;245m┌────────────────────── Hardware ─────────────────────┐\u001b[0m"
+        },
+        {
+            "type": "cpu",
+            "key": "\u001b[38;2;245;169;127mCPU"
+        },
+        {
+            "type": "gpu",
+            "key": "\u001b[38;2;245;169;127mGPU"
+        },
+        {
+            "type": "memory",
+            "key": "\u001b[38;2;245;169;127mMemory"
+        },
+        {
+            "type": "swap",
+            "key": "\u001b[38;2;245;169;127mSwap"
+        },
+        {
+            "type": "disk",
+            "key": "\u001b[38;2;245;169;127mDisk"
+        },
+        {
+            "type": "battery",
+            "key": "\u001b[38;2;245;169;127mBattery"
+        },
+        {
+            "type": "localip",
+            "key": "\u001b[38;2;245;169;127mLocal IP"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[38;2;202;211;245m└─────────────────────────────────────────────────────┘\u001b[0m"
+        },
+
+        "break",
+
+        {
+            "type": "custom",
+            "format": "\u001b[38;2;202;211;245m┌────────────────────── Palette ──────────────────────┐\u001b[0m"
+        },
+        {
+            "type": "colors",
+            "paddingLeft": 1,
+            "symbol": "circle"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[38;2;202;211;245m└─────────────────────────────────────────────────────┘\u001b[0m"
+        }
+    ]
+}

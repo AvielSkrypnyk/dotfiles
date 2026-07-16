@@ -25,6 +25,10 @@ Show-Loading "Installing packages..."
 $Packages = @(
     "Git.Git",
     "Starship.Starship",
+    "Fastfetch-cli.Fastfetch",
+    "nepnep.neofetch-win",
+    "aristocratos.btop4win",
+    "karlstav.cava",
     "Neovim.Neovim",
     "LGUG2Z.komorebi",
     "LGUG2Z.whkd",
