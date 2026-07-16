@@ -88,6 +88,16 @@ dotfiles/
 │           ├── README.md
 │           └── wallpaper-switcher
 │
+├── unix/
+│   └── .config/
+│       └── kitty/
+│           ├── themes/
+│           │   ├── frappe.conf
+│           │   ├── latte.conf
+│           │   ├── macchiato.conf
+│           │   └── mocha.conf
+│           └── kitty.conf
+│
 └── windows/
     ├── .config/
     │   ├── komorebi/
@@ -298,7 +308,7 @@ Theme    -> Catppuccin Macchiato (Peach)
 
 <!-- STATS -->
 ```text
-Commits     : 66
+Commits     : 68
 Open PRs    : 0
 Last Update : 2026-07-16
 ```
