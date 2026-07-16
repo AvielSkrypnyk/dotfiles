@@ -40,6 +40,9 @@ dotfiles/
 │   │   │   │   └── tricolor
 │   │   │   └── config
 │   │   │
+│   │   ├── fastfetch/
+│   │   │   └── config.jsonc
+│   │   │
 │   │   ├── htop/
 │   │   │   └── htoprc
 │   │   │
@@ -84,16 +87,6 @@ dotfiles/
 │       └── wallpaper-switcher/
 │           ├── README.md
 │           └── wallpaper-switcher
-│
-├── unix/
-│   └── .config/
-│       └── kitty/
-│           ├── themes/
-│           │   ├── frappe.conf
-│           │   ├── latte.conf
-│           │   ├── macchiato.conf
-│           │   └── mocha.conf
-│           └── kitty.conf
 │
 └── windows/
     ├── .config/
@@ -315,7 +308,7 @@ Theme    -> Catppuccin Macchiato (Peach)
 
 <!-- STATS -->
 ```text
-Commits     : 59
+Commits     : 61
 Open PRs    : 0
 Last Update : 2026-07-16
 ```
