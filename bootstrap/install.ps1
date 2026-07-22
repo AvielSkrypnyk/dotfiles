@@ -183,12 +183,6 @@ if (!(Test-Path $PROFILE)) {
         -Path $PROFILE | Out-Null
 }
 
-$ProfileText = @"
-
-Invoke-Expression (& starship init powershell)
-
-"@
-
 $ProfileContent = Get-Content `
     $PROFILE `
     -Raw `
@@ -198,7 +192,14 @@ if ($ProfileContent -notmatch "starship init powershell") {
 
     Add-Content `
         -Path $PROFILE `
-        -Value $ProfileText
+        -Value "`nInvoke-Expression (& starship init powershell)`n"
+}
+
+if ($ProfileContent -notmatch "Get-Command fastfetch") {
+
+    Add-Content `
+        -Path $PROFILE `
+        -Value "`nif (Get-Command fastfetch -ErrorAction SilentlyContinue) {`n    fastfetch`n}`n"
 }
 
 # ------------------------------------
@@ -207,6 +208,10 @@ if ($ProfileContent -notmatch "starship init powershell") {
 
 $SettingsPath =
 "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
+
+$WindowsTerminalPowerShellSource = "Windows.Terminal.PowershellCore"
+$PowerShellCommandline = "pwsh.exe -NoLogo"
+$PwshCommandlinePattern = "(^|[\\/])pwsh(\.exe)?(\s|$)"
 
 if (Test-Path $SettingsPath) {
 
@@ -282,6 +287,38 @@ if (Test-Path $SettingsPath) {
                 face = "Hack Nerd Font Mono"
             }) `
             -Force
+
+        $PowerShellProfile =
+            $Settings.profiles.list |
+            Where-Object {
+                $_.source -eq $WindowsTerminalPowerShellSource
+            } |
+            Select-Object -First 1
+
+        if (-not $PowerShellProfile) {
+            $PowerShellProfile =
+                $Settings.profiles.list |
+                Where-Object {
+                    $_.commandline -match $PwshCommandlinePattern
+                } |
+                Select-Object -First 1
+        }
+
+        if ($PowerShellProfile) {
+            if ($PowerShellProfile.PSObject.Properties.Name -contains "commandline") {
+                $PowerShellProfile.commandline = $PowerShellCommandline
+            }
+            else {
+                $PowerShellProfile |
+                    Add-Member `
+                    -MemberType NoteProperty `
+                    -Name commandline `
+                    -Value $PowerShellCommandline
+            }
+        }
+        else {
+            Write-Host "[WARN] PowerShell profile not found in Windows Terminal settings" -ForegroundColor Yellow
+        }
 
         # -Depth 100 keeps the whole settings tree intact when saving back
         $Settings |
