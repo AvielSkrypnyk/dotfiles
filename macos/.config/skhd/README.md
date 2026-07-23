@@ -64,6 +64,8 @@ cmd + shift - return : open -na "iTerm"
 | `cmd + shift - l`     | Lock screen                     |
 | `cmd + shift - w`     | Random wallpaper                |
 
+> Gaming mode currently only stops and restarts Ubersicht and Notion Calendar.
+
 ---
 
 ## Setup
@@ -95,4 +97,4 @@ skhd --start-service
 ## Notes
 
 - `cmd + shift - w` switches the wallpaper for **not all** monitors, it works per space
-- Lock screen relies on `Control + Command + Q` and requires a password to be set
+- Lock screen relies on `Control + Command + Q` because it is more stable than AppleScript-based alternatives, and it requires a password to be set
