@@ -17,6 +17,9 @@ permissions:
   contents: write
   pull-requests: write
 
+env:
+  STATS_BRANCH: chore/update-dotfiles-stats
+
 jobs:
   build:
     if: >-
@@ -35,32 +38,17 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          BRANCH_NAME="${{ github.ref_name }}"
-
           # Keep commit count aligned with main, then account for this branch's upcoming squash merge commit.
           git fetch origin main --quiet
 
           UPDATED=$(gh repo view "${{ github.repository }}" \
             --json pushedAt -q '.pushedAt')
 
-          # Exclude the current branch PR so this metric reflects other open PRs.
-          CURRENT_BRANCH_PR=$(gh pr list \
+          # Exclude only the generated stats PR; count all real open PRs.
+          PRS=$(gh pr list \
             --state open \
-            --head "$BRANCH_NAME" \
-            --json number \
-            --jq '.[0].number // empty')
-
-          if [ -n "$CURRENT_BRANCH_PR" ]; then
-            PRS=$(gh pr list \
-              --state open \
-              --json number \
-              --jq "[.[] | select(.number != $CURRENT_BRANCH_PR)] | length")
-          else
-            PRS=$(gh pr list \
-              --state open \
-              --json number \
-              --jq 'length')
-          fi
+            --json headRefName \
+            --jq '[.[] | select(.headRefName != env.STATS_BRANCH)] | length')
 
           # Show the expected post-merge total seen on main.
           COMMITS=$(( $(git rev-list --count origin/main) + 1 ))
@@ -105,7 +93,7 @@ jobs:
           add-paths: README.md
           commit-message: "chore: update repository stats"
           base: "main"
-          branch: "chore/update-dotfiles-stats"
+          branch: ${{ env.STATS_BRANCH }}
           delete-branch: true
           title: "chore: update repository stats"
           body: |
