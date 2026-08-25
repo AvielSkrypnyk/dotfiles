@@ -31,13 +31,21 @@ dotfiles/
 │   │   │   │   ├── bar_spectrum.frag
 │   │   │   │   ├── eye_of_phi.frag
 │   │   │   │   ├── northern_lights.frag
+│   │   │   │   ├── orion_circle.frag
+│   │   │   │   ├── orion_circle_rotate.frag
+│   │   │   │   ├── orion_saturn_core.frag
+│   │   │   │   ├── orion_saturn_subring.frag
 │   │   │   │   ├── pass_through.vert
 │   │   │   │   ├── spectrogram.frag
 │   │   │   │   └── winamp_line_style_spectrum.frag
 │   │   │   │
 │   │   │   ├── themes/
-│   │   │   │   ├── solarized_dark
-│   │   │   │   └── tricolor
+│   │   │   │   ├── frappe.cava
+│   │   │   │   ├── latte.cava
+│   │   │   │   ├── macchiato.cava
+│   │   │   │   ├── mocha.cava
+│   │   │   │   ├── solarized_dark.cava
+│   │   │   │   └── tricolor.cava
 │   │   │   └── config
 │   │   │
 │   │   ├── fastfetch/
@@ -308,7 +316,7 @@ Theme    -> Catppuccin Macchiato (Peach)
 
 <!-- STATS -->
 ```text
-Commits     : 82
+Commits     : 84
 Open PRs    : 0
 Last Update : 2026-08-25
 ```
