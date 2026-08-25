@@ -2,6 +2,8 @@
 
 Hotkey daemon for macOS using [skhd](https://github.com/koekeishiya/skhd), driving the [yabai](https://github.com/koekeishiya/yabai) tiling window manager.
 
+The macOS counterpart to [whkd](whkd.md).
+
 ---
 
 ## Overview
@@ -14,6 +16,8 @@ It does the following:
 - Switches desktop layouts (bsp / float)
 - Launches applications
 - Toggles a gaming mode, lock screen, and wallpaper switcher
+
+Config file: [`macos/.config/skhd/skhdrc`](../macos/.config/skhd/skhdrc), stowed to `~/.config/skhd/skhdrc`.
 
 ---
 

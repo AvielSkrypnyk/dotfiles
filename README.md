@@ -71,6 +71,10 @@ dotfiles/
 │   ├── .zshenv
 │   └── .zshrc
 │
+├── docs/
+│   ├── skhd.md
+│   └── whkd.md
+│
 ├── linux/
 │   └── .config/
 │       └── hypr/
@@ -82,7 +86,6 @@ dotfiles/
 ├── macos/
 │   ├── .config/
 │   │   ├── skhd/
-│   │   │   ├── README.md
 │   │   │   └── skhdrc
 │   │   │
 │   │   └── yabai/
@@ -129,6 +132,7 @@ dotfiles/
 - `macos` contains macOS-specific configurations
 - `windows` contains Windows-specific configurations
 - `bootstrap` contains machine provisioning scripts
+- `docs` contains reference guides for the configurations
 
 ---
 
@@ -279,13 +283,22 @@ Collection of small CLI utilities.
 
 - [wallpaper-switcher](macos/scripts/wallpaper-switcher/README.md) -
   random wallpaper setter
-- [skhd](macos/.config/skhd/README.md) -
-  hotkey daemon driving the yabai window manager
 
 ### Windows scripts
 
 - [komorebi](windows/scripts/komorebi/README.md) -
   helper script for komorebi startup manual
+
+---
+
+## Configuration Guides
+
+Reference docs for the window management configs, including keybinding tables.
+
+- [skhd](docs/skhd.md) -
+  hotkey daemon driving the yabai window manager on macOS
+- [whkd](docs/whkd.md) -
+  hotkey daemon driving the komorebi window manager on Windows
 
 ---
 
