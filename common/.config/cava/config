@@ -13,18 +13,19 @@
 # 'autosens' will attempt to decrease sensitivity if the bars peak. 1 = on, 0 = off
 # new as of 0.6.0 autosens of low values (dynamic range)
 # 'overshoot' allows bars to overshoot (in % of terminal height) without initiating autosens. DEPRECATED as of 0.6.0
-; autosens = 1
+autosens = 1
 ; overshoot = 20
 
 # Manual sensitivity in %. If autosens is enabled, this will only be the initial value.
 # 200 means double height. Accepts only non-negative values.
-; sensitivity = 100
+sensitivity = 100
 
 # The number of bars (0-512). 0 sets it to auto (fill up console).
 # Bars' width and space between bars in number of characters.
-; bars = 0
-; bar_width = 2
-; bar_spacing = 1
+bars = 0
+# bold, thick bars
+bar_width = 4
+bar_spacing = 2
 # bar_height is only used for output in "noritake" format
 ; bar_height = 32
 
@@ -60,6 +61,8 @@
 # All input methods uses the same config variable 'source'
 # to define where it should get the audio.
 #
+# This file is shared across macOS/Linux/Windows: method/source are left
+# unset so cava auto-detects per-platform (required on Windows, works fine elsewhere).
 # For pulseaudio and pipewire 'source' will be the source. Default: 'auto', which uses the monitor source of the default sink
 # (all pulseaudio sinks(outputs) have 'monitor' sources(inputs) associated with them).
 #
@@ -80,8 +83,8 @@
 # README.md contains further information on how to setup CAVA for JACK.
 #
 
-method = portaudio
-source = list
+# Windows captures the default output device automatically; no method/source needed
+; source = list
 
 
 
@@ -165,9 +168,9 @@ method = noncurses
 # 'mono' outputs left to right lowest to highest frequencies.
 # 'mono_option' set mono to either take input from 'left', 'right' or 'average'.
 # set 'reverse' to 1 to display frequencies the other way around.
-; channels = stereo
+channels = stereo
 ; mono_option = average
-; reverse = 0
+reverse = 0
 
 # Raw output target.
 # On Linux, a fifo will be created if target does not exist.
@@ -217,7 +220,7 @@ method = noncurses
 ; disable_blanking = 0
 
 # show a flat bar at the bottom of the screen when idle, 1 = on, 0 = off
-; show_idle_bar_heads = 1
+show_idle_bar_heads = 1
 
 # show waveform instead of frequency spectrum, 1 = on, 0 = off
 ; waveform = 0
@@ -249,6 +252,10 @@ method = noncurses
 ; gradient_color_7 = '#cc5933'
 ; gradient_color_8 = '#cc3333'
 
+# use theme file instead of defining colors in this file, located in ~/.config/cava/themes
+# available: macchiato.cava, mocha.cava, latte.cava, frappe.cava, solarized_dark.cava, tricolor.cava
+theme = 'macchiato.cava'
+
 
 
 [smoothing]
@@ -259,8 +266,8 @@ method = noncurses
 ; integral = 77
 
 # Disables or enables the so-called "Monstercat smoothing" with or without "waves". Set to 0 to disable.
-; monstercat = 0
-; waves = 0
+monstercat = 0
+waves = 0
 
 # Set gravity percentage for "drop off". Higher values means bars will drop faster.
 # Accepts only non-negative values. 50 means half gravity, 200 means double. Set to 0 to disable "drop off".
@@ -275,7 +282,7 @@ method = noncurses
 # Noise reduction, int 0 - 100. default 77
 # the raw visualization is very noisy, this factor adjusts the integral and gravity filters to keep the signal smooth
 # 100 will be very slow and smooth, 0 will be fast but noisy.
-; noise_reduction = 77
+noise_reduction = 77
 
 
 [eq]
