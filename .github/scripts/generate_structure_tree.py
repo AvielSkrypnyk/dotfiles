@@ -6,7 +6,7 @@ Spacer lines are added only between folder siblings.
 
 from pathlib import Path
 
-ROOTS = ["bootstrap", "common", "linux", "macos", "unix", "windows"]
+ROOTS = ["bootstrap", "common", "docs", "linux", "macos", "unix", "windows"]
 
 GIT_DIR_NAME = ".git"
 DIR_SUFFIX = "/"
