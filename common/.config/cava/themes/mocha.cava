@@ -1,0 +1,14 @@
+# catppuccin mocha, custom config, peach as accent (top of gradient)
+[color]
+background = '#1e1e2e'
+
+gradient = 1
+
+gradient_color_1 = '#94e2d5'
+gradient_color_2 = '#89dceb'
+gradient_color_3 = '#74c7ec'
+gradient_color_4 = '#89b4fa'
+gradient_color_5 = '#b4befe'
+gradient_color_6 = '#cba6f7'
+gradient_color_7 = '#f5c2e7'
+gradient_color_8 = '#fab387'
