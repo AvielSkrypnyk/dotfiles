@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Bunq.Cli")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9de54322a916565e1efb857e6fa410b44e82da99")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+58ee9714dea660d69d172cf6672ba97f38e00790")]
 [assembly: System.Reflection.AssemblyProductAttribute("Bunq.Cli")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Bunq.Cli")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

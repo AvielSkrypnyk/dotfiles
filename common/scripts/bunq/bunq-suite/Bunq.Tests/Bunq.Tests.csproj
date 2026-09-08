@@ -13,4 +13,9 @@
       <Folder Include="Infrastructure\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Bunq.Core\Bunq.Core.csproj" />
+      <ProjectReference Include="..\Bunq.Infrastructure\Bunq.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>

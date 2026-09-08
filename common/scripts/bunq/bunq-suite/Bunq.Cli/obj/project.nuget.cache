@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "CVSx8aRyo9w=",
+  "dgSpecHash": "U3oMThb/pDg=",
   "success": true,
   "projectFilePath": "C:\\Users\\AvielSkrypnyk\\dotfiles\\common\\scripts\\bunq\\bunq-suite\\Bunq.Cli\\Bunq.Cli.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\AvielSkrypnyk\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\11.0.0-preview.7.26381.103\\microsoft.extensions.dependencyinjection.11.0.0-preview.7.26381.103.nupkg.sha512",
+    "C:\\Users\\AvielSkrypnyk\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\11.0.0-preview.7.26381.103\\microsoft.extensions.dependencyinjection.abstractions.11.0.0-preview.7.26381.103.nupkg.sha512"
+  ],
   "logs": []
 }

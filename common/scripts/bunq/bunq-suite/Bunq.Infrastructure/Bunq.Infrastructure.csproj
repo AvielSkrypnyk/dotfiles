@@ -11,4 +11,8 @@
       <Folder Include="Exporters\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Bunq.Core\Bunq.Core.csproj" />
+    </ItemGroup>
+
 </Project>

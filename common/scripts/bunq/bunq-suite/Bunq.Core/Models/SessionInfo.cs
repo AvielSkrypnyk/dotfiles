@@ -1,6 +1,7 @@
 ﻿namespace Bunq.Core.Models;
 
-public class SessionInfo
+public sealed class SessionInfo
 {
-    
+    public string SessionToken { get; set; } = string.Empty;
+    public int UserId { get; set; }
 }
