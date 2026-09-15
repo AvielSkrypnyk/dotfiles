@@ -1,0 +1,228 @@
+using Bunq.Core.Common;
+using Bunq.Core.Interfaces;
+using Bunq.Core.Models;
+
+namespace Bunq.Core.Services;
+
+public sealed class BunqAuthService
+{
+    private readonly IBunqContextRepository _contextStore;
+    private readonly IRsaService _rsaService;
+    private readonly IBunqApiService _bunqApiService;
+
+    public BunqAuthService(
+        IBunqContextRepository contextStore,
+        IRsaService rsaService,
+        IBunqApiService bunqApiService)
+    {
+        _contextStore = contextStore;
+        _rsaService = rsaService;
+        _bunqApiService = bunqApiService;
+    }
+
+    public async Task<OperationResult<BunqContext>> ExecuteAsync(
+        string baseUrl,
+        string apiKey,
+        string deviceDescription,
+        string[] permittedIps,
+        bool force,
+        CancellationToken cancellationToken = default)
+    {
+        var context = await _contextStore.LoadAsync(cancellationToken);
+        if (force || NeedsFreshInstallation(context))
+        {
+            var installation = await RunInstallationAsync(baseUrl, force, cancellationToken);
+            if (!installation.Success || installation.Data is null)
+            {
+                return installation;
+            }
+
+            context = installation.Data;
+        }
+
+        if (context is null || string.IsNullOrWhiteSpace(context.InstallationToken))
+        {
+            return OperationResult<BunqContext>.Fail(
+                MessageTypeEnum.Exception,
+                "Missing_Installation",
+                "Installation token is missing.");
+        }
+
+        if (!context.DeviceRegistered || force)
+        {
+            var registration = await RunDeviceRegistrationAsync(
+                baseUrl,
+                apiKey,
+                deviceDescription,
+                permittedIps,
+                cancellationToken);
+            if (!registration.Success || registration.Data is null)
+            {
+                return registration;
+            }
+        }
+
+        var session = await RunSessionCreationAsync(baseUrl, apiKey, cancellationToken);
+        if (session.Success && session.Data is not null)
+        {
+            return session;
+        }
+
+        if (force)
+        {
+            return session;
+        }
+
+        var forcedInstallation = await RunInstallationAsync(baseUrl, true, cancellationToken);
+        if (!forcedInstallation.Success || forcedInstallation.Data is null)
+        {
+            return forcedInstallation;
+        }
+
+        var forcedRegistration = await RunDeviceRegistrationAsync(
+            baseUrl,
+            apiKey,
+            deviceDescription,
+            permittedIps,
+            cancellationToken);
+        if (!forcedRegistration.Success || forcedRegistration.Data is null)
+        {
+            return forcedRegistration;
+        }
+
+        return await RunSessionCreationAsync(baseUrl, apiKey, cancellationToken);
+    }
+
+    public async Task<OperationResult<BunqContext>> RunInstallationAsync(
+        string baseUrl,
+        bool forceNewKeys,
+        CancellationToken cancellationToken = default)
+    {
+        var context = await _contextStore.LoadAsync(cancellationToken);
+        var shouldGenerateKeys = forceNewKeys ||
+                                 context is null ||
+                                 string.IsNullOrWhiteSpace(context.PublicKeyPem) ||
+                                 string.IsNullOrWhiteSpace(context.PrivateKeyPem);
+
+        if (shouldGenerateKeys)
+        {
+            var keyPair = _rsaService.GenerateKeyPair();
+            context = new BunqContext
+            {
+                PublicKeyPem = keyPair.PublicKeyPem,
+                PrivateKeyPem = keyPair.PrivateKeyPem
+            };
+        }
+
+        if (context is null)
+        {
+            return OperationResult<BunqContext>.Fail(
+                MessageTypeEnum.Exception,
+                "Context_Missing",
+                "Failed to initialize bunq context.");
+        }
+
+        var installationResult = await _bunqApiService.CreateInstallationAsync(
+            baseUrl,
+            context.PublicKeyPem,
+            cancellationToken);
+        if (!installationResult.Success || installationResult.Data is null)
+        {
+            return OperationResult<BunqContext>.Fail(
+                installationResult.MessageType,
+                installationResult.Code ?? "Installation_Failed",
+                installationResult.Error ?? "Installation failed.");
+        }
+
+        var updated = new BunqContext
+        {
+            PublicKeyPem = context.PublicKeyPem,
+            PrivateKeyPem = context.PrivateKeyPem,
+            InstallationToken = installationResult.Data.Token,
+            ServerPublicKeyPem = installationResult.Data.ServerPublicKeyPem,
+            DeviceRegistered = false,
+            SessionToken = string.Empty,
+            UserId = 0
+        };
+
+        await _contextStore.SaveAsync(updated);
+        return OperationResult<BunqContext>.Ok(updated);
+    }
+
+    public async Task<OperationResult<BunqContext>> RunDeviceRegistrationAsync(
+        string baseUrl,
+        string apiKey,
+        string description,
+        string[] permittedIps,
+        CancellationToken cancellationToken = default)
+    {
+        var context = await _contextStore.LoadAsync(cancellationToken);
+        if (context is null || string.IsNullOrWhiteSpace(context.InstallationToken))
+        {
+            return OperationResult<BunqContext>.Fail(
+                MessageTypeEnum.Exception,
+                "Missing_Installation",
+                "Installation is required before device registration.");
+        }
+
+        var registerResult = await _bunqApiService.RegisterDeviceAsync(
+            baseUrl,
+            context.InstallationToken,
+            apiKey,
+            description,
+            permittedIps,
+            cancellationToken);
+        if (!registerResult.Success)
+        {
+            return OperationResult<BunqContext>.Fail(
+                registerResult.MessageType,
+                registerResult.Code ?? "Device_Registration_Failed",
+                registerResult.Error ?? "Device registration failed.");
+        }
+
+        context.DeviceRegistered = true;
+        await _contextStore.SaveAsync(context);
+        return OperationResult<BunqContext>.Ok(context);
+    }
+
+    public async Task<OperationResult<BunqContext>> RunSessionCreationAsync(
+        string baseUrl,
+        string apiKey,
+        CancellationToken cancellationToken = default)
+    {
+        var context = await _contextStore.LoadAsync(cancellationToken);
+        if (context is null || string.IsNullOrWhiteSpace(context.InstallationToken))
+        {
+            return OperationResult<BunqContext>.Fail(
+                MessageTypeEnum.Exception,
+                "Missing_Installation",
+                "Installation is required before creating a session.");
+        }
+
+        var sessionResult = await _bunqApiService.CreateSessionAsync(
+            baseUrl,
+            context.InstallationToken,
+            apiKey,
+            cancellationToken);
+        if (!sessionResult.Success || sessionResult.Data is null)
+        {
+            return OperationResult<BunqContext>.Fail(
+                sessionResult.MessageType,
+                sessionResult.Code ?? "Session_Failed",
+                sessionResult.Error ?? "Session creation failed.");
+        }
+
+        context.SessionToken = sessionResult.Data.SessionToken;
+        context.UserId = sessionResult.Data.UserId;
+        await _contextStore.SaveAsync(context);
+        return OperationResult<BunqContext>.Ok(context);
+    }
+
+    private static bool NeedsFreshInstallation(BunqContext? existingContext)
+    {
+        return existingContext is null ||
+               string.IsNullOrWhiteSpace(existingContext.InstallationToken) ||
+               string.IsNullOrWhiteSpace(existingContext.PublicKeyPem) ||
+               string.IsNullOrWhiteSpace(existingContext.PrivateKeyPem);
+    }
+}
