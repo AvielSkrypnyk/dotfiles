@@ -13,6 +13,8 @@ public interface IBunqApiService
     Task<OperationResult> RegisterDeviceAsync(
         string baseUrl,
         string installationToken,
+        string privateKeyPem,
+        string serverPublicKeyPem,
         string apiKey,
         string description,
         string[] permittedIps,
@@ -21,6 +23,8 @@ public interface IBunqApiService
     Task<OperationResult<SessionInfo>> CreateSessionAsync(
         string baseUrl,
         string installationToken,
+        string privateKeyPem,
+        string serverPublicKeyPem,
         string apiKey,
         CancellationToken ct = default);
 }

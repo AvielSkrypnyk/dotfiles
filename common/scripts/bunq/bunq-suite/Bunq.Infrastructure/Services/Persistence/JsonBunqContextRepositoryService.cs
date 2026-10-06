@@ -6,9 +6,17 @@ namespace Bunq.Infrastructure.Services.Persistence;
 
 public class JsonBunqContextRepositoryService : IBunqContextRepository
 {
+    private const string ContextFileEnvironmentVariable = "BUNQ_CONTEXT_FILE";
+    private readonly IContextFileSecurityService _fileSecurityService;
+
+    public JsonBunqContextRepositoryService(IContextFileSecurityService fileSecurityService)
+    {
+        _fileSecurityService = fileSecurityService;
+    }
+
     public string GetPath()
     {
-        var configuredPath = Environment.GetEnvironmentVariable("BUNQ_CONTEXT_FILE");
+        var configuredPath = Environment.GetEnvironmentVariable(ContextFileEnvironmentVariable);
         if (!string.IsNullOrWhiteSpace(configuredPath))
         {
             var absolutePath = Path.GetFullPath(configuredPath);
@@ -29,8 +37,17 @@ public class JsonBunqContextRepositoryService : IBunqContextRepository
 
     public async Task SaveAsync(BunqContext context)
     {
-        var json = JsonSerializer.Serialize(context, new JsonSerializerOptions{ WriteIndented = true });
-        await File.WriteAllTextAsync(GetPath(), json);
+        var path = GetPath();
+        var json = JsonSerializer.Serialize(context, new JsonSerializerOptions { WriteIndented = true });
+
+        _fileSecurityService.EnsureSecurePermissions(path);
+
+        await using var stream = _fileSecurityService.OpenSecureWriteStream(path);
+        await using var writer = new StreamWriter(stream);
+        await writer.WriteAsync(json);
+        await writer.FlushAsync();
+
+        _fileSecurityService.EnsureSecurePermissions(path);
     }
 
     public async Task<BunqContext?> LoadAsync(CancellationToken ct = default)
@@ -39,6 +56,8 @@ public class JsonBunqContextRepositoryService : IBunqContextRepository
 
         if (!File.Exists(path))
             return null;
+
+        _fileSecurityService.EnsureSecurePermissions(path);
 
         var json = await File.ReadAllTextAsync(path, ct);
         return JsonSerializer.Deserialize<BunqContext>(json);

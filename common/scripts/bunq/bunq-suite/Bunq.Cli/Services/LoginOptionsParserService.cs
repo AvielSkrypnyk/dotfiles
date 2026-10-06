@@ -38,7 +38,13 @@ public sealed class LoginOptionsParserService
                         return false;
                     }
 
-                    options.BaseUrl = NormalizeBaseUrl(baseUrl);
+                    if (!TryNormalizeAbsoluteHttpUrl(baseUrl, out var normalizedBaseUrl))
+                    {
+                        error = $"Invalid URL for {CliConstants.OptionBaseUrl}: {baseUrl}";
+                        return false;
+                    }
+
+                    options.BaseUrl = normalizedBaseUrl;
                     break;
 
                 case CliConstants.OptionDescription:
@@ -60,7 +66,7 @@ public sealed class LoginOptionsParserService
                     break;
 
                 case CliConstants.OptionForce:
-                    options.Force = true;
+                    options.ForceRecreateContext = true;
                     break;
 
                 default:
@@ -97,5 +103,22 @@ public sealed class LoginOptionsParserService
     private static string NormalizeBaseUrl(string baseUrl)
     {
         return baseUrl.EndsWith('/') ? baseUrl : $"{baseUrl}/";
+    }
+
+    private static bool TryNormalizeAbsoluteHttpUrl(string value, out string normalizedUrl)
+    {
+        normalizedUrl = string.Empty;
+        if (!Uri.TryCreate(value, UriKind.Absolute, out var parsedBaseUrl))
+        {
+            return false;
+        }
+
+        if (parsedBaseUrl.Scheme != Uri.UriSchemeHttp && parsedBaseUrl.Scheme != Uri.UriSchemeHttps)
+        {
+            return false;
+        }
+
+        normalizedUrl = NormalizeBaseUrl(parsedBaseUrl.AbsoluteUri);
+        return true;
     }
 }

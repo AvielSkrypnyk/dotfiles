@@ -1,6 +1,8 @@
 ﻿using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using Bunq.Core.Common;
+using Bunq.Core.Interfaces;
 using Bunq.Core.Models;
 using Bunq.Infrastructure.Models;
 
@@ -9,6 +11,8 @@ namespace Bunq.Infrastructure.Services.BunqApi;
 public sealed class BunqApiClientService
 {
     private const string AuthenticationHeader = "X-Bunq-Client-Authentication";
+    private const string ClientSignatureHeader = "X-Bunq-Client-Signature";
+    private const string ServerSignatureHeader = "X-Bunq-Server-Signature";
     private const string RequestIdHeader = "X-Bunq-Client-Request-Id";
     private const string GeolocationHeader = "X-Bunq-Geolocation";
     private const string LanguageHeader = "X-Bunq-Language";
@@ -20,10 +24,12 @@ public sealed class BunqApiClientService
     private const string SessionServerEndpoint = "v1/session-server";
 
     private readonly HttpClient _httpClient;
+    private readonly IRsaService _rsaService;
 
-    public BunqApiClientService(HttpClient httpClient)
+    public BunqApiClientService(HttpClient httpClient, IRsaService rsaService)
     {
         _httpClient = httpClient;
+        _rsaService = rsaService;
     }
 
     private static async Task<string> GetErrorMessageAsync(
@@ -59,13 +65,8 @@ public sealed class BunqApiClientService
         return "HTTP error " + (int)response.StatusCode;
     }
 
-    private static HttpRequestMessage CreateRequest(HttpMethod method, string endpoint, object payload, string? authToken = null)
+    private static void AddCommonHeaders(HttpRequestMessage request, string? authToken = null)
     {
-        var request = new HttpRequestMessage(method, endpoint)
-        {
-            Content = JsonContent.Create(payload)
-        };
-
         request.Headers.Add(RequestIdHeader, Guid.NewGuid().ToString());
         request.Headers.Add(GeolocationHeader, "0 0 0 0 000");
         request.Headers.Add(LanguageHeader, "en_US");
@@ -77,8 +78,60 @@ public sealed class BunqApiClientService
         {
             request.Headers.Add(AuthenticationHeader, authToken);
         }
+    }
 
+    private static HttpRequestMessage CreateUnsignedJsonRequest(HttpMethod method, string endpoint, object payload, string? authToken = null)
+    {
+        var json = JsonSerializer.Serialize(payload);
+        var request = new HttpRequestMessage(method, endpoint)
+        {
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
+        };
+        AddCommonHeaders(request, authToken);
         return request;
+    }
+
+    private HttpRequestMessage CreateSignedJsonRequest(
+        HttpMethod method,
+        string endpoint,
+        object payload,
+        string authToken,
+        string privateKeyPem)
+    {
+        var json = JsonSerializer.Serialize(payload);
+        var signature = _rsaService.SignData(json, privateKeyPem);
+        var request = new HttpRequestMessage(method, endpoint)
+        {
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
+        };
+        AddCommonHeaders(request, authToken);
+        request.Headers.Add(ClientSignatureHeader, signature);
+        return request;
+    }
+
+    private async Task<(bool IsValid, string Body, string? Error)> TryReadAndVerifyAuthenticatedResponseAsync(
+        HttpResponseMessage response,
+        string serverPublicKeyPem,
+        CancellationToken ct)
+    {
+        var responseBody = await response.Content.ReadAsStringAsync(ct);
+        if (!response.Headers.TryGetValues(ServerSignatureHeader, out var signatureValues))
+        {
+            return (false, responseBody, "Missing bunq server signature header.");
+        }
+
+        var signature = signatureValues.FirstOrDefault();
+        if (string.IsNullOrWhiteSpace(signature))
+        {
+            return (false, responseBody, "Bunq server signature header is empty.");
+        }
+
+        if (!_rsaService.VerifyData(responseBody, signature, serverPublicKeyPem))
+        {
+            return (false, responseBody, "Bunq server signature verification failed.");
+        }
+
+        return (true, responseBody, null);
     }
 
     public async Task<OperationResult<InstallationResult>> CreateInstallationAsync(
@@ -90,7 +143,7 @@ public sealed class BunqApiClientService
             client_public_key = clientPublicKeyPem
         };
 
-        using var request = CreateRequest(HttpMethod.Post, InstallationEndpoint, payload);
+        using var request = CreateUnsignedJsonRequest(HttpMethod.Post, InstallationEndpoint, payload);
         try
         {
             using var response = await _httpClient.SendAsync(request, ct);
@@ -130,6 +183,14 @@ public sealed class BunqApiClientService
                 }
             }
 
+            if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(serverPublicKey))
+            {
+                return OperationResult<InstallationResult>.Fail(
+                    MessageTypeEnum.ExternalApi,
+                    "Invalid_Installation_Response",
+                    "Bunq response did not include an installation token and server public key.");
+            }
+
             var result = new InstallationResult(token, serverPublicKey);
             return OperationResult<InstallationResult>.Ok(result);
         }
@@ -158,6 +219,8 @@ public sealed class BunqApiClientService
 
     public async Task<OperationResult> RegisterDeviceAsync(
         string installationToken, 
+        string privateKeyPem,
+        string serverPublicKeyPem,
         string apiKey, 
         string description = "Bunq CLI Suite",
         string[]? permittedIps = null,
@@ -171,7 +234,12 @@ public sealed class BunqApiClientService
             permitted_ips = resolvedIps
         };
 
-        using var request = CreateRequest(HttpMethod.Post, DeviceServerEndpoint, payload, installationToken);
+        using var request = CreateSignedJsonRequest(
+            HttpMethod.Post,
+            DeviceServerEndpoint,
+            payload,
+            installationToken,
+            privateKeyPem);
         try
         {
             using var response = await _httpClient.SendAsync(request, ct);
@@ -183,6 +251,15 @@ public sealed class BunqApiClientService
                     MessageTypeEnum.ExternalApi, 
                     "Device_Registration_Failed", 
                     error);
+            }
+
+            var verification = await TryReadAndVerifyAuthenticatedResponseAsync(response, serverPublicKeyPem, ct);
+            if (!verification.IsValid)
+            {
+                return OperationResult.Fail(
+                    MessageTypeEnum.ExternalApi,
+                    "Server_Signature_Invalid",
+                    verification.Error ?? "Bunq server signature verification failed.");
             }
 
             return OperationResult.Ok();
@@ -212,6 +289,8 @@ public sealed class BunqApiClientService
 
     public async Task<OperationResult<SessionInfo>> CreateSessionAsync(
         string installationToken, 
+        string privateKeyPem,
+        string serverPublicKeyPem,
         string apiKey, 
         CancellationToken ct = default)
     {
@@ -220,7 +299,12 @@ public sealed class BunqApiClientService
             secret = apiKey
         };
 
-        using var request = CreateRequest(HttpMethod.Post, SessionServerEndpoint, payload, installationToken);
+        using var request = CreateSignedJsonRequest(
+            HttpMethod.Post,
+            SessionServerEndpoint,
+            payload,
+            installationToken,
+            privateKeyPem);
         try
         {
             using var response = await _httpClient.SendAsync(request, ct);
@@ -234,7 +318,16 @@ public sealed class BunqApiClientService
                     error);
             }
 
-            var responseDto = await response.Content.ReadFromJsonAsync<SessionResponse>(cancellationToken: ct);
+            var verification = await TryReadAndVerifyAuthenticatedResponseAsync(response, serverPublicKeyPem, ct);
+            if (!verification.IsValid)
+            {
+                return OperationResult<SessionInfo>.Fail(
+                    MessageTypeEnum.ExternalApi,
+                    "Server_Signature_Invalid",
+                    verification.Error ?? "Bunq server signature verification failed.");
+            }
+
+            var responseDto = JsonSerializer.Deserialize<SessionResponse>(verification.Body);
             if (responseDto?.Response is null)
             {
                 return OperationResult<SessionInfo>.Fail(
@@ -266,6 +359,14 @@ public sealed class BunqApiClientService
                 {
                     userId = item.UserApiKey.Id;
                 }
+            }
+
+            if (string.IsNullOrWhiteSpace(sessionToken) || userId <= 0)
+            {
+                return OperationResult<SessionInfo>.Fail(
+                    MessageTypeEnum.ExternalApi,
+                    "Invalid_Session_Response",
+                    "Bunq response did not include a valid session token and user id.");
             }
 
             var sessionInfo = new SessionInfo

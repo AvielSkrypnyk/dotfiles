@@ -13,7 +13,8 @@ public sealed class JsonBunqContextRepositoryServiceTests
         var original = Environment.GetEnvironmentVariable("BUNQ_CONTEXT_FILE");
         var tempPath = Path.Combine(Path.GetTempPath(), $"bunq-context-{Guid.NewGuid():N}.json");
         Environment.SetEnvironmentVariable("BUNQ_CONTEXT_FILE", tempPath);
-        var store = new JsonBunqContextRepositoryService();
+        var fileSecurity = BuildFileSecurityService();
+        var store = new JsonBunqContextRepositoryService(fileSecurity);
 
         try
         {
@@ -40,7 +41,8 @@ public sealed class JsonBunqContextRepositoryServiceTests
         var original = Environment.GetEnvironmentVariable("BUNQ_CONTEXT_FILE");
         var tempPath = Path.Combine(Path.GetTempPath(), $"bunq-context-{Guid.NewGuid():N}.json");
         Environment.SetEnvironmentVariable("BUNQ_CONTEXT_FILE", tempPath);
-        var store = new JsonBunqContextRepositoryService();
+        var fileSecurity = BuildFileSecurityService();
+        var store = new JsonBunqContextRepositoryService(fileSecurity);
         var expected = new BunqContext
         {
             InstallationToken = "installation-token",
@@ -75,5 +77,16 @@ public sealed class JsonBunqContextRepositoryServiceTests
                 File.Delete(tempPath);
             }
         }
+    }
+
+    private static IContextFileSecurityService BuildFileSecurityService()
+    {
+        var strategies = new IContextFilePermissionStrategy[]
+        {
+            new WindowsContextFilePermissionStrategy(),
+            new UnixContextFilePermissionStrategy()
+        };
+
+        return new ContextFileSecurityService(new RuntimePlatformService(), strategies);
     }
 }

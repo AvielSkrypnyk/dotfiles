@@ -28,4 +28,25 @@ public sealed class RsaService : IRsaService
         
         return Convert.ToBase64String(signature);
     }
+
+    public bool VerifyData(string data, string signatureBase64, string publicKeyPem)
+    {
+        try
+        {
+            using var rsa = RSA.Create();
+            rsa.ImportFromPem(publicKeyPem);
+
+            var dataBytes = Encoding.UTF8.GetBytes(data);
+            var signatureBytes = Convert.FromBase64String(signatureBase64);
+            return rsa.VerifyData(dataBytes, signatureBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+        catch (CryptographicException)
+        {
+            return false;
+        }
+    }
 }

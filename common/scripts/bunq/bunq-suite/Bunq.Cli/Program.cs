@@ -11,6 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();
 
+services.AddSingleton<IPlatformService, RuntimePlatformService>();
+services.AddSingleton<IContextFilePermissionStrategy, WindowsContextFilePermissionStrategy>();
+services.AddSingleton<IContextFilePermissionStrategy, UnixContextFilePermissionStrategy>();
+services.AddSingleton<IContextFileSecurityService, ContextFileSecurityService>();
 services.AddSingleton<IBunqContextRepository, JsonBunqContextRepositoryService>();
 services.AddSingleton<IRsaService, RsaService>();
 services.AddSingleton<IBunqApiService, BunqApiService>();
@@ -55,6 +59,7 @@ switch (command)
         break;
     default:
         PrintUsage();
+        Environment.ExitCode = 1;
         break;
 }
 

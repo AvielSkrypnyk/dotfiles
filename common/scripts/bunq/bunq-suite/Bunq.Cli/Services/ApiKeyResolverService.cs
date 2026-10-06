@@ -1,4 +1,5 @@
 using Bunq.Cli.Constants;
+using Bunq.Cli.Helpers;
 
 namespace Bunq.Cli.Services;
 
@@ -15,7 +16,7 @@ public sealed class ApiKeyResolverService
         if (string.IsNullOrWhiteSpace(apiKey) && interactivePrompt)
         {
             Console.Write("Enter bunq API key: ");
-            apiKey = Console.ReadLine();
+            apiKey = MaskedInputReader.ReadSecret();
         }
 
         return string.IsNullOrWhiteSpace(apiKey) ? null : apiKey.Trim();

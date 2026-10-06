@@ -6,4 +6,5 @@ public interface IRsaService
 {
     KeyPair GenerateKeyPair();
     string SignData(string data, string privateKeyPem);
+    bool VerifyData(string data, string signatureBase64, string publicKeyPem);
 }

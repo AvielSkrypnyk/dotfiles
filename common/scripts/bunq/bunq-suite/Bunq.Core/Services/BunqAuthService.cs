@@ -25,13 +25,13 @@ public sealed class BunqAuthService
         string apiKey,
         string deviceDescription,
         string[] permittedIps,
-        bool force,
+        bool forceRecreateContext,
         CancellationToken cancellationToken = default)
     {
         var context = await _contextStore.LoadAsync(cancellationToken);
-        if (force || NeedsFreshInstallation(context))
+        if (forceRecreateContext || NeedsFreshInstallation(context))
         {
-            var installation = await RunInstallationAsync(baseUrl, force, cancellationToken);
+            var installation = await RunInstallationAsync(baseUrl, forceRecreateContext, cancellationToken);
             if (!installation.Success || installation.Data is null)
             {
                 return installation;
@@ -48,7 +48,7 @@ public sealed class BunqAuthService
                 "Installation token is missing.");
         }
 
-        if (!context.DeviceRegistered || force)
+        if (!context.DeviceRegistered || forceRecreateContext)
         {
             var registration = await RunDeviceRegistrationAsync(
                 baseUrl,
@@ -68,7 +68,7 @@ public sealed class BunqAuthService
             return session;
         }
 
-        if (force)
+        if (forceRecreateContext)
         {
             return session;
         }
@@ -165,9 +165,19 @@ public sealed class BunqAuthService
                 "Installation is required before device registration.");
         }
 
+        if (string.IsNullOrWhiteSpace(context.PrivateKeyPem) || string.IsNullOrWhiteSpace(context.ServerPublicKeyPem))
+        {
+            return OperationResult<BunqContext>.Fail(
+                MessageTypeEnum.Exception,
+                "Missing_Crypto_Material",
+                "Installation keys are missing. Re-run installation to refresh local context.");
+        }
+
         var registerResult = await _bunqApiService.RegisterDeviceAsync(
             baseUrl,
             context.InstallationToken,
+            context.PrivateKeyPem,
+            context.ServerPublicKeyPem,
             apiKey,
             description,
             permittedIps,
@@ -199,9 +209,19 @@ public sealed class BunqAuthService
                 "Installation is required before creating a session.");
         }
 
+        if (string.IsNullOrWhiteSpace(context.PrivateKeyPem) || string.IsNullOrWhiteSpace(context.ServerPublicKeyPem))
+        {
+            return OperationResult<BunqContext>.Fail(
+                MessageTypeEnum.Exception,
+                "Missing_Crypto_Material",
+                "Installation keys are missing. Re-run installation to refresh local context.");
+        }
+
         var sessionResult = await _bunqApiService.CreateSessionAsync(
             baseUrl,
             context.InstallationToken,
+            context.PrivateKeyPem,
+            context.ServerPublicKeyPem,
             apiKey,
             cancellationToken);
         if (!sessionResult.Success || sessionResult.Data is null)

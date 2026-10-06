@@ -42,7 +42,7 @@ public sealed class LoginCommand
             apiKey,
             options.DeviceDescription,
             options.GetPermittedIps(),
-            options.Force,
+            options.ForceRecreateContext,
             cancellationToken);
         if (!loginResult.Success || loginResult.Data is null)
         {

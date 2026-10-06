@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using Bunq.Infrastructure.Services.Security;
 using NUnit.Framework;
 
@@ -33,13 +31,7 @@ public sealed class RsaServiceTests
         var signature = service.SignData(payload, keyPair.PrivateKeyPem);
 
         // Assert
-        using var rsa = RSA.Create();
-        rsa.ImportFromPem(keyPair.PublicKeyPem);
-        var isValid = rsa.VerifyData(
-            Encoding.UTF8.GetBytes(payload),
-            Convert.FromBase64String(signature),
-            HashAlgorithmName.SHA256,
-            RSASignaturePadding.Pkcs1);
+        var isValid = service.VerifyData(payload, signature, keyPair.PublicKeyPem);
         Assert.That(isValid, Is.True);
     }
 }

@@ -2,14 +2,22 @@
 
 Small CLI for bunq API authentication and local context management.
 
-## What this tool does
+## TL;DR (Quick Insight)
 
-- Interactive setup menu
-- API key input and handshake flow
-- Installation -> device registration -> session creation
-- Context JSON storage, status, and reset
-- Command mode (`login`, `menu`, `context-path`, `reset`)
+- Interactive and command-based bunq login helper
+- Runs bunq auth handshake: installation -> device registration -> session creation
+- Stores context locally (tokens + keys + user id) for reuse
+- Works with `menu`, `login`, `context-path`, `reset`
 - Gives you the speed of getting the **UserId + SessionToken** of your account in Bunq and later you can use it for something else
+
+Quick start:
+
+```powershell
+cd $env:USERPROFILE\dotfiles\common\scripts\bunq
+.\bunq.ps1 login --sandbox
+```
+
+---
 
 ## Run on Windows
 
@@ -25,12 +33,6 @@ cd %USERPROFILE%\dotfiles\common\scripts\bunq
 bunq.cmd
 ```
 
-Run a command directly:
-
-```powershell
-.\bunq.ps1 login --sandbox
-```
-
 ## Run on macOS
 
 ```bash
@@ -38,23 +40,11 @@ cd ~/dotfiles/common/scripts/bunq
 ./bunq.sh
 ```
 
-Run a command directly:
-
-```bash
-./bunq.sh login --production
-```
-
 ## Run on Linux
 
 ```bash
 cd ~/dotfiles/common/scripts/bunq
 ./bunq.sh
-```
-
-Run a command directly:
-
-```bash
-./bunq.sh context-path
 ```
 
 ## Commands
@@ -74,9 +64,9 @@ If you run only `bunq` with no args, menu is opened by default.
 - `--base-url <url>`: custom API URL (advanced)
 - `--description <text>`: device description
 - `--permitted-ip <ip>`: permitted IP (repeatable)
-- `--force`: recreate installation/session context
+- `--force`: force re-installation, device registration, and session recreation
 
-Examples:
+## Common examples
 
 ```bash
 # sandbox, key from env var
@@ -149,16 +139,9 @@ dotnet publish bunq-suite/Bunq.Cli/Bunq.Cli.csproj -c Release -r osx-arm64 --sel
 
 Wrappers (`bunq.ps1`, `bunq.cmd`, `bunq.sh`) first try `dist/<rid>/` and fallback to `dotnet run`.
 
-## Project structure
-
-- `Bunq.Cli`: CLI/UI layer (commands, menu, prompts, output helpers)
-- `Bunq.Core`: business contracts + models + auth orchestration service
-- `Bunq.Infrastructure`: technical implementations (HTTP bunq API, crypto, JSON repository)
-- `Bunq.Tests`: NUnit unit tests (AAA style)
-
 ---
 
-## bunq API flow used by this CLI (short)
+## Deep Dive: How this CLI works
 
 This CLI uses bunq API in 3 auth steps.  
 Each step depends on data from the previous step.
@@ -203,9 +186,7 @@ Each step depends on data from the previous step.
 - `X-Bunq-Client-Authentication` is set with the **installation token** for device/session steps.
 - API key is sent in request body as `secret`.
 
----
-
-## Technical notes(FAQ): why I have built it this way
+## Architecture and design choices
 
 ### 1) Why split into CLI / Core / Infrastructure?
 
@@ -247,7 +228,7 @@ Real validation requires bunq server call (device registration/session call), be
 
 So the app performs quick local sanity check, then server-side truth check in handshake.
 
-> I have chosen to build this way to able to stop user when randomly typed one letter and hitted enter.
+> I chose this behavior so the tool can stop users who type one character and press Enter by mistake.
 
 ### 5) Why JSON context file?
 
@@ -290,3 +271,10 @@ Returning `OperationResult` for expected operational failures (API errors, inval
 - avoids broad exception-driven control flow
 
 Exceptions are still used for unexpected runtime failures.
+
+## Project structure
+
+- `Bunq.Cli`: CLI/UI layer (commands, menu, prompts, output helpers)
+- `Bunq.Core`: business contracts + models + auth orchestration service
+- `Bunq.Infrastructure`: technical implementations (HTTP bunq API, crypto, JSON repository)
+- `Bunq.Tests`: NUnit unit tests (AAA style)

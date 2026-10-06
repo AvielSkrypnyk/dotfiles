@@ -78,7 +78,8 @@ public sealed class MenuCommand
     private void PasteApiKey()
     {
         ColorConsole.Write(CliMessages.ApiKeyPrompt);
-        var entered = Console.ReadLine();
+        
+        var entered = MaskedInputReader.ReadSecret();
         if (string.IsNullOrWhiteSpace(entered))
         {
             ColorConsole.WriteWarning(CliMessages.ApiKeyNotChanged);
@@ -368,5 +369,5 @@ public sealed class MenuCommand
 
         return error;
     }
-
+    
 }
