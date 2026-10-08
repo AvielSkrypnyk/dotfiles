@@ -42,3 +42,15 @@ common/.config/xfce4/
 *.log
 *.tmp
 *.swp
+
+# bunq-suite build and IDE artifacts
+common/scripts/bunq/bunq-suite/**/bin/
+common/scripts/bunq/bunq-suite/**/obj/
+common/scripts/bunq/bunq-suite/.idea/
+common/scripts/bunq/bunq-suite/.vs/
+common/scripts/bunq/bunq-suite/**/TestResults/
+common/scripts/bunq/bunq-suite/**/*.user
+common/scripts/bunq/bunq-suite/**/*.suo
+common/scripts/bunq/bunq-suite/**/*.DotSettings.user
+common/scripts/bunq/bunq-suite/**/*.nupkg
+common/scripts/bunq/dist/
