@@ -8,28 +8,30 @@ namespace Bunq.Cli.Commands;
 
 public sealed class LoginCommand
 {
-    private readonly LoginOptionsParserService _optionsParser;
+    private readonly LoginFlagsParserService _flagsParser;
     private readonly ApiKeyResolverService _apiKeyResolver;
     private readonly BunqAuthService _loginWorkflowService;
 
     public LoginCommand(
-        LoginOptionsParserService optionsParser,
+        LoginFlagsParserService flagsParser,
         ApiKeyResolverService apiKeyResolver,
         BunqAuthService loginWorkflowService)
     {
-        _optionsParser = optionsParser;
+        _flagsParser = flagsParser;
         _apiKeyResolver = apiKeyResolver;
         _loginWorkflowService = loginWorkflowService;
     }
 
     public async Task ExecuteAsync(string[] args, CancellationToken cancellationToken = default)
     {
-        if (!_optionsParser.TryParse(args, out var options, out var parseError))
+        var parseResult = _flagsParser.Parse(args);
+        if (!parseResult.Success || parseResult.Data is null)
         {
-            PrintError(parseError ?? "Could not parse options.");
+            PrintError(parseResult.Error ?? "Could not parse login flags.");
             return;
         }
 
+        var options = parseResult.Data;
         var apiKey = _apiKeyResolver.Resolve(options.ApiKey, interactivePrompt: true);
         if (apiKey is null)
         {

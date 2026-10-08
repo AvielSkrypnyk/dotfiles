@@ -18,7 +18,7 @@ services.AddSingleton<IContextFileSecurityService, ContextFileSecurityService>()
 services.AddSingleton<IBunqContextRepository, JsonBunqContextRepositoryService>();
 services.AddSingleton<IRsaService, RsaService>();
 services.AddSingleton<IBunqApiService, BunqApiService>();
-services.AddSingleton<LoginOptionsParserService>();
+services.AddSingleton<LoginFlagsParserService>();
 services.AddSingleton<ApiKeyResolverService>();
 services.AddSingleton<BunqAuthService>();
 services.AddTransient<LoginCommand>();
@@ -77,7 +77,7 @@ static void PrintUsage()
     ColorConsole.WriteLine($"  {CliConstants.OptionApiKey} <value>   API key (or set {CliConstants.EnvApiKey} env var)");
     ColorConsole.WriteLine($"  {CliConstants.OptionSandbox}           Use sandbox API ({CliConstants.BaseUrlSandbox})");
     ColorConsole.WriteLine($"  {CliConstants.OptionProduction}        Use production API ({CliConstants.BaseUrlProduction})");
-    ColorConsole.WriteLine($"  {CliConstants.OptionBaseUrl} <url>    Override base API URL");
+    ColorConsole.WriteLine($"  {CliConstants.OptionBaseUrl} <url>    Override base API URL (https:// only)");
     ColorConsole.WriteLine($"  {CliConstants.OptionDescription} <txt> Device description sent to bunq");
     ColorConsole.WriteLine($"  {CliConstants.OptionPermittedIp} <ip> Permitted IP for device registration (repeatable, leave empty to use current IP)");
     ColorConsole.WriteLine($"  {CliConstants.OptionForce}             Re-create context even if one already exists");
