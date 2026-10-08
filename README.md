@@ -279,6 +279,11 @@ Collection of small CLI utilities.
 - [qobuz-meta](common/scripts/flac/qobuz-meta/README.md) -
   processes `.flac` files and embeds metadata
 
+### bunq
+
+- [bunq-suite](common/scripts/bunq/README.md)
+  small tool for bunq API authentication
+
 ### macOS scripts
 
 - [wallpaper-switcher](macos/scripts/wallpaper-switcher/README.md) -
