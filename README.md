@@ -62,6 +62,91 @@ dotfiles/
 │   │   └── qobuz-meta
 │   │
 │   ├── scripts/
+│   │   ├── bunq/
+│   │   │   ├── bunq-suite/
+│   │   │   │   ├── Bunq.Cli/
+│   │   │   │   │   ├── Commands/
+│   │   │   │   │   │   ├── ContextPathCommand.cs
+│   │   │   │   │   │   ├── LoginCommand.cs
+│   │   │   │   │   │   ├── MenuCommand.cs
+│   │   │   │   │   │   └── ResetCommand.cs
+│   │   │   │   │   │
+│   │   │   │   │   ├── Constants/
+│   │   │   │   │   │   ├── CliConstants.cs
+│   │   │   │   │   │   ├── CliMessages.cs
+│   │   │   │   │   │   └── LoginFlagsParserServiceConstants.cs
+│   │   │   │   │   │
+│   │   │   │   │   ├── Helpers/
+│   │   │   │   │   │   ├── ColorConsole.cs
+│   │   │   │   │   │   └── MaskedInputReader.cs
+│   │   │   │   │   │
+│   │   │   │   │   ├── Models/
+│   │   │   │   │   │   ├── HandshakeStep.cs
+│   │   │   │   │   │   └── LoginSettings.cs
+│   │   │   │   │   │
+│   │   │   │   │   ├── Services/
+│   │   │   │   │   │   ├── ApiKeyProviderService.cs
+│   │   │   │   │   │   └── LoginFlagsParserService.cs
+│   │   │   │   │   ├── Bunq.Cli.csproj
+│   │   │   │   │   └── Program.cs
+│   │   │   │   │
+│   │   │   │   ├── Bunq.Core/
+│   │   │   │   │   ├── Common/
+│   │   │   │   │   │   ├── MessageTypeEnum.cs
+│   │   │   │   │   │   └── OperationResult.cs
+│   │   │   │   │   │
+│   │   │   │   │   ├── Interfaces/
+│   │   │   │   │   │   ├── IBunqApiService.cs
+│   │   │   │   │   │   ├── IBunqContextRepository.cs
+│   │   │   │   │   │   └── IRsaService.cs
+│   │   │   │   │   │
+│   │   │   │   │   ├── Models/
+│   │   │   │   │   │   ├── BunqContext.cs
+│   │   │   │   │   │   ├── InstallationModels.cs
+│   │   │   │   │   │   ├── KeyPair.cs
+│   │   │   │   │   │   └── SessionInfo.cs
+│   │   │   │   │   │
+│   │   │   │   │   ├── Services/
+│   │   │   │   │   │   └── BunqLoginService.cs
+│   │   │   │   │   └── Bunq.Core.csproj
+│   │   │   │   │
+│   │   │   │   ├── Bunq.Infrastructure/
+│   │   │   │   │   ├── Models/
+│   │   │   │   │   │   ├── BunqErrorResponseModel.cs
+│   │   │   │   │   │   ├── InstallationResponseModel.cs
+│   │   │   │   │   │   └── SessionResponseModel.cs
+│   │   │   │   │   │
+│   │   │   │   │   ├── Services/
+│   │   │   │   │   │   ├── BunqApi/
+│   │   │   │   │   │   │   ├── BunqApiHttpClient.cs
+│   │   │   │   │   │   │   └── BunqApiService.cs
+│   │   │   │   │   │   │
+│   │   │   │   │   │   ├── Persistence/
+│   │   │   │   │   │   │   ├── ContextFileSecurityService.cs
+│   │   │   │   │   │   │   ├── IContextFilePermissionStrategy.cs
+│   │   │   │   │   │   │   ├── IContextFileSecurityService.cs
+│   │   │   │   │   │   │   ├── IOperatingSystemService.cs
+│   │   │   │   │   │   │   ├── JsonFileBunqContextRepository.cs
+│   │   │   │   │   │   │   ├── OperatingSystemService.cs
+│   │   │   │   │   │   │   ├── UnixContextFilePermissionStrategy.cs
+│   │   │   │   │   │   │   └── WindowsContextFilePermissionStrategy.cs
+│   │   │   │   │   │   │
+│   │   │   │   │   │   └── Security/
+│   │   │   │   │   │       └── RsaService.cs
+│   │   │   │   │   └── Bunq.Infrastructure.csproj
+│   │   │   │   │
+│   │   │   │   ├── Bunq.Tests/
+│   │   │   │   │   ├── Infrastructure/
+│   │   │   │   │   │   ├── JsonFileBunqContextRepositoryTests.cs
+│   │   │   │   │   │   └── RsaServiceTests.cs
+│   │   │   │   │   ├── AssemblyInfo.cs
+│   │   │   │   │   └── Bunq.Tests.csproj
+│   │   │   │   └── bunq-suite.sln
+│   │   │   ├── bunq.cmd
+│   │   │   ├── bunq.ps1
+│   │   │   ├── bunq.sh
+│   │   │   └── README.md
+│   │   │
 │   │   └── flac/
 │   │       └── qobuz-meta/
 │   │           ├── qobuz-meta
@@ -334,7 +419,7 @@ Theme    -> Catppuccin Macchiato (Peach)
 
 <!-- STATS -->
 ```text
-Commits     : 92
+Commits     : 94
 Open PRs    : 1
 Last Update : 2026-10-08
 ```
