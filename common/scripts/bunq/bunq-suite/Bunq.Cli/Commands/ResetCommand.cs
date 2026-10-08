@@ -3,11 +3,11 @@ using Bunq.Core.Interfaces;
 
 namespace Bunq.Cli.Commands;
 
-public sealed class ResetCommand(IBunqContextRepository contextStore)
+public sealed class ResetCommand(IBunqContextRepository contextRepository)
 {
     public async Task ExecuteAsync(CancellationToken cancellationToken = default)
     {
-        await contextStore.DeleteAsync(cancellationToken);
+        await contextRepository.DeleteAsync(cancellationToken);
         ColorConsole.WriteSuccess("bunq context removed.");
     }
 }

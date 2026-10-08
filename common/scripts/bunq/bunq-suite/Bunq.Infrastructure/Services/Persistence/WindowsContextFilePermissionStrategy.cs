@@ -5,7 +5,7 @@ namespace Bunq.Infrastructure.Services.Persistence;
 
 public sealed class WindowsContextFilePermissionStrategy : IContextFilePermissionStrategy
 {
-    public bool Supports(PlatformKind platform) => platform == PlatformKind.Windows;
+    public bool Supports(OperatingSystemKind platform) => platform == OperatingSystemKind.Windows;
 
     public FileStream OpenSecureWriteStream(string path)
     {
@@ -15,11 +15,11 @@ public sealed class WindowsContextFilePermissionStrategy : IContextFilePermissio
         }
 
         var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
-        EnsureSecurePermissions(path);
+        RestrictToCurrentUser(path);
         return stream;
     }
 
-    public void EnsureSecurePermissions(string path)
+    public void RestrictToCurrentUser(string path)
     {
         if (!OperatingSystem.IsWindows())
         {

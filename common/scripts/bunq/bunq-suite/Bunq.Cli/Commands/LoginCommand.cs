@@ -9,17 +9,17 @@ namespace Bunq.Cli.Commands;
 public sealed class LoginCommand
 {
     private readonly LoginFlagsParserService _flagsParser;
-    private readonly ApiKeyResolverService _apiKeyResolver;
-    private readonly BunqAuthService _loginWorkflowService;
+    private readonly ApiKeyProviderService _apiKeyProvider;
+    private readonly BunqLoginService _loginService;
 
     public LoginCommand(
         LoginFlagsParserService flagsParser,
-        ApiKeyResolverService apiKeyResolver,
-        BunqAuthService loginWorkflowService)
+        ApiKeyProviderService apiKeyProvider,
+        BunqLoginService loginService)
     {
         _flagsParser = flagsParser;
-        _apiKeyResolver = apiKeyResolver;
-        _loginWorkflowService = loginWorkflowService;
+        _apiKeyProvider = apiKeyProvider;
+        _loginService = loginService;
     }
 
     public async Task ExecuteAsync(string[] args, CancellationToken cancellationToken = default)
@@ -31,24 +31,24 @@ public sealed class LoginCommand
             return;
         }
 
-        var options = parseResult.Data;
-        var apiKey = _apiKeyResolver.Resolve(options.ApiKey, interactivePrompt: true);
+        var loginSettings = parseResult.Data;
+        var apiKey = _apiKeyProvider.GetApiKey(loginSettings.ApiKey);
         if (apiKey is null)
         {
-            PrintError($"API key is required. Provide {CliConstants.OptionApiKey} or {CliConstants.EnvApiKey}.");
+            PrintError($"API key is required. Provide {CliConstants.FlagApiKey} or {CliConstants.EnvVarApiKey}.");
             return;
         }
 
-        var loginResult = await _loginWorkflowService.ExecuteAsync(
-            options.BaseUrl,
+        var loginResult = await _loginService.LoginAsync(
+            loginSettings.BaseUrl,
             apiKey,
-            options.DeviceDescription,
-            options.GetPermittedIps(),
-            options.ForceRecreateContext,
+            loginSettings.DeviceDescription,
+            loginSettings.GetPermittedIps(),
+            loginSettings.ForceRecreateContext,
             cancellationToken);
         if (!loginResult.Success || loginResult.Data is null)
         {
-            PrintError(BuildFriendlyError(loginResult.Error, options));
+            PrintError(BuildFriendlyError(loginResult.Error, loginSettings));
             return;
         }
         
@@ -60,7 +60,7 @@ public sealed class LoginCommand
         ColorConsole.WriteError($"Error: {message}");
     }
 
-    private static string BuildFriendlyError(string? error, LoginOptions options)
+    private static string BuildFriendlyError(string? error, LoginSettings loginSettings)
     {
         if (string.IsNullOrWhiteSpace(error))
         {
@@ -69,10 +69,10 @@ public sealed class LoginCommand
 
         if (error.Contains("Incorrect API key or IP address", StringComparison.OrdinalIgnoreCase))
         {
-            var permittedIp = options.GetPermittedIps().FirstOrDefault() ?? string.Empty;
+            var permittedIp = loginSettings.GetPermittedIps().FirstOrDefault() ?? string.Empty;
             return CliMessages.BuildApiKeyIpHint(
                 $"{error} Try leaving permitted IP empty (current IP), verify environment (sandbox/production), and confirm the key is active.",
-                options.BaseUrl,
+                loginSettings.BaseUrl,
                 permittedIp);
         }
 

@@ -4,7 +4,7 @@ namespace Bunq.Core.Interfaces;
 
 public interface IBunqContextRepository
 {
-    string GetPath();
+    string GetFilePath();
     Task SaveAsync(BunqContext context);
     Task<BunqContext?> LoadAsync(CancellationToken ct = default);
     Task DeleteAsync(CancellationToken ct = default);

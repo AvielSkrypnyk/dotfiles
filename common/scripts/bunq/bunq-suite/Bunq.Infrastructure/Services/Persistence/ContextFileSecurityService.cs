@@ -5,10 +5,10 @@ public sealed class ContextFileSecurityService : IContextFileSecurityService
     private readonly IContextFilePermissionStrategy _permissionStrategy;
 
     public ContextFileSecurityService(
-        IPlatformService platformService,
+        IOperatingSystemService operatingSystemService,
         IEnumerable<IContextFilePermissionStrategy> strategies)
     {
-        var platform = platformService.Current;
+        var platform = operatingSystemService.Current;
         _permissionStrategy = strategies.FirstOrDefault(strategy => strategy.Supports(platform))
             ?? throw new PlatformNotSupportedException($"Unsupported operating system for secure credential file handling: {platform}.");
     }
@@ -18,8 +18,8 @@ public sealed class ContextFileSecurityService : IContextFileSecurityService
         return _permissionStrategy.OpenSecureWriteStream(path);
     }
 
-    public void EnsureSecurePermissions(string path)
+    public void RestrictToCurrentUser(string path)
     {
-        _permissionStrategy.EnsureSecurePermissions(path);
+        _permissionStrategy.RestrictToCurrentUser(path);
     }
 }

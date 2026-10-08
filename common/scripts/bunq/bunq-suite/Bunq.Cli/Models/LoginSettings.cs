@@ -2,7 +2,7 @@ using Bunq.Cli.Constants;
 
 namespace Bunq.Cli.Models;
 
-public sealed class LoginOptions
+public sealed class LoginSettings
 {
     public string? ApiKey { get; set; }
     public bool ForceRecreateContext { get; set; }

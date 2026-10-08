@@ -20,7 +20,7 @@ public sealed class BunqApiService : IBunqApiService
         CancellationToken ct = default)
     {
         using var httpClient = CreateHttpClient(baseUrl);
-        var client = new BunqApiClientService(httpClient, _rsaService);
+        var client = new BunqApiHttpClient(httpClient, _rsaService);
         return await client.CreateInstallationAsync(clientPublicKeyPem, ct);
     }
 
@@ -35,7 +35,7 @@ public sealed class BunqApiService : IBunqApiService
         CancellationToken ct = default)
     {
         using var httpClient = CreateHttpClient(baseUrl);
-        var client = new BunqApiClientService(httpClient, _rsaService);
+        var client = new BunqApiHttpClient(httpClient, _rsaService);
         return await client.RegisterDeviceAsync(
             installationToken,
             privateKeyPem,
@@ -55,7 +55,7 @@ public sealed class BunqApiService : IBunqApiService
         CancellationToken ct = default)
     {
         using var httpClient = CreateHttpClient(baseUrl);
-        var client = new BunqApiClientService(httpClient, _rsaService);
+        var client = new BunqApiHttpClient(httpClient, _rsaService);
         return await client.CreateSessionAsync(installationToken, privateKeyPem, serverPublicKeyPem, apiKey, ct);
     }
 

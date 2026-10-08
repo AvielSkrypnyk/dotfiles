@@ -10,8 +10,8 @@ public sealed class MenuCommand
 {
     private readonly ResetCommand _resetCommand;
     private readonly ContextPathCommand _contextPathCommand;
-    private readonly IBunqContextRepository _contextStore;
-    private readonly BunqAuthService _loginWorkflowService;
+    private readonly IBunqContextRepository _contextRepository;
+    private readonly BunqLoginService _loginService;
 
     private string? _apiKey;
     private string _baseUrl = CliConstants.BaseUrlSandbox;
@@ -21,14 +21,14 @@ public sealed class MenuCommand
     public MenuCommand(
         ResetCommand resetCommand,
         ContextPathCommand contextPathCommand,
-        IBunqContextRepository contextStore,
-        BunqAuthService loginWorkflowService)
+        IBunqContextRepository contextRepository,
+        BunqLoginService loginService)
     {
         _resetCommand = resetCommand;
         _contextPathCommand = contextPathCommand;
-        _contextStore = contextStore;
-        _loginWorkflowService = loginWorkflowService;
-        _apiKey = Environment.GetEnvironmentVariable(CliConstants.EnvApiKey);
+        _contextRepository = contextRepository;
+        _loginService = loginService;
+        _apiKey = Environment.GetEnvironmentVariable(CliConstants.EnvVarApiKey);
     }
 
     public async Task ExecuteAsync(CancellationToken cancellationToken = default)
@@ -117,7 +117,7 @@ public sealed class MenuCommand
 
     private async Task ShowStatusAsync(CancellationToken cancellationToken)
     {
-        var context = await _contextStore.LoadAsync(cancellationToken);
+        var context = await _contextRepository.LoadAsync(cancellationToken);
         if (context is null)
         {
             ColorConsole.WriteWarning(CliMessages.ContextMissing);
@@ -211,7 +211,7 @@ public sealed class MenuCommand
     private async Task<bool> RunInstallationStepAsync(CancellationToken cancellationToken)
     {
         ColorConsole.WriteLine(string.Empty);
-        var result = await _loginWorkflowService.RunInstallationAsync(_baseUrl, forceNewKeys: false, cancellationToken);
+        var result = await _loginService.CreateInstallationAsync(_baseUrl, forceNewKeys: false, cancellationToken);
         if (!result.Success || result.Data is null)
         {
             PrintStepResult(HandshakeStep.Installation, false);
@@ -238,7 +238,7 @@ public sealed class MenuCommand
         }
 
         var permittedIps = string.IsNullOrWhiteSpace(_permittedIp) ? Array.Empty<string>() : [_permittedIp];
-        var result = await _loginWorkflowService.RunDeviceRegistrationAsync(
+        var result = await _loginService.RegisterDeviceAsync(
             _baseUrl,
             _apiKey!,
             _deviceDescription,
@@ -267,7 +267,7 @@ public sealed class MenuCommand
             return false;
         }
 
-        var result = await _loginWorkflowService.RunSessionCreationAsync(_baseUrl, _apiKey!, cancellationToken);
+        var result = await _loginService.CreateSessionAsync(_baseUrl, _apiKey!, cancellationToken);
         if (!result.Success || result.Data is null)
         {
             PrintStepResult(HandshakeStep.SessionCreation, false);

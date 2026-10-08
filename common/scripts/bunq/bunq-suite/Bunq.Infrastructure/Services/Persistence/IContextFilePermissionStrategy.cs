@@ -2,7 +2,7 @@ namespace Bunq.Infrastructure.Services.Persistence;
 
 public interface IContextFilePermissionStrategy
 {
-    bool Supports(PlatformKind platform);
+    bool Supports(OperatingSystemKind platform);
     FileStream OpenSecureWriteStream(string path);
-    void EnsureSecurePermissions(string path);
+    void RestrictToCurrentUser(string path);
 }

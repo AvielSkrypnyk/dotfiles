@@ -4,17 +4,17 @@ using Bunq.Core.Models;
 
 namespace Bunq.Infrastructure.Services.Persistence;
 
-public class JsonBunqContextRepositoryService : IBunqContextRepository
+public class JsonFileBunqContextRepository : IBunqContextRepository
 {
     private const string ContextFileEnvironmentVariable = "BUNQ_CONTEXT_FILE";
     private readonly IContextFileSecurityService _fileSecurityService;
 
-    public JsonBunqContextRepositoryService(IContextFileSecurityService fileSecurityService)
+    public JsonFileBunqContextRepository(IContextFileSecurityService fileSecurityService)
     {
         _fileSecurityService = fileSecurityService;
     }
 
-    public string GetPath()
+    public string GetFilePath()
     {
         var configuredPath = Environment.GetEnvironmentVariable(ContextFileEnvironmentVariable);
         if (!string.IsNullOrWhiteSpace(configuredPath))
@@ -37,27 +37,27 @@ public class JsonBunqContextRepositoryService : IBunqContextRepository
 
     public async Task SaveAsync(BunqContext context)
     {
-        var path = GetPath();
+        var path = GetFilePath();
         var json = JsonSerializer.Serialize(context, new JsonSerializerOptions { WriteIndented = true });
 
-        _fileSecurityService.EnsureSecurePermissions(path);
+        _fileSecurityService.RestrictToCurrentUser(path);
 
         await using var stream = _fileSecurityService.OpenSecureWriteStream(path);
         await using var writer = new StreamWriter(stream);
         await writer.WriteAsync(json);
         await writer.FlushAsync();
 
-        _fileSecurityService.EnsureSecurePermissions(path);
+        _fileSecurityService.RestrictToCurrentUser(path);
     }
 
     public async Task<BunqContext?> LoadAsync(CancellationToken ct = default)
     {
-        var path = GetPath();
+        var path = GetFilePath();
 
         if (!File.Exists(path))
             return null;
 
-        _fileSecurityService.EnsureSecurePermissions(path);
+        _fileSecurityService.RestrictToCurrentUser(path);
 
         var json = await File.ReadAllTextAsync(path, ct);
         return JsonSerializer.Deserialize<BunqContext>(json);
@@ -65,7 +65,7 @@ public class JsonBunqContextRepositoryService : IBunqContextRepository
 
     public Task DeleteAsync(CancellationToken ct = default)
     {
-        var path = GetPath();
+        var path = GetFilePath();
         
         if (File.Exists(path))
             File.Delete(path);

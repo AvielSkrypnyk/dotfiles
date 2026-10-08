@@ -8,7 +8,7 @@ using Bunq.Infrastructure.Models;
 
 namespace Bunq.Infrastructure.Services.BunqApi;
 
-public sealed class BunqApiClientService
+public sealed class BunqApiHttpClient
 {
     private const string AuthenticationHeader = "X-Bunq-Client-Authentication";
     private const string ClientSignatureHeader = "X-Bunq-Client-Signature";
@@ -26,7 +26,7 @@ public sealed class BunqApiClientService
     private readonly HttpClient _httpClient;
     private readonly IRsaService _rsaService;
 
-    public BunqApiClientService(HttpClient httpClient, IRsaService rsaService)
+    public BunqApiHttpClient(HttpClient httpClient, IRsaService rsaService)
     {
         _httpClient = httpClient;
         _rsaService = rsaService;

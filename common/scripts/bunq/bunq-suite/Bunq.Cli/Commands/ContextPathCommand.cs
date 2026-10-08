@@ -5,16 +5,16 @@ namespace Bunq.Cli.Commands;
 
 public sealed class ContextPathCommand
 {
-    private readonly IBunqContextRepository _contextStore;
+    private readonly IBunqContextRepository _contextRepository;
 
-    public ContextPathCommand(IBunqContextRepository contextStore)
+    public ContextPathCommand(IBunqContextRepository contextRepository)
     {
-        _contextStore = contextStore;
+        _contextRepository = contextRepository;
     }
 
     public Task ExecuteAsync()
     {
-        ColorConsole.WriteInfo(_contextStore.GetPath());
+        ColorConsole.WriteInfo(_contextRepository.GetFilePath());
         return Task.CompletedTask;
     }
 }

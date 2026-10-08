@@ -7,16 +7,16 @@ public static class CliConstants
     public const string CommandContextPath = "context-path";
     public const string CommandMenu = "menu";
 
-    public const string OptionApiKey = "--api-key";
-    public const string OptionSandbox = "--sandbox";
-    public const string OptionProduction = "--production";
-    public const string OptionBaseUrl = "--base-url";
-    public const string OptionDescription = "--description";
-    public const string OptionPermittedIp = "--permitted-ip";
-    public const string OptionForce = "--force";
+    public const string FlagApiKey = "--api-key";
+    public const string FlagSandbox = "--sandbox";
+    public const string FlagProduction = "--production";
+    public const string FlagBaseUrl = "--base-url";
+    public const string FlagDescription = "--description";
+    public const string FlagPermittedIp = "--permitted-ip";
+    public const string FlagForce = "--force";
 
-    public const string EnvApiKey = "BUNQ_API_KEY";
-    public const string EnvContextFile = "BUNQ_CONTEXT_FILE";
+    public const string EnvVarApiKey = "BUNQ_API_KEY";
+    public const string EnvVarContextFile = "BUNQ_CONTEXT_FILE";
 
     public const string BaseUrlProduction = "https://api.bunq.com/";
     public const string BaseUrlSandbox = "https://public-api.sandbox.bunq.com/";

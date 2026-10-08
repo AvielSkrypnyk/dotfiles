@@ -6,7 +6,7 @@ public sealed class UnixContextFilePermissionStrategy : IContextFilePermissionSt
 {
     private const UnixFileMode OwnerReadWrite = UnixFileMode.UserRead | UnixFileMode.UserWrite;
 
-    public bool Supports(PlatformKind platform) => platform is PlatformKind.Linux or PlatformKind.MacOS;
+    public bool Supports(OperatingSystemKind platform) => platform is OperatingSystemKind.Linux or OperatingSystemKind.MacOS;
 
     [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Guarded by runtime OS checks.")]
     public FileStream OpenSecureWriteStream(string path)
@@ -26,7 +26,7 @@ public sealed class UnixContextFilePermissionStrategy : IContextFilePermissionSt
     }
 
     [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Guarded by runtime OS checks.")]
-    public void EnsureSecurePermissions(string path)
+    public void RestrictToCurrentUser(string path)
     {
         if (!OperatingSystem.IsLinux() && !OperatingSystem.IsMacOS())
         {

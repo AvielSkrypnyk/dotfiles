@@ -5,85 +5,85 @@ using Bunq.Core.Common;
 namespace Bunq.Cli.Services;
 
 /// <summary>
-/// Parses the flags typed after <c>bunq login</c> into <see cref="LoginOptions"/>.
+/// Parses the flags typed after <c>bunq login</c> into <see cref="LoginSettings"/>.
 /// Example: <c>--sandbox --api-key abc123</c> becomes a sandbox login with API key "abc123".
 /// </summary>
 public sealed class LoginFlagsParserService
 {
-    public OperationResult<LoginOptions> Parse(string[] flagsAndValues)
+    public OperationResult<LoginSettings> Parse(string[] flagsAndValues)
     {
-        var loginOptions = new LoginOptions();
+        var loginSettings = new LoginSettings();
 
         // A queue hands out the words one by one, so a flag can take the next word as its value.
         var remainingWords = new Queue<string>(flagsAndValues);
 
         while (remainingWords.TryDequeue(out var flag))
         {
-            var flagResult = ApplyFlag(flag, remainingWords, loginOptions);
+            var flagResult = ApplyFlag(flag, remainingWords, loginSettings);
             if (!flagResult.Success)
             {
-                return OperationResult<LoginOptions>.Fail(flagResult.MessageType, flagResult.Code!, flagResult.Error!);
+                return OperationResult<LoginSettings>.Fail(flagResult.MessageType, flagResult.Code!, flagResult.Error!);
             }
         }
 
-        loginOptions.BaseUrl = EnsureTrailingSlash(loginOptions.BaseUrl);
-        return OperationResult<LoginOptions>.Ok(loginOptions);
+        loginSettings.BaseUrl = EnsureTrailingSlash(loginSettings.BaseUrl);
+        return OperationResult<LoginSettings>.Ok(loginSettings);
     }
 
-    private static OperationResult ApplyFlag(string flag, Queue<string> remainingWords, LoginOptions loginOptions)
+    private static OperationResult ApplyFlag(string flag, Queue<string> remainingWords, LoginSettings loginSettings)
     {
         var flagName = flag.ToLowerInvariant();
 
         switch (flagName)
         {
             // Flags without a value
-            case CliConstants.OptionSandbox:
-                loginOptions.BaseUrl = CliConstants.BaseUrlSandbox;
+            case CliConstants.FlagSandbox:
+                loginSettings.BaseUrl = CliConstants.BaseUrlSandbox;
                 return OperationResult.Ok();
 
-            case CliConstants.OptionProduction:
-                loginOptions.BaseUrl = CliConstants.BaseUrlProduction;
+            case CliConstants.FlagProduction:
+                loginSettings.BaseUrl = CliConstants.BaseUrlProduction;
                 return OperationResult.Ok();
 
-            case CliConstants.OptionForce:
-                loginOptions.ForceRecreateContext = true;
+            case CliConstants.FlagForce:
+                loginSettings.ForceRecreateContext = true;
                 return OperationResult.Ok();
 
             // Flags with a value: the next word is the value
-            case CliConstants.OptionApiKey:
+            case CliConstants.FlagApiKey:
                 if (!remainingWords.TryDequeue(out var apiKey))
                 {
                     return MissingValueFailure(flagName);
                 }
 
-                loginOptions.ApiKey = apiKey;
+                loginSettings.ApiKey = apiKey;
                 return OperationResult.Ok();
 
-            case CliConstants.OptionDescription:
+            case CliConstants.FlagDescription:
                 if (!remainingWords.TryDequeue(out var deviceDescription))
                 {
                     return MissingValueFailure(flagName);
                 }
 
-                loginOptions.DeviceDescription = deviceDescription;
+                loginSettings.DeviceDescription = deviceDescription;
                 return OperationResult.Ok();
 
-            case CliConstants.OptionPermittedIp:
+            case CliConstants.FlagPermittedIp:
                 if (!remainingWords.TryDequeue(out var permittedIp))
                 {
                     return MissingValueFailure(flagName);
                 }
 
-                loginOptions.PermittedIps.Add(permittedIp);
+                loginSettings.PermittedIps.Add(permittedIp);
                 return OperationResult.Ok();
 
-            case CliConstants.OptionBaseUrl:
+            case CliConstants.FlagBaseUrl:
                 if (!remainingWords.TryDequeue(out var baseUrl))
                 {
                     return MissingValueFailure(flagName);
                 }
 
-                return ApplyBaseUrl(baseUrl, loginOptions);
+                return ApplyBaseUrl(baseUrl, loginSettings);
 
             default:
                 return Failure(
@@ -92,30 +92,30 @@ public sealed class LoginFlagsParserService
         }
     }
 
-    private static OperationResult ApplyBaseUrl(string baseUrl, LoginOptions loginOptions)
+    private static OperationResult ApplyBaseUrl(string baseUrl, LoginSettings loginSettings)
     {
         if (!Uri.TryCreate(baseUrl, UriKind.Absolute, out var parsedUrl))
         {
             return Failure(
                 LoginFlagsParserServiceConstants.ErrorCodeInvalidBaseUrl,
-                LoginFlagsParserServiceConstants.BuildInvalidUrlMessage(CliConstants.OptionBaseUrl, baseUrl));
+                LoginFlagsParserServiceConstants.BuildInvalidUrlMessage(CliConstants.FlagBaseUrl, baseUrl));
         }
 
         if (parsedUrl.Scheme == Uri.UriSchemeHttp)
         {
             return Failure(
                 LoginFlagsParserServiceConstants.ErrorCodeHttpNotAllowed,
-                LoginFlagsParserServiceConstants.BuildHttpSchemeNotAllowedMessage(CliConstants.OptionBaseUrl));
+                LoginFlagsParserServiceConstants.BuildHttpSchemeNotAllowedMessage(CliConstants.FlagBaseUrl));
         }
 
         if (parsedUrl.Scheme != Uri.UriSchemeHttps)
         {
             return Failure(
                 LoginFlagsParserServiceConstants.ErrorCodeHttpsRequired,
-                LoginFlagsParserServiceConstants.BuildHttpsUrlRequiredMessage(CliConstants.OptionBaseUrl));
+                LoginFlagsParserServiceConstants.BuildHttpsUrlRequiredMessage(CliConstants.FlagBaseUrl));
         }
 
-        loginOptions.BaseUrl = parsedUrl.AbsoluteUri;
+        loginSettings.BaseUrl = parsedUrl.AbsoluteUri;
         return OperationResult.Ok();
     }
 

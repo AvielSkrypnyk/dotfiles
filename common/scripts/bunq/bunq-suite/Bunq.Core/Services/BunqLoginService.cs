@@ -4,23 +4,23 @@ using Bunq.Core.Models;
 
 namespace Bunq.Core.Services;
 
-public sealed class BunqAuthService
+public sealed class BunqLoginService
 {
-    private readonly IBunqContextRepository _contextStore;
+    private readonly IBunqContextRepository _contextRepository;
     private readonly IRsaService _rsaService;
     private readonly IBunqApiService _bunqApiService;
 
-    public BunqAuthService(
-        IBunqContextRepository contextStore,
+    public BunqLoginService(
+        IBunqContextRepository contextRepository,
         IRsaService rsaService,
         IBunqApiService bunqApiService)
     {
-        _contextStore = contextStore;
+        _contextRepository = contextRepository;
         _rsaService = rsaService;
         _bunqApiService = bunqApiService;
     }
 
-    public async Task<OperationResult<BunqContext>> ExecuteAsync(
+    public async Task<OperationResult<BunqContext>> LoginAsync(
         string baseUrl,
         string apiKey,
         string deviceDescription,
@@ -28,10 +28,10 @@ public sealed class BunqAuthService
         bool forceRecreateContext,
         CancellationToken cancellationToken = default)
     {
-        var context = await _contextStore.LoadAsync(cancellationToken);
+        var context = await _contextRepository.LoadAsync(cancellationToken);
         if (forceRecreateContext || NeedsFreshInstallation(context))
         {
-            var installation = await RunInstallationAsync(baseUrl, forceRecreateContext, cancellationToken);
+            var installation = await CreateInstallationAsync(baseUrl, forceRecreateContext, cancellationToken);
             if (!installation.Success || installation.Data is null)
             {
                 return installation;
@@ -50,7 +50,7 @@ public sealed class BunqAuthService
 
         if (!context.DeviceRegistered || forceRecreateContext)
         {
-            var registration = await RunDeviceRegistrationAsync(
+            var registration = await RegisterDeviceAsync(
                 baseUrl,
                 apiKey,
                 deviceDescription,
@@ -62,7 +62,7 @@ public sealed class BunqAuthService
             }
         }
 
-        var session = await RunSessionCreationAsync(baseUrl, apiKey, cancellationToken);
+        var session = await CreateSessionAsync(baseUrl, apiKey, cancellationToken);
         if (session.Success && session.Data is not null)
         {
             return session;
@@ -73,13 +73,13 @@ public sealed class BunqAuthService
             return session;
         }
 
-        var forcedInstallation = await RunInstallationAsync(baseUrl, true, cancellationToken);
+        var forcedInstallation = await CreateInstallationAsync(baseUrl, true, cancellationToken);
         if (!forcedInstallation.Success || forcedInstallation.Data is null)
         {
             return forcedInstallation;
         }
 
-        var forcedRegistration = await RunDeviceRegistrationAsync(
+        var forcedRegistration = await RegisterDeviceAsync(
             baseUrl,
             apiKey,
             deviceDescription,
@@ -90,15 +90,15 @@ public sealed class BunqAuthService
             return forcedRegistration;
         }
 
-        return await RunSessionCreationAsync(baseUrl, apiKey, cancellationToken);
+        return await CreateSessionAsync(baseUrl, apiKey, cancellationToken);
     }
 
-    public async Task<OperationResult<BunqContext>> RunInstallationAsync(
+    public async Task<OperationResult<BunqContext>> CreateInstallationAsync(
         string baseUrl,
         bool forceNewKeys,
         CancellationToken cancellationToken = default)
     {
-        var context = await _contextStore.LoadAsync(cancellationToken);
+        var context = await _contextRepository.LoadAsync(cancellationToken);
         var shouldGenerateKeys = forceNewKeys ||
                                  context is null ||
                                  string.IsNullOrWhiteSpace(context.PublicKeyPem) ||
@@ -145,18 +145,18 @@ public sealed class BunqAuthService
             UserId = 0
         };
 
-        await _contextStore.SaveAsync(updated);
+        await _contextRepository.SaveAsync(updated);
         return OperationResult<BunqContext>.Ok(updated);
     }
 
-    public async Task<OperationResult<BunqContext>> RunDeviceRegistrationAsync(
+    public async Task<OperationResult<BunqContext>> RegisterDeviceAsync(
         string baseUrl,
         string apiKey,
         string description,
         string[] permittedIps,
         CancellationToken cancellationToken = default)
     {
-        var context = await _contextStore.LoadAsync(cancellationToken);
+        var context = await _contextRepository.LoadAsync(cancellationToken);
         if (context is null || string.IsNullOrWhiteSpace(context.InstallationToken))
         {
             return OperationResult<BunqContext>.Fail(
@@ -191,16 +191,16 @@ public sealed class BunqAuthService
         }
 
         context.DeviceRegistered = true;
-        await _contextStore.SaveAsync(context);
+        await _contextRepository.SaveAsync(context);
         return OperationResult<BunqContext>.Ok(context);
     }
 
-    public async Task<OperationResult<BunqContext>> RunSessionCreationAsync(
+    public async Task<OperationResult<BunqContext>> CreateSessionAsync(
         string baseUrl,
         string apiKey,
         CancellationToken cancellationToken = default)
     {
-        var context = await _contextStore.LoadAsync(cancellationToken);
+        var context = await _contextRepository.LoadAsync(cancellationToken);
         if (context is null || string.IsNullOrWhiteSpace(context.InstallationToken))
         {
             return OperationResult<BunqContext>.Fail(
@@ -234,7 +234,7 @@ public sealed class BunqAuthService
 
         context.SessionToken = sessionResult.Data.SessionToken;
         context.UserId = sessionResult.Data.UserId;
-        await _contextStore.SaveAsync(context);
+        await _contextRepository.SaveAsync(context);
         return OperationResult<BunqContext>.Ok(context);
     }
 

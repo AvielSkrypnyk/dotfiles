@@ -11,16 +11,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();
 
-services.AddSingleton<IPlatformService, RuntimePlatformService>();
+services.AddSingleton<IOperatingSystemService, OperatingSystemService>();
 services.AddSingleton<IContextFilePermissionStrategy, WindowsContextFilePermissionStrategy>();
 services.AddSingleton<IContextFilePermissionStrategy, UnixContextFilePermissionStrategy>();
 services.AddSingleton<IContextFileSecurityService, ContextFileSecurityService>();
-services.AddSingleton<IBunqContextRepository, JsonBunqContextRepositoryService>();
+services.AddSingleton<IBunqContextRepository, JsonFileBunqContextRepository>();
 services.AddSingleton<IRsaService, RsaService>();
 services.AddSingleton<IBunqApiService, BunqApiService>();
 services.AddSingleton<LoginFlagsParserService>();
-services.AddSingleton<ApiKeyResolverService>();
-services.AddSingleton<BunqAuthService>();
+services.AddSingleton<ApiKeyProviderService>();
+services.AddSingleton<BunqLoginService>();
 services.AddTransient<LoginCommand>();
 services.AddTransient<ResetCommand>();
 services.AddTransient<ContextPathCommand>();
@@ -65,7 +65,7 @@ switch (command)
 
 static void PrintUsage()
 {
-    ColorConsole.WriteInfo("bunq <command> [options]");
+    ColorConsole.WriteInfo("bunq <command> [flags]");
     ColorConsole.WriteLine(string.Empty);
     ColorConsole.WriteInfo("Commands:");
     ColorConsole.WriteLine($"  {CliConstants.CommandLogin}    Create installation, register device, and create session");
@@ -73,16 +73,16 @@ static void PrintUsage()
     ColorConsole.WriteLine($"  {CliConstants.CommandContextPath}  Print the location of context.json");
     ColorConsole.WriteLine($"  {CliConstants.CommandMenu}     Open the interactive setup menu");
     ColorConsole.WriteLine(string.Empty);
-    ColorConsole.WriteInfo("Login options:");
-    ColorConsole.WriteLine($"  {CliConstants.OptionApiKey} <value>   API key (or set {CliConstants.EnvApiKey} env var)");
-    ColorConsole.WriteLine($"  {CliConstants.OptionSandbox}           Use sandbox API ({CliConstants.BaseUrlSandbox})");
-    ColorConsole.WriteLine($"  {CliConstants.OptionProduction}        Use production API ({CliConstants.BaseUrlProduction})");
-    ColorConsole.WriteLine($"  {CliConstants.OptionBaseUrl} <url>    Override base API URL (https:// only)");
-    ColorConsole.WriteLine($"  {CliConstants.OptionDescription} <txt> Device description sent to bunq");
-    ColorConsole.WriteLine($"  {CliConstants.OptionPermittedIp} <ip> Permitted IP for device registration (repeatable, leave empty to use current IP)");
-    ColorConsole.WriteLine($"  {CliConstants.OptionForce}             Re-create context even if one already exists");
+    ColorConsole.WriteInfo("Login flags:");
+    ColorConsole.WriteLine($"  {CliConstants.FlagApiKey} <value>   API key (or set {CliConstants.EnvVarApiKey} env var)");
+    ColorConsole.WriteLine($"  {CliConstants.FlagSandbox}           Use sandbox API ({CliConstants.BaseUrlSandbox})");
+    ColorConsole.WriteLine($"  {CliConstants.FlagProduction}        Use production API ({CliConstants.BaseUrlProduction})");
+    ColorConsole.WriteLine($"  {CliConstants.FlagBaseUrl} <url>    Override base API URL (https:// only)");
+    ColorConsole.WriteLine($"  {CliConstants.FlagDescription} <txt> Device description sent to bunq");
+    ColorConsole.WriteLine($"  {CliConstants.FlagPermittedIp} <ip> Permitted IP for device registration (repeatable, leave empty to use current IP)");
+    ColorConsole.WriteLine($"  {CliConstants.FlagForce}             Re-create context even if one already exists");
     ColorConsole.WriteLine(string.Empty);
     ColorConsole.WriteInfo("Environment variables:");
-    ColorConsole.WriteLine($"  {CliConstants.EnvApiKey}        API key fallback for login");
-    ColorConsole.WriteLine($"  {CliConstants.EnvContextFile}   Optional override for context.json path");
+    ColorConsole.WriteLine($"  {CliConstants.EnvVarApiKey}        API key fallback for login");
+    ColorConsole.WriteLine($"  {CliConstants.EnvVarContextFile}   Optional override for context.json path");
 }

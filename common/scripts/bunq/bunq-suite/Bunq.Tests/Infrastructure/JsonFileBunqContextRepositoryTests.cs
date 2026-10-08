@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace Bunq.Tests.Infrastructure;
 
-public sealed class JsonBunqContextRepositoryServiceTests
+public sealed class JsonFileBunqContextRepositoryTests
 {
     [Test]
     public void GetPath_UsesEnvironmentOverride_WhenProvided()
@@ -14,12 +14,12 @@ public sealed class JsonBunqContextRepositoryServiceTests
         var tempPath = Path.Combine(Path.GetTempPath(), $"bunq-context-{Guid.NewGuid():N}.json");
         Environment.SetEnvironmentVariable("BUNQ_CONTEXT_FILE", tempPath);
         var fileSecurity = BuildFileSecurityService();
-        var store = new JsonBunqContextRepositoryService(fileSecurity);
+        var store = new JsonFileBunqContextRepository(fileSecurity);
 
         try
         {
             // Act
-            var actual = store.GetPath();
+            var actual = store.GetFilePath();
 
             // Assert
             Assert.That(actual, Is.EqualTo(Path.GetFullPath(tempPath)));
@@ -42,7 +42,7 @@ public sealed class JsonBunqContextRepositoryServiceTests
         var tempPath = Path.Combine(Path.GetTempPath(), $"bunq-context-{Guid.NewGuid():N}.json");
         Environment.SetEnvironmentVariable("BUNQ_CONTEXT_FILE", tempPath);
         var fileSecurity = BuildFileSecurityService();
-        var store = new JsonBunqContextRepositoryService(fileSecurity);
+        var store = new JsonFileBunqContextRepository(fileSecurity);
         var expected = new BunqContext
         {
             InstallationToken = "installation-token",
@@ -87,6 +87,6 @@ public sealed class JsonBunqContextRepositoryServiceTests
             new UnixContextFilePermissionStrategy()
         };
 
-        return new ContextFileSecurityService(new RuntimePlatformService(), strategies);
+        return new ContextFileSecurityService(new OperatingSystemService(), strategies);
     }
 }
