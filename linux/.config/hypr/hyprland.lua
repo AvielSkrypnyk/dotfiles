@@ -37,6 +37,7 @@ hl.monitor({
 
 -- Set programs that you use
 local terminal    = "kitty"
+local browser     = "firefox"
 local fileManager = "dolphin"
 local menu        = "hyprlauncher"
 
@@ -259,42 +260,53 @@ hl.device({
 ---- KEYBINDINGS ----
 ---------------------
 
-local mainMod = "SUPER" -- Sets "Windows" key as main modifier
+local mainMod = "SUPER"
 
--- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
-hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
-local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
--- closeWindowBind:set_enabled(false)
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
-hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
-hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
-hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
+local TilingToggle = require("./modules/tiling_toggle.lua")
+local tilingToggle = TilingToggle.new()
 
--- Move focus with mainMod + arrow keys
-hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
+-- Match the window-management and app shortcuts used by skhd and whkd.
+hl.bind("ALT + T",        hl.dsp.window.float({ action = "toggle" }))
+hl.bind("CTRL + ALT + Z", function() hl.config({ general = { layout = "dwindle" } }) end)
+hl.bind("CTRL + ALT + X", tilingToggle:handler())
+hl.bind("ALT + Q",        hl.dsp.window.kill())
+hl.bind(mainMod .. " + SHIFT + RETURN", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + SHIFT + F",      hl.dsp.exec_cmd(browser))
+hl.bind(mainMod .. " + SHIFT + L",      hl.dsp.exec_cmd("hyprlock"))
+hl.bind(mainMod .. " + SHIFT + R",      hl.dsp.reload_config())
 
--- Switch workspaces with mainMod + [0-9]
--- Move active window to a workspace with mainMod + SHIFT + [0-9]
+-- Brightness: right Control + main-row +/- for coarse steps, Alt+Shift + +/- for fine steps.
+local BRIGHTNESS_CMD         = "brightnessctl -e4 -n2 set "
+local BRIGHTNESS_STEP_COARSE = "10%"
+local BRIGHTNESS_STEP_FINE   = "1%"
+local REPEATING              = { repeating = true }
+
+hl.bind("Ctrl_R + SHIFT + EQUAL", hl.dsp.exec_cmd(BRIGHTNESS_CMD .. BRIGHTNESS_STEP_COARSE .. "+"), REPEATING)
+hl.bind("Ctrl_R + MINUS",         hl.dsp.exec_cmd(BRIGHTNESS_CMD .. BRIGHTNESS_STEP_COARSE .. "-"), REPEATING)
+hl.bind("ALT + SHIFT + EQUAL",    hl.dsp.exec_cmd(BRIGHTNESS_CMD .. BRIGHTNESS_STEP_FINE   .. "+"), REPEATING)
+hl.bind("ALT + SHIFT + MINUS",    hl.dsp.exec_cmd(BRIGHTNESS_CMD .. BRIGHTNESS_STEP_FINE   .. "-"), REPEATING)
+
+-- Change workspaces with Ctrl + Left/Right or Super + number.
+hl.bind("CTRL + LEFT",  hl.dsp.focus({ workspace = "e-1" }))
+hl.bind("CTRL + RIGHT", hl.dsp.focus({ workspace = "e+1" }))
 for i = 1, 10 do
-    local key = i % 10 -- 10 maps to key 0
-    hl.bind(mainMod .. " + " .. key,             hl.dsp.focus({ workspace = i}))
+    local key = i % 10
+    hl.bind(mainMod .. " + " .. key,             hl.dsp.focus({ workspace = i }))
     hl.bind(mainMod .. " + SHIFT + " .. key,     hl.dsp.window.move({ workspace = i }))
 end
 
--- Example special workspace (scratchpad)
-hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+-- Use the same modifiers for focus and window movement as skhd and whkd.
+for direction, key in pairs({
+    left = "left",
+    right = "right",
+    up = "up",
+    down = "down",
+}) do
+    hl.bind(mainMod .. " + CTRL + " .. key, hl.dsp.focus({ direction = direction }))
+    hl.bind("ALT + " .. mainMod .. " + " .. key, hl.dsp.window.move({ direction = direction }))
+end
 
--- Scroll through existing workspaces with mainMod + scroll
-hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
-
--- Move/resize windows with mainMod + LMB/RMB and dragging
+-- Move/resize windows with mainMod + LMB/RMB and dragging.
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 

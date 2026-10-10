@@ -93,6 +93,9 @@ cmd + shift - l : skhd -k "ctrl + cmd - q"
 #TODO there is a one downside. I can't get inside of WallpaperAgent which stores the wallpapers, so it works only for all monitors, NOT for each space
 cmd + shift - w : wallpaper-switcher ~/Documents/Wallpapers/catpuccin_wallpapers
 
+# quick reload of layout
+cmd + shift - r : yabai -m space --layout float; yabai -m space --layout bsp
+
 # focus window change
 cmd + ctrl - right : yabai -m window --focus east
 cmd + ctrl - left : yabai -m window --focus west
