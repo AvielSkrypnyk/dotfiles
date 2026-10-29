@@ -1,84 +1,129 @@
 # Automatic Releases
 
-PR titles determine the release after a squash merge to `main`:
+Squash merge a PR into `main`. Once the main-branch quality checks pass,
+the workflow publishes a release if the squash commit title calls for one.
+There is no manual version update or release PR.
 
-| Title | Version bump |
-| --- | --- |
-| `fix: correct uptime display` | Patch: `v1.0.0` to `v1.0.1` |
-| `feat: add update notifications` | Minor: `v1.0.0` to `v1.1.0` |
-| `feat!: change configuration layout` | Major: `v1.0.0` to `v2.0.0` |
+## Release Rules
 
-Scopes are optional, for example `fix(windows): correct startup`. Any type
-with `!` is breaking. `perf` and `revert` also produce patch releases.
-`docs`, `style`, `refactor`, `test`, `build`, `ci`, and `chore` do not release
-unless marked breaking.
+All examples start from `v1.0.0`.
 
-## Repository Setup
+| PR title | Result | Next version |
+| --- | --- | --- |
+| `fix: correct uptime display` | Patch | `v1.0.1` |
+| `perf: reduce startup time` | Patch | `v1.0.1` |
+| `revert: restore configuration` | Patch | `v1.0.1` |
+| `feat: add update notifications` | Minor | `v1.1.0` |
+| `feat!: change configuration layout` | Major | `v2.0.0` |
+| `chore: update repository stats` | No release | Unchanged |
+| `chore: sync readme metadata` | No release | Unchanged |
+| `docs: clarify installation` | No release | Unchanged |
 
-1. Commit `VERSION` and this automation. The existing `v1.0.0` is the baseline.
-2. In GitHub's pull request settings, allow squash merging only and set the
-   default squash commit message to **Pull request title**. Keep the final
-   squash title consistent with the validated PR title.
-3. Require **Validate PR Title** and **Release Rules** along with the normal quality checks
-   before merging. Do not edit `VERSION` manually after initialization.
-4. Create a GitHub App installed only on this repository with **Contents:
-   Read and write** permission. Set repository variable `RELEASE_APP_ID` to
-   its App ID and secret `RELEASE_APP_PRIVATE_KEY` to its private key.
-5. In the rulesets protecting `main`, grant only this App an **Always allow**
-   bypass so it can push the generated version commit without another PR.
-   Any tag rules must also allow the App to create `v*` tags. For legacy
-   branch protection, configure equivalent App push and PR-bypass permissions.
+**Scopes are optional.** `feat: add notifications` and
+`feat(updates): add notifications` both produce a minor release.
 
-The App's write access is needed only by the release workflow. The normal
-workflow token remains read-only. No branch protection settings are changed
-by the workflow itself.
+```text
+type: description
+type(scope): description
+type!: breaking change description
+type(scope)!: breaking change description
+```
+
+- Use a supported lowercase type, `: `, and a description with no leading whitespace.
+- An optional scope must not be empty or contain nested parentheses.
+- `docs`, `style`, `refactor`, `test`, `build`, `ci`, and `chore` normally skip releases.
+- Adding `!` to any supported type makes it a major release, including `chore!:`.
+- Individual branch commits do not determine the version update. Keep the final squash
+  commit title identical to the validated PR title when merging.
+
+> A valid PR title does **not** necessarily produce a release.
+> Maintenance titles pass validation but do not trigger a version update on their own.
 
 ## Release Flow
 
-After **Quality** succeeds for a push to `main`, **Release** calculates the
-next version, updates `VERSION`, prepends `CHANGELOG.md`, and commits both.
-It pushes that commit and its matching tag atomically, then publishes a
-GitHub release using the same changelog entry. Generated release commits
-do not start another release.
+```mermaid
+flowchart TD
+    PR[Open or update PR] --> Title[Validate PR Title]
+    PR --> Checks[Quality checks on PR]
+    Title --> Merge[Squash merge to main]
+    Checks --> Merge
+    Merge --> Quality[Quality checks on main]
+    Quality --> Ready{Checks passed and main unchanged?}
+    Ready -->|No| Skip[No publication from this run]
+    Ready -->|Yes| VersionUpdate{Pending titles need a release?}
+    VersionUpdate -->|No| Unchanged[Keep version unchanged]
+    VersionUpdate -->|Yes| Files[Update VERSION and CHANGELOG.md]
+    Files --> Commit[Create version commit]
+    Commit --> Push[Push version commit and tag together]
+    Push --> Release[Publish GitHub release]
+```
 
-Releases are serialized. If `main` has moved beyond the checked commit,
-that run skips publication. The next successful run includes all pending
-commit titles since the last version update and uses the largest bump.
-Fast consecutive merges can therefore share one release. If `main` moves
-during publication, the atomic push fails without publishing either ref;
-the next successful run picks up those pending changes.
+After a qualifying merge:
 
-If the tag push succeeds but GitHub release publication fails, publish a
-release from the existing tag using its changelog entry. Do not move the tag
-or bump the version again to recover that release.
+1. **Check:** wait for the push-triggered `Quality` workflow on `main` to succeed.
+2. **Calculate:** read titles since the last commit that changed `VERSION` and choose the highest-priority version update.
+3. **Write:** update `VERSION` and prepend a dated entry to `CHANGELOG.md`.
+   The entry lists all pending titles, including maintenance changes.
+4. **Commit:** create `chore(release): vX.Y.Z` containing both files.
+5. **Tag:** push that version-containing commit and its matching `vX.Y.Z` tag atomically.
+6. **Publish:** create the GitHub release with the same notes as the changelog entry.
 
-Publication time depends on checks and runner availability. Other devices
-discover the release on their next update check; their installed version
-does not change until they update.
+The tag points to the **version commit**, not the earlier squash merge.
+Generated release commits are excluded from release processing to prevent loops.
 
-## Local Check
+### Fast Merges and Failed Checks
+
+| Situation | What happens |
+| --- | --- |
+| Main-branch quality checks fail | No release is published. |
+| Another commit reaches `main` before preparation | The older run skips publication; a later successful run includes pending changes. |
+| Several merges are pending | They can share one release. Major takes priority over minor, then patch. |
+| Only maintenance commits are pending | No version change, changelog update, tag, or release. |
+| `main` advances during the push | The atomic push fails without pushing either the version commit or tag. |
+| The generated release commit runs checks | Checks may run, but another release is not created. |
+
+Release jobs run one at a time. Pending changes remain available for the next
+successful run rather than being discarded when an older run skips publication.
+
+## Repository Configuration
+
+- **Aviel Dots Release** is authorized to publish, using `RELEASE_APP_ID` and
+  `RELEASE_APP_PRIVATE_KEY`. Only this App bypasses protection on `main`.
+- Use squash merges with the PR title as the commit title, and require title
+  validation and quality checks before merging.
+- Let the workflow update `VERSION`; no manual version update is needed.
+
+Release timing depends on checks and runner availability. Other devices see
+the release on their next update check; installation is a separate step.
+
+## Maintenance
+
+### Files
+
+| File | Responsibility |
+| --- | --- |
+| [pr-title.yml](../.github/workflows/pr-title.yml) | Run PR-title validation. |
+| [quality.yml](../.github/workflows/quality.yml) | Run release tests and repository quality checks. |
+| [release.yml](../.github/workflows/release.yml) | Coordinate version preparation, commit, tag, and publication. |
+| [release_rules.py](../.github/scripts/release_rules.py) | Validate titles and calculate versions. |
+| [validate_pr_title.py](../.github/scripts/validate_pr_title.py) | Report title validation success or failure to Actions. |
+| [release.py](../.github/scripts/release.py) | Read Git history and write release files. |
+| [test_release.py](../.github/scripts/test_release.py) | Test the rules and release preparation using Arrange, Act, Assert. |
+
+### Run the Tests
+
+From the repository root, with Python and Git available:
 
 ```sh
 python -m unittest discover -s .github/scripts -p 'test_release.py' -v
 ```
 
-## Code Layout
+### Dependencies
 
-- `.github/workflows/pr-title.yml`: validates PR titles, including title edits.
-- `.github/workflows/quality.yml`: runs release tests and the normal quality checks.
-- `.github/workflows/release.yml`: coordinates release preparation and publication.
-- `.github/scripts/release_rules.py`: pure title parsing and version calculation.
-- `.github/scripts/validate_pr_title.py`: validates the `PR_TITLE` environment variable.
-- `.github/scripts/release.py`: reads Git history and writes release files.
-- `.github/scripts/test_release.py`: standard-library unit and integration tests.
+The release scripts have **no third-party Python packages** and need no
+`pip install`. The rules module has no imports. Other scripts use modules
+that ship with Python for files, Git subprocesses, dates, and environment variables.
+Importing them does not download or install anything.
 
-The Python scripts have no third-party packages and need no `pip install`.
-The rules module has no imports. Release preparation uses Python's built-in
-standard library: `pathlib` for files, `subprocess` for reading Git history,
-`datetime` for the release date, and `os` for Actions environment variables.
-Importing these modules does not download or install anything.
-
-Git commits, tag pushes, and GitHub CLI publication stay in the release
-workflow, where their order and permissions are visible. Python 3.12 is
-selected explicitly so runner updates do not silently change the interpreter.
-Release timing still depends on the required checks and runner availability.
+The workflows select Python 3.12 explicitly for predictable behavior. Git and
+GitHub CLI handle repository writes and publication; no Node.js setup is needed.
