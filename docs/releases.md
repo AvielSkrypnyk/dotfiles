@@ -66,7 +66,7 @@ flowchart TD
         Bump -->|feat| Minor[Minor: v1.2.3 → v1.3.0]
         Bump -->|"fix, perf, revert"| Patch[Patch: v1.2.3 → v1.2.4]
         Bump -->|only chore, docs, ...| NoRelease[No release: version unchanged]
-        Major & Minor & Patch --> Files[Update VERSION and CHANGELOG.md]
+        Major & Minor & Patch --> Files[Update VERSION]
         Files --> Commit["Commit chore(release): vX.Y.Z and tag it"]
         Commit --> Push[Push commit and tag together]
         Push --> Publish[Publish GitHub release]
@@ -80,11 +80,12 @@ After a qualifying merge:
 
 1. **Check:** wait for the push-triggered `Quality` workflow on `main` to succeed.
 2. **Calculate:** read titles since the last commit that changed `VERSION` and choose the highest-priority version update.
-3. **Write:** update `VERSION` and prepend a dated entry to `CHANGELOG.md`.
-   The entry lists all pending titles, including maintenance changes.
-4. **Commit:** create `chore(release): vX.Y.Z` containing both files.
+3. **Write:** update `VERSION`.
+4. **Commit:** create `chore(release): vX.Y.Z` containing that file.
 5. **Tag:** push that version-containing commit and its matching `vX.Y.Z` tag atomically.
-6. **Publish:** create the GitHub release with the same notes as the changelog entry.
+6. **Publish:** create the GitHub release with GitHub's generated notes
+   ("What's Changed" with PR links and authors, plus a full changelog link).
+   The [releases page](https://github.com/AvielSkrypnyk/dotfiles/releases) is the changelog.
 
 The tag points to the **version commit**, not the earlier squash merge.
 Generated release commits are excluded from release processing to prevent loops.
@@ -96,10 +97,10 @@ Generated release commits are excluded from release processing to prevent loops.
 | Main-branch quality checks fail | No release is published. |
 | Another commit reaches `main` before preparation | The older run skips publication; a later successful run includes pending changes. |
 | Several merges are pending | They can share one release. Major takes priority over minor, then patch. |
-| Only maintenance commits are pending | No version change, changelog update, tag, or release. |
+| Only maintenance commits are pending | No version change, tag, or release. |
 | `main` advances during the push | The atomic push fails without pushing either the version commit or tag. |
 | The generated release commit runs checks | Checks may run, but another release is not created. |
-| Publishing fails after the tag is pushed | Publish it by hand: `gh release create vX.Y.Z --verify-tag --title vX.Y.Z --notes "..."` with the notes from the changelog entry. |
+| Publishing fails after the tag is pushed | Publish it by hand: `gh release create vX.Y.Z --verify-tag --title vX.Y.Z --generate-notes`. |
 
 Release jobs run one at a time. Pending changes remain available for the next
 successful run rather than being discarded when an older run skips publication.
@@ -129,7 +130,7 @@ the release on their next update check; installation is a separate step.
 | [release.yml](../.github/workflows/release.yml) | Coordinate version preparation, commit, tag, and publication. |
 | [release_rules.py](../.github/scripts/release_rules.py) | Validate titles and calculate versions. |
 | [validate_pr_title.py](../.github/scripts/validate_pr_title.py) | Report title validation success or failure to Actions. |
-| [release.py](../.github/scripts/release.py) | Read Git history and write release files. |
+| [release.py](../.github/scripts/release.py) | Read Git history and choose the next version. |
 | [test_release.py](../.github/scripts/test_release.py) | Test the rules and release preparation using Arrange, Act, Assert. |
 
 ### Run the Tests

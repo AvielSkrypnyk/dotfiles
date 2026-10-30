@@ -1,6 +1,5 @@
 import os
 import subprocess
-from datetime import datetime, timezone
 from pathlib import Path
 
 from release_rules import next_version, release_type
@@ -38,22 +37,6 @@ def determine_release_type(titles: list[str]) -> str | None:
     return None
 
 
-def build_release_notes(titles: list[str]) -> str:
-    return "".join(f"- {title}\n" for title in titles)
-
-
-def update_changelog(version: str, notes: str) -> None:
-    changelog = Path("CHANGELOG.md")
-    history = ""
-    if changelog.exists():
-        history = changelog.read_text(encoding="utf-8")
-        history = history.removeprefix("# Changelog\n\n")
-
-    date = datetime.now(timezone.utc).date().isoformat()
-    heading = f"# Changelog\n\n## {version} ({date})\n\n"
-    changelog.write_text(heading + notes + "\n" + history, encoding="utf-8")
-
-
 def prepare_release() -> None:
     titles = get_pending_titles()
     release_increment = determine_release_type(titles)
@@ -63,16 +46,10 @@ def prepare_release() -> None:
     version_path = Path("VERSION")
     current_version = version_path.read_text(encoding="utf-8")
     version = next_version(current_version, release_increment)
-    notes = build_release_notes(titles)
 
-    # Actions provides a temporary folder and an output file for later workflow steps.
-    temporary_directory = Path(os.environ["RUNNER_TEMP"])
-    notes_path = temporary_directory / "release-notes.md"
-    output_path = Path(os.environ["GITHUB_OUTPUT"])
     version_path.write_text(f"{version}\n", encoding="utf-8")
-    update_changelog(version, notes)
-    notes_path.write_text(notes, encoding="utf-8")
-    with output_path.open("a", encoding="utf-8") as output:
+    # Actions reads this file to pass the version to the publish step.
+    with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
         output.write(f"version={version}\n")
 
 
