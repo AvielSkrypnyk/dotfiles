@@ -179,7 +179,7 @@ class ReleaseIntegrationTests(unittest.TestCase):
         self.git("config", "core.autocrlf", "false")
         (self.directory / "VERSION").write_text("v1.0.0\n", encoding="utf-8")
         self.git("add", "VERSION")
-        self.commit("chore: initialize version")
+        self.commit("chore(release): v1.0.0")
 
     def git(self, *args: str) -> str:
         return subprocess.check_output(
@@ -295,6 +295,18 @@ class ReleaseIntegrationTests(unittest.TestCase):
             "- fix: correct startup\n",
             (self.directory / "CHANGELOG.md").read_text(encoding="utf-8"),
         )
+
+    def test_GivenVersionAddedByBreakingChange_WhenPrepareReleaseCalled_ThenCreateFirstMajorRelease(self) -> None:
+        # Arrange: the PR that adds VERSION is the first release.
+        version_path = self.directory / "VERSION"
+        self.git("-c", "commit.gpgsign=false", "commit", "--amend", "-m", "feat!: add automated releases")
+
+        # Act
+        self.prepare()
+
+        # Assert
+        self.assertEqual(self.output.read_text(encoding="utf-8"), "version=v2.0.0\n")
+        self.assertEqual(version_path.read_text(encoding="utf-8"), "v2.0.0\n")
 
 
 if __name__ == "__main__":

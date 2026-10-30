@@ -108,6 +108,9 @@ successful run rather than being discarded when an older run skips publication.
 
 - **Aviel Dots Release** is authorized to publish, using `RELEASE_APP_ID` and
   `RELEASE_APP_PRIVATE_KEY`. Only this App bypasses protection on `main`.
+- The App also opens and merges the README sync and stats PRs, so it needs
+  **Contents** and **Pull requests** write access. Merges made with
+  `github.token` would not trigger Quality, so main would skip the release.
 - Use squash merges with the PR title as the commit title, and require title
   validation and quality checks before merging.
 - Let the workflow update `VERSION`; no manual version update is needed.

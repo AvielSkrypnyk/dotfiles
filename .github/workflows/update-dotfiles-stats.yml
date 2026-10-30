@@ -82,11 +82,21 @@ jobs:
 
           mv README.new README.md
 
+      # App token, so the merge triggers Quality and Release on main (github.token pushes don't).
+      - name: Create bot token
+        id: token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
       - name: Create pull request with stats update
         id: create_pr
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ github.token }}
+          token: ${{ steps.token.outputs.token }}
           committer: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           sign-commits: true
@@ -102,7 +112,7 @@ jobs:
       - name: Merge PR when possible
         if: steps.create_pr.outputs.pull-request-number != ''
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.token.outputs.token }}
         run: |
           PR_NUMBER="${{ steps.create_pr.outputs.pull-request-number }}"
 

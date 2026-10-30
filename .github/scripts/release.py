@@ -20,8 +20,14 @@ def get_pending_titles() -> list[str]:
 
     # Git's start..end range excludes the starting commit and includes the end.
     commit_range = f"{version_commit}..HEAD"
-    history = git("log", "--reverse", "--format=%s", commit_range)
-    return history.splitlines()
+    titles = git("log", "--reverse", "--format=%s", commit_range).splitlines()
+
+    # A release commit is already released. Any other VERSION commit is the
+    # first setup (for example, the PR that added VERSION), so it still counts.
+    first_title = git("log", "-1", "--format=%s", version_commit)
+    if not first_title.startswith("chore(release):"):
+        titles.insert(0, first_title)
+    return titles
 
 
 def determine_release_type(titles: list[str]) -> str | None:
