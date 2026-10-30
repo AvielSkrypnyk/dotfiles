@@ -191,7 +191,6 @@ class ReleaseIntegrationTests(unittest.TestCase):
 
     def prepare(self) -> None:
         environment = os.environ.copy()
-        environment["RUNNER_TEMP"] = str(self.directory)
         environment["GITHUB_OUTPUT"] = str(self.output)
         script = Path(__file__).with_name("release.py")
         subprocess.run(
@@ -201,11 +200,8 @@ class ReleaseIntegrationTests(unittest.TestCase):
             check=True,
         )
 
-    def test_GivenPendingChangesAndChangelog_WhenPrepareReleaseCalled_ThenPreserveHistory(self) -> None:
+    def test_GivenMixedChanges_WhenPrepareReleaseCalled_ThenUseLargestUpdate(self) -> None:
         # Arrange
-        changelog_path = self.directory / "CHANGELOG.md"
-        changelog_path.write_text("# Changelog\n\n## v1.0.0\n\n- Initial release\n", encoding="utf-8")
-        self.git("add", "CHANGELOG.md")
         self.commit("docs: clarify setup")
         self.commit("fix: correct uptime display")
         self.commit("feat!: change configuration layout")
@@ -216,18 +212,6 @@ class ReleaseIntegrationTests(unittest.TestCase):
         # Assert
         self.assertEqual(self.output.read_text(encoding="utf-8"), "version=v2.0.0\n")
         self.assertEqual((self.directory / "VERSION").read_text(encoding="utf-8"), "v2.0.0\n")
-        changelog = changelog_path.read_text(encoding="utf-8")
-        self.assertRegex(changelog, r"## v2\.0\.0 \(\d{4}-\d{2}-\d{2}\)")
-        self.assertIn(
-            "- docs: clarify setup\n- fix: correct uptime display\n"
-            "- feat!: change configuration layout\n", changelog
-        )
-        self.assertIn("## v1.0.0\n\n- Initial release", changelog)
-        self.assertEqual(
-            (self.directory / "release-notes.md").read_text(encoding="utf-8"),
-            "- docs: clarify setup\n- fix: correct uptime display\n"
-            "- feat!: change configuration layout\n",
-        )
 
     def test_GivenReleaseCommit_WhenPrepareReleaseCalled_ThenSkipDuplicateRelease(self) -> None:
         # Arrange
@@ -243,11 +227,9 @@ class ReleaseIntegrationTests(unittest.TestCase):
         self.assertFalse(self.output.exists())
         self.assertEqual(version_path.read_text(encoding="utf-8"), "v2.0.0\n")
 
-    def test_GivenMaintenanceCommits_WhenPrepareReleaseCalled_ThenSkipReleaseFiles(self) -> None:
+    def test_GivenMaintenanceCommits_WhenPrepareReleaseCalled_ThenKeepVersion(self) -> None:
         # Arrange
         version_path = self.directory / "VERSION"
-        changelog_path = self.directory / "CHANGELOG.md"
-        notes_path = self.directory / "release-notes.md"
 
         for title in ["chore: update repository stats", "chore: sync readme metadata"]:
             with self.subTest(title=title):
@@ -260,13 +242,10 @@ class ReleaseIntegrationTests(unittest.TestCase):
                 # Assert
                 self.assertEqual(version_path.read_text(encoding="utf-8"), "v1.0.0\n")
                 self.assertFalse(self.output.exists())
-                self.assertFalse(changelog_path.exists())
-                self.assertFalse(notes_path.exists())
 
     def test_GivenFeatureAfterMaintenance_WhenPrepareReleaseCalled_ThenCreateMinorRelease(self) -> None:
         # Arrange
         version_path = self.directory / "VERSION"
-        changelog_path = self.directory / "CHANGELOG.md"
         self.commit("chore: update repository stats")
         self.commit("chore: sync readme metadata")
         self.commit("feat: add update notifications")
@@ -277,12 +256,8 @@ class ReleaseIntegrationTests(unittest.TestCase):
         # Assert
         self.assertEqual(version_path.read_text(encoding="utf-8"), "v1.1.0\n")
         self.assertEqual(self.output.read_text(encoding="utf-8"), "version=v1.1.0\n")
-        self.assertIn(
-            "- feat: add update notifications\n",
-            changelog_path.read_text(encoding="utf-8"),
-        )
 
-    def test_GivenFixWithoutChangelog_WhenPrepareReleaseCalled_ThenCreatePatchReleaseAndChangelog(self) -> None:
+    def test_GivenFix_WhenPrepareReleaseCalled_ThenCreatePatchRelease(self) -> None:
         # Arrange
         self.commit("fix: correct startup")
 
@@ -291,10 +266,6 @@ class ReleaseIntegrationTests(unittest.TestCase):
 
         # Assert
         self.assertEqual(self.output.read_text(encoding="utf-8"), "version=v1.0.1\n")
-        self.assertIn(
-            "- fix: correct startup\n",
-            (self.directory / "CHANGELOG.md").read_text(encoding="utf-8"),
-        )
 
     def test_GivenVersionAddedByBreakingChange_WhenPrepareReleaseCalled_ThenCreateFirstMajorRelease(self) -> None:
         # Arrange: the PR that adds VERSION is the first release.
