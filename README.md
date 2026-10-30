@@ -209,6 +209,25 @@ dotfiles/
 ```
 <!-- /STRUCTURE -->
 
+## Automatic Releases
+
+Releases are automatic, starting with
+[v2.0.0](https://github.com/AvielSkrypnyk/dotfiles/releases/tag/v2.0.0).
+After a squash merge to `main` passes Quality checks, the PR title sets the
+version: `fix:` → patch, `feat:` → minor, `feat!:` → major. Other types such as
+`chore:` or `docs:` don't release.
+
+```mermaid
+flowchart LR
+    PR[PR with valid title] --> Merge[Squash merge to main]
+    Merge --> Quality{Quality passes?}
+    Quality -->|No| Stop[No release]
+    Quality -->|Yes| Version[Set next version from PR title]
+    Version --> Release[Tag and publish release]
+```
+
+Full details: [releases](docs/releases.md).
+
 ## Overview
 
 - `common` contains shared configurations and utilities
