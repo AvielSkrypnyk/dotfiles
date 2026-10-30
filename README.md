@@ -157,6 +157,7 @@ dotfiles/
 │   └── .zshrc
 │
 ├── docs/
+│   ├── releases.md
 │   ├── skhd.md
 │   └── whkd.md
 │
@@ -438,7 +439,7 @@ Theme    -> Catppuccin Macchiato (Peach)
 
 <!-- STATS -->
 ```text
-Commits     : 103
+Commits     : 105
 Open PRs    : 1
 Last Update : 2026-10-30
 ```
