@@ -25,24 +25,15 @@ def get_pending_titles() -> list[str]:
 
 
 def determine_release_type(titles: list[str]) -> str | None:
-    changes = []
-    for title in titles:
-        changes.append(release_type(title))
-
-    if "major" in changes:
-        return "major"
-    if "minor" in changes:
-        return "minor"
-    if "patch" in changes:
-        return "patch"
+    changes = [release_type(title) for title in titles]
+    for change in ["major", "minor", "patch"]:
+        if change in changes:
+            return change
     return None
 
 
 def build_release_notes(titles: list[str]) -> str:
-    notes = ""
-    for title in titles:
-        notes += f"- {title}\n"
-    return notes
+    return "".join(f"- {title}\n" for title in titles)
 
 
 def update_changelog(version: str, notes: str) -> None:

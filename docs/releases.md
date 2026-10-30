@@ -43,19 +43,37 @@ type(scope)!: breaking change description
 
 ```mermaid
 flowchart TD
-    PR[Open or update PR] --> Title[Validate PR Title]
-    PR --> Checks[Quality checks on PR]
-    Title --> Merge[Squash merge to main]
-    Checks --> Merge
-    Merge --> Quality[Quality checks on main]
-    Quality --> Ready{Checks passed and main unchanged?}
-    Ready -->|No| Skip[No publication from this run]
-    Ready -->|Yes| VersionUpdate{Pending titles need a release?}
-    VersionUpdate -->|No| Unchanged[Keep version unchanged]
-    VersionUpdate -->|Yes| Files[Update VERSION and CHANGELOG.md]
-    Files --> Commit[Create version commit]
-    Commit --> Push[Push version commit and tag together]
-    Push --> Release[Publish GitHub release]
+    subgraph PR["1. Pull request (pr-title.yml, quality.yml)"]
+        Open["Open PR<br/>feature branch or bot chore PR"] --> Title["Validate PR title<br/>type(scope)!: description"]
+        Open --> PRChecks[Quality checks on PR]
+        Title --> Merge[Squash merge to main<br/>PR title becomes commit title]
+        PRChecks --> Merge
+    end
+
+    subgraph Main["2. Push to main (quality.yml)"]
+        Quality{Quality checks pass?}
+        Quality -->|No| Stop[Stop: no release]
+    end
+
+    subgraph Release["3. Release (release.yml, release.py)"]
+        Own{"chore(release) commit?"}
+        Own -->|Yes| Ignore[Skip: avoid release loop]
+        Own -->|No| Current{Is this still the latest main?}
+        Current -->|No| Later[Skip: next run includes these changes]
+        Current -->|Yes| Read[Read titles since last VERSION change]
+        Read --> Bump{Highest change?}
+        Bump -->|"feat! (any type with !)"| Major[Major: v1.2.3 → v2.0.0]
+        Bump -->|feat| Minor[Minor: v1.2.3 → v1.3.0]
+        Bump -->|"fix, perf, revert"| Patch[Patch: v1.2.3 → v1.2.4]
+        Bump -->|only chore, docs, ...| NoRelease[No release: version unchanged]
+        Major & Minor & Patch --> Files[Update VERSION and CHANGELOG.md]
+        Files --> Commit["Commit chore(release): vX.Y.Z and tag it"]
+        Commit --> Push[Push commit and tag together]
+        Push --> Publish[Publish GitHub release]
+    end
+
+    Merge --> Quality
+    Quality -->|Yes| Own
 ```
 
 After a qualifying merge:
@@ -81,6 +99,7 @@ Generated release commits are excluded from release processing to prevent loops.
 | Only maintenance commits are pending | No version change, changelog update, tag, or release. |
 | `main` advances during the push | The atomic push fails without pushing either the version commit or tag. |
 | The generated release commit runs checks | Checks may run, but another release is not created. |
+| Publishing fails after the tag is pushed | Publish it by hand: `gh release create vX.Y.Z --verify-tag --title vX.Y.Z --notes "..."` with the notes from the changelog entry. |
 
 Release jobs run one at a time. Pending changes remain available for the next
 successful run rather than being discarded when an older run skips publication.
