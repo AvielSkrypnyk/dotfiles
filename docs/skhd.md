@@ -60,6 +60,7 @@ cmd + shift - return : open -na "iTerm"
 | `alt - t`             | Toggle float + center on grid   |
 | `ctrl + alt - z`      | Layout: bsp                     |
 | `ctrl + alt - x`      | Layout: float                   |
+| `cmd + shift - r`     | Quick reload of layout (clears ghost windows) |
 | `alt + cmd - ←↓↑→`    | Move (warp) window              |
 | `cmd + ctrl - ←↓↑→`   | Focus window                    |
 | `cmd + shift - return`| Open iTerm                      |

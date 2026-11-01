@@ -70,6 +70,9 @@ alt - t : yabai -m window --toggle float --grid 4:4:1:1:2:2
 ctrl + alt - z : yabai -m space --layout bsp
 ctrl + alt - x : yabai -m space --layout float
 
+# quick reload of layout: rebuilding bsp drops ghost windows of closed apps
+cmd + shift - r : yabai -m space --layout float; yabai -m space --layout bsp
+
 # move window
 alt + cmd - left : yabai -m window --warp west  
 alt + cmd - down : yabai -m window --warp south
