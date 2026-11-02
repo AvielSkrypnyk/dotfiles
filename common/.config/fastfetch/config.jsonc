@@ -6,110 +6,183 @@
     // https://github.com/AvielSkrypnyk/dotfiles
 
     "display": {
-        "separator": "  ",
+        "separator": ": ",
         "key": {
-            "width": 13
+            "width": 0
         }
     },
 
     "logo": {
-        "type": "builtin",
-        "height": 16,
-        "width": 30,
+        "type": "small",
         "padding": {
-            "top": 1,
-            "left": 2,
+            "top": 3,
+            "left": 1,
             "right": 3
         }
     },
 
     "modules": [
+        "break",
         {
             "type": "custom",
-            "format": "\u001b[38;2;202;211;245m┌─────────────────────── Hardware Information ───────────────────────┐\u001b[0m"
+            "format": "\u001b[90m┌──────────────────────────── Hardware ──────────────────────────────┐\u001b[0m"
         },
         {
             "type": "host",
-            "key": "\u001b[38;2;245;169;127m 󰌢 "
+            "key": "󰌢 PC",
+            "keyColor": "green"
         },
         {
             "type": "cpu",
-            "key": "\u001b[38;2;245;169;127m 󰍛 "
+            "key": "│ ├󰍛",
+            "keyColor": "green"
         },
         {
             "type": "gpu",
-            "key": "\u001b[38;2;245;169;127m 󰘚 "
+            "key": "│ ├󰘚",
+            "keyColor": "green"
         },
         {
             "type": "memory",
-            "key": "\u001b[38;2;245;169;127m 󰑭 "
+            "key": "│ ├󰑭",
+            "keyColor": "green"
         },
         {
             "type": "disk",
-            "key": "\u001b[38;2;245;169;127m  "
+            "key": "│ ├",
+            "keyColor": "green"
         },
         {
             "type": "display",
-            "key": "\u001b[38;2;245;169;127m 󰍹 "
+            "key": "│ ├󰍹",
+            "keyColor": "green"
         },
         {
             "type": "battery",
-            "key": "\u001b[38;2;245;169;127m 󱈑 "
+            "key": "└ └󱈑",
+            "keyColor": "green"
         },
         {
             "type": "custom",
-            "format": "\u001b[38;2;202;211;245m├─────────────────────── Software Information ───────────────────────┤\u001b[0m"
+            "format": "\u001b[90m└────────────────────────────────────────────────────────────────────┘\u001b[0m"
+        },
+        "break",
+        {
+            "type": "custom",
+            "format": "\u001b[90m┌──────────────────────────── Software ──────────────────────────────┐\u001b[0m"
         },
         {
             "type": "os",
-            "key": "\u001b[38;2;245;169;127m  "
+            "key": " OS",
+            "keyColor": "yellow"
         },
         {
             "type": "kernel",
-            "key": "\u001b[38;2;245;169;127m  "
-        },
-        {
-            "type": "de",
-            "key": "\u001b[38;2;245;169;127m  "
-        },
-        {
-            "type": "wm",
-            "key": "\u001b[38;2;245;169;127m  "
-        },
-        {
-            "type": "shell",
-            "key": "\u001b[38;2;245;169;127m  "
-        },
-        {
-            "type": "terminal",
-            "key": "\u001b[38;2;245;169;127m  "
-        },
-        {
-            "type": "terminalfont",
-            "key": "\u001b[38;2;245;169;127m  "
+            "key": "│ ├",
+            "keyColor": "yellow"
         },
         {
             "type": "packages",
-            "key": "\u001b[38;2;245;169;127m 󰊠 "
+            "key": "│ ├󰊠",
+            "keyColor": "yellow"
         },
         {
-            "type": "uptime",
-            "key": "\u001b[38;2;245;169;127m 󰅐 "
+            "type": "shell",
+            "key": "└ └",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "de",
+            "key": " DE",
+            "keyColor": "blue"
+        },
+        {
+            "type": "wm",
+            "key": " WM",
+            "keyColor": "blue"
+        },
+        {
+            "type": "terminal",
+            "key": "│ ├",
+            "keyColor": "blue"
+        },
+        {
+            "type": "terminalfont",
+            "key": "│ ├",
+            "keyColor": "blue"
         },
         {
             "type": "localip",
-            "key": "\u001b[38;2;245;169;127m  "
+            "key": "└ └",
+            "keyColor": "blue"
         },
         {
             "type": "custom",
-            "format": "\u001b[38;2;202;211;245m└────────────────────────────────────────────────────────────────────┘\u001b[0m"
+            "format": "\u001b[90m└────────────────────────────────────────────────────────────────────┘\u001b[0m"
         },
-
         "break",
-
+        {
+            "type": "custom",
+            "format": "\u001b[90m┌────────────────────── Uptime / Age / Dots ─────────────────────────┐\u001b[0m"
+        },
+        {
+            "type": "command",
+            "condition": { "system": "Windows" },
+            "shell": "powershell.exe",
+            "param": "-NoProfile",
+            "key": "                       OS Age",
+            "keyColor": "magenta",
+            "text": "$ErrorActionPreference = 'Stop'; $installed = Get-ItemPropertyValue 'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion' InstallDate; '{0} days' -f [math]::Floor(([DateTimeOffset]::Now.ToUnixTimeSeconds() - $installed) / 86400)"
+        },
+        {
+            "type": "command",
+            "condition": { "system": "Linux" },
+            "shell": "/bin/sh",
+            "param": "-c",
+            "key": "                       OS Age",
+            "keyColor": "magenta",
+            "text": "installed=$(stat -c %W /) && current=$(date +%s) || exit 1; if [ \"$installed\" -gt 0 ] && [ \"$installed\" -le \"$current\" ]; then printf '%s days\\n' \"$(((current - installed) / 86400))\"; else printf '%s\\n' 'Unavailable (filesystem birth time unknown)'; fi"
+        },
+        {
+            "type": "command",
+            "condition": { "system": "macOS" },
+            "shell": "/bin/sh",
+            "param": "-c",
+            "key": "                       OS Age",
+            "keyColor": "magenta",
+            "text": "installed=$(stat -f %B /var/db/.AppleSetupDone) && current=$(date +%s) || exit 1; if [ \"$installed\" -gt 0 ] && [ \"$installed\" -le \"$current\" ]; then printf '%s days\\n' \"$(((current - installed) / 86400))\"; else printf '%s\\n' 'Unavailable (setup date unknown)'; fi"
+        },
+        {
+            "type": "uptime",
+            "key": "                       Uptime",
+            "keyColor": "magenta"
+        },
+        {
+            "type": "command",
+            "condition": { "system": "Windows" },
+            "shell": "powershell.exe",
+            "param": "-NoProfile",
+            "key": "                 Aviel's Dots",
+            "keyColor": "magenta",
+            "text": "(Get-Content -LiteralPath (Join-Path $HOME 'dotfiles\\VERSION') -Raw -ErrorAction Stop).Trim()"
+        },
+        {
+            "type": "command",
+            "condition": { "system": ["Linux", "macOS"] },
+            "shell": "/bin/sh",
+            "param": "-c",
+            "key": "                 Aviel's Dots",
+            "keyColor": "magenta",
+            "text": "cat \"$HOME/dotfiles/VERSION\""
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m└────────────────────────────────────────────────────────────────────┘\u001b[0m"
+        },
+        "break",
         {
             "type": "colors",
-            "paddingLeft": 27,
+            "paddingLeft": 28,
             "symbol": "circle"
         }
     ]
