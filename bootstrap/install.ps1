@@ -188,6 +188,19 @@ $ProfileContent = Get-Content `
     -Raw `
     -ErrorAction SilentlyContinue
 
+# Ask which Starship style to use (~/.config/starship.toml links to it)
+$StarshipStylePath = Join-Path $Dotfiles "common\scripts\starship-style\starship-style.ps1"
+
+# Runs the Starship style script
+& $StarshipStylePath
+
+if ($ProfileContent -notmatch "function starship-style") {
+
+    Add-Content `
+        -Path $PROFILE `
+        -Value "`nfunction starship-style { & '$StarshipStylePath' @args }`n"
+}
+
 if ($ProfileContent -notmatch "starship init powershell") {
 
     Add-Content `

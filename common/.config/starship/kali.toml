@@ -1,0 +1,62 @@
+# Made by Aviel Skrypnyk
+# Repository:
+# https://github.com/AvielSkrypnyk/dotfiles
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Kali Linux zsh prompt:
+# ┌──(user㉿host)-[~/path]-[(branch) main]
+# └─$
+
+format = """
+[┌──\\(](bold green)$username[㉿](bold blue)$hostname[\\)-\\[](bold green)$directory[\\]](bold green)\
+$git_branch$git_status$python$cmd_duration
+[└─](bold green)$character"""
+
+add_newline = true
+
+[username]
+show_always = true
+style_user = "bold blue"
+style_root = "bold red"
+format = "[$user]($style)"
+
+[hostname]
+ssh_only = false
+trim_at = "."
+style = "bold blue"
+format = "[$hostname]($style)"
+
+[directory]
+style = "bold white"
+format = "[$path]($style)[$read_only]($read_only_style)"
+truncation_length = 5
+truncate_to_repo = false
+truncation_symbol = "…/"
+read_only = " 󰌾"
+
+[git_branch]
+symbol = "\uf418 "
+style = "bold yellow"
+format = "[-\\[](bold green)[$symbol$branch]($style)"
+
+[git_status]
+style = "bold red"
+format = "( [$all_status$ahead_behind]($style))[\\]](bold green)"
+
+[python]
+symbol = "\ue73c "
+style = "bold yellow"
+format = "[-\\(](bold green)[$symbol$virtualenv]($style)[\\)](bold green)"
+detect_extensions = []
+detect_files = []
+
+[cmd_duration]
+min_time = 2000
+style = "dimmed white"
+format = " [$duration]($style)"
+
+[character]
+success_symbol = "[\\$](bold blue)"
+error_symbol = "[\\$](bold red)"
+vimcmd_symbol = "[#](bold green)"

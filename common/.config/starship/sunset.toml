@@ -1,0 +1,77 @@
+# Made by Aviel Skrypnyk
+# Repository:
+# https://github.com/AvielSkrypnyk/dotfiles
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Sunset: soft rounded pills in warm dusk colors.
+# (Windows) aviel  ~/dotfiles  main +1  14:22
+# 󰘧
+
+format = """
+$os$username$directory$git_branch$git_status$time$cmd_duration
+$character"""
+
+add_newline = true
+palette = "sunset"
+
+[palettes.sunset]
+coral = "#ff7a85"
+peach = "#ffb38a"
+gold = "#ffd479"
+plum = "#b48ef0"
+dusk = "#2a1e33"
+ink = "#1a1420"
+
+[os]
+disabled = false
+style = "fg:ink bg:coral"
+format = "[\ue0b6](fg:coral)[$symbol]($style)"
+
+[os.symbols]
+Windows = "󰍲 "
+Macos = "\uf179 "
+Linux = "󰌽 "
+Ubuntu = "󰕈 "
+Debian = "󰣚 "
+Arch = "󰣇 "
+Fedora = "󰣛 "
+Kali = "\uf327 "
+
+[username]
+show_always = true
+style_user = "bold fg:ink bg:coral"
+style_root = "bold fg:ink bg:gold"
+format = "[$user]($style)[\ue0b4](fg:coral) "
+
+[directory]
+style = "bold fg:ink bg:peach"
+format = "[\ue0b6](fg:peach)[ $path$read_only]($style)[\ue0b4](fg:peach) "
+truncation_length = 3
+truncation_symbol = "…/"
+read_only = " 󰌾"
+
+[git_branch]
+symbol = "\uf418 "
+style = "bold fg:ink bg:plum"
+format = "[\ue0b6](fg:plum)[$symbol$branch]($style)"
+
+[git_status]
+style = "bold fg:ink bg:plum"
+format = "([ $all_status$ahead_behind]($style))[\ue0b4](fg:plum) "
+
+[time]
+disabled = false
+time_format = "%R"
+style = "fg:gold bg:dusk"
+format = "[\ue0b6](fg:dusk)[\uf017 $time]($style)[\ue0b4](fg:dusk) "
+
+[cmd_duration]
+min_time = 2000
+style = "italic fg:peach"
+format = "[took $duration]($style)"
+
+[character]
+success_symbol = "[󰘧](bold fg:coral)"
+error_symbol = "[󰘧](bold fg:gold) [✗](bold red)"
+vimcmd_symbol = "[󰘧](bold fg:plum)"

@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+# Switch the Starship prompt style (macOS / Linux).
+#
+#   starship-style          list styles and prompt for a name (Enter = default)
+#   starship-style kali     switch straight to a style
+#
+# When prompting, show the current style if it matches a preset.
+# ~/.config/starship.toml becomes a symlink to the chosen style, so edits to
+# the style file show up on the next prompt.
+
+set -euo pipefail
+
+readonly STYLES_DIR="$HOME/dotfiles/common/.config/starship"
+readonly TARGET="$HOME/.config/starship.toml"
+
+style="${1:-}"
+
+show_styles() {
+    echo "Available styles:"
+    ls "$STYLES_DIR" | sed 's/\.toml$//'
+}
+
+detect_active_style() {
+    [[ -f $TARGET ]] || return 0
+
+    local file
+    for file in "$STYLES_DIR"/*.toml; do
+        if cmp -s "$TARGET" "$file"; then
+            basename "$file" .toml
+            return 0
+        fi
+    done
+    return 0
+}
+
+choose_style() {
+    [[ -n $style ]] && return
+
+    show_styles
+    echo
+
+    local active_style
+    active_style=$(detect_active_style)
+
+    if [[ -n $active_style ]]; then
+        echo "Current style: $active_style"
+    fi
+
+    echo
+
+    if [[ -t 2 && -r /dev/tty ]]; then
+        read -rp "Style (Enter = default): " style </dev/tty
+    else
+        echo "No terminal available; using the default style."
+    fi
+    style="${style:-default}"
+}
+
+handle_unknown_style() {
+    [[ -f $TARGET ]] || return 0
+    [[ -z $(detect_active_style) ]] || return 0
+
+    echo "Current style: unknown"
+    echo "[WARN] Current configuration does not match a known style."
+    echo "[WARN] Switching styles may overwrite custom changes."
+    echo
+
+    local answer="" backup="$TARGET.backup"
+    if [[ -t 2 && -r /dev/tty ]]; then
+        read -rp "Back up and switch styles? (Y/n): " answer </dev/tty
+    else
+        echo "No terminal available; backing up before switching."
+    fi
+
+    if [[ $answer =~ ^[Nn]$ ]]; then
+        echo "Cancelled; configuration unchanged."
+        exit 0
+    fi
+
+    if [[ -e $backup || -L $backup ]]; then
+        backup=$(mktemp "$TARGET.backup.XXXXXX")
+    fi
+    cp "$TARGET" "$backup"
+    echo "[OK] Backup created: $backup"
+}
+
+validate_style() {
+    [[ -f "$STYLES_DIR/$style.toml" ]] || {
+        echo "Unknown style: $style" >&2
+        exit 1
+    }
+
+    if [[ -d $TARGET ]]; then
+        echo "Cannot replace $TARGET: it is a directory." >&2
+        exit 1
+    fi
+}
+
+apply_style() {
+    mkdir -p "$HOME/.config"
+
+    ln -sfn \
+        "$STYLES_DIR/$style.toml" \
+        "$TARGET"
+
+    echo "Starship style: $style"
+}
+
+main() {
+    choose_style
+    validate_style
+    handle_unknown_style
+    apply_style
+}
+
+main "$@"
