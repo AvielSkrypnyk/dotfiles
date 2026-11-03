@@ -6,6 +6,7 @@ param(
 )
 
 Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
 
 $StylesDir = "$HOME\dotfiles\common\.config\starship"
 $Target    = "$HOME\.config\starship.toml"
@@ -25,37 +26,69 @@ function Get-ActiveStyle {
         return
     }
 
-    $item = Get-Item $Target
+    $targetHash = (Get-FileHash -LiteralPath $Target).Hash
 
-    if (-not $item.LinkType) {
-        return
-    }
-
-    Split-Path $item.Target -LeafBase
+    Get-ChildItem $StylesDir -Filter *.toml |
+        Where-Object {
+            (Get-FileHash -LiteralPath $_.FullName).Hash -eq $targetHash
+        } |
+        Select-Object -First 1 -ExpandProperty BaseName
 }
 
 function Choose-Style {
     if ($Style) {
-        return
+        return $true
     }
 
     Show-Styles
+    Write-Host ""
 
     $activeStyle = Get-ActiveStyle
 
     if ($activeStyle) {
-        Write-Host ""
         Write-Host "Current style: $activeStyle"
     }
 
     Write-Host ""
 
-    # Update the script-level parameter so the other functions see the selection.
     $script:Style = Read-Host "Style (Enter = default)"
 
     if (-not $script:Style) {
         $script:Style = "default"
     }
+
+    return $true
+}
+
+function Handle-UnknownStyle {
+    if (-not (Test-Path -LiteralPath $Target) -or (Get-ActiveStyle)) {
+        return $true
+    }
+
+    Write-Host "Current style: unknown" -ForegroundColor Yellow
+    Write-Host "[WARN] Current configuration does not match a known style." -ForegroundColor Yellow
+    Write-Host "[WARN] Switching styles may overwrite custom changes." -ForegroundColor Yellow
+    Write-Host ""
+
+    $answer = Read-Host "Back up and switch styles? (Y/n)"
+
+    if ($answer -notmatch '^[Nn]$') {
+        $backup = "$Target.backup"
+
+        if (Test-Path -LiteralPath $backup) {
+            $backup = "$Target.backup.$([guid]::NewGuid().ToString('N'))"
+        }
+        Copy-Item -LiteralPath $Target -Destination $backup
+
+        Write-Host "[OK] Backup created: $backup" `
+            -ForegroundColor Green
+    }
+    else {
+        Write-Host "Cancelled; configuration unchanged."
+        return $false
+    }
+
+    return $true
 }
 
 function Validate-Style {
@@ -63,6 +96,10 @@ function Validate-Style {
 
     if (-not (Test-Path $source)) {
         throw "Unknown style: $Style"
+    }
+
+    if (Test-Path -LiteralPath $Target -PathType Container) {
+        throw "Cannot replace $Target because it is a directory."
     }
 }
 
@@ -74,7 +111,9 @@ function Apply-Style {
         -Path (Split-Path $Target) `
         -Force | Out-Null
 
-    Remove-Item $Target -Force -ErrorAction SilentlyContinue
+    if (Test-Path -LiteralPath $Target) {
+        Remove-Item -LiteralPath $Target -Force
+    }
 
     # Hard links need no administrator rights and keep edits shared with the style file.
     New-Item `
@@ -86,15 +125,14 @@ function Apply-Style {
 }
 
 function Main {
-    if (-not $Style) {
-        Choose-Style
-    }
-
-    if (-not $Style) {
-        $Style = "default"
+    if (-not (Choose-Style)) {
+        return
     }
 
     Validate-Style
+    if (-not (Handle-UnknownStyle)) {
+        return
+    }
     Apply-Style
 }
 

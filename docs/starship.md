@@ -13,6 +13,28 @@ starship-style kali     # switch straight to a style
 The next prompt uses the new style; no shell restart needed. The bootstrap
 installer asks the same question on first install.
 
+When choosing interactively, the switcher shows the current style if its
+contents match one of the presets.
+
+## Custom Configurations and Backups
+
+If your current configuration does not match a preset, the switcher asks
+whether to back it up before switching. This also applies when you provide
+a style name, such as `starship-style kali`.
+
+- Enter or `y` creates `~/.config/starship.toml.backup` and switches styles.
+- `n` cancels without changing your configuration.
+- If a backup already exists, a unique suffix is added to the new backup.
+
+Keep custom configurations outside the preset files: editing an active
+linked configuration also edits the preset it points to.
+
+On macOS/Linux, prompts read from the terminal, so piped installers still
+allow style selection. Without a terminal, the switcher selects `default`
+and automatically backs up an unrecognized configuration before switching.
+
+## Platform Differences
+
 | OS | Script | How it switches |
 |---|---|---|
 | macOS / Linux | `common/scripts/starship-style/starship-style` (bash, linked in `common/bin`) | symlink |
