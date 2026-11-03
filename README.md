@@ -298,6 +298,12 @@ irm https://raw.githubusercontent.com/AvielSkrypnyk/dotfiles/main/bootstrap/inst
 
 - Hack Nerd Font
 
+### Starship Styles
+
+Run `starship-style` to choose a style, or `starship-style kali` to switch directly.
+
+See the [full Starship guide](docs/starship.md) for details.
+
 ### Packages for macOS
 
 - Homebrew
@@ -419,7 +425,7 @@ Reference docs for the window management configs, including keybinding tables.
 - `.config/` mirrors the final configuration layout
 - GNU Stow is used on macOS and Linux
 - Windows uses junctions and hard links instead of symbolic links
-- Starship automatically loads `~/.config/starship.toml`
+- Starship loads the selected style from `~/.config/starship/`
 - New machines can be provisioned using a single bootstrap command
 
 ---
