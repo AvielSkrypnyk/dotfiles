@@ -183,6 +183,13 @@ else
 fi
 
 # ------------------------------------
+# Starship Style
+# ------------------------------------
+
+# Ask which Starship style to use (~/.config/starship.toml links to it)
+bash "$DOTFILES/common/scripts/starship-style/starship-style"
+
+# ------------------------------------
 # Apply Configs
 # ------------------------------------
 
