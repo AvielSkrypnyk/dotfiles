@@ -56,10 +56,15 @@ dotfiles/
 │   │   │
 │   │   ├── neofetch/
 │   │   │   └── config.conf
-│   │   └── starship.toml
+│   │   │
+│   │   └── starship/
+│   │       ├── default.toml
+│   │       ├── kali.toml
+│   │       └── sunset.toml
 │   │
 │   ├── bin/
-│   │   └── qobuz-meta
+│   │   ├── qobuz-meta
+│   │   └── starship-style
 │   │
 │   ├── scripts/
 │   │   ├── bunq/
@@ -147,18 +152,28 @@ dotfiles/
 │   │   │   ├── bunq.sh
 │   │   │   └── README.md
 │   │   │
-│   │   └── flac/
-│   │       └── qobuz-meta/
-│   │           ├── qobuz-meta
-│   │           ├── README.md
-│   │           └── requirements.txt
+│   │   ├── flac/
+│   │   │   └── qobuz-meta/
+│   │   │       ├── qobuz-meta
+│   │   │       ├── README.md
+│   │   │       └── requirements.txt
+│   │   │
+│   │   └── starship-style/
+│   │       ├── starship-style
+│   │       └── starship-style.ps1
 │   ├── .zprofile
 │   ├── .zshenv
 │   └── .zshrc
 │
 ├── docs/
+│   ├── images/
+│   │   └── starship/
+│   │       ├── default.png
+│   │       ├── kali.png
+│   │       └── sunset.png
 │   ├── releases.md
 │   ├── skhd.md
+│   ├── starship.md
 │   └── whkd.md
 │
 ├── linux/
@@ -445,8 +460,8 @@ Theme    -> Catppuccin Macchiato (Peach)
 
 <!-- STATS -->
 ```text
-Commits     : 126
-Open PRs    : 1
+Commits     : 128
+Open PRs    : 0
 Last Update : 2026-11-03
 ```
 <!-- /STATS -->
