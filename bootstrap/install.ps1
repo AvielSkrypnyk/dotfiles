@@ -442,6 +442,48 @@ catch {
 }
 
 # ------------------------------------
+# Auto-start Autostart (optional)
+# ------------------------------------
+
+$EnableAutoStart = Read-Host "Open auto-start (choose apps to start) at login? [y/N]"
+
+if ($EnableAutoStart -match '^[yY]') {
+
+    try {
+
+        $Startup =
+        "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
+
+        $Shell = New-Object -ComObject WScript.Shell
+
+        $Shortcut =
+            $Shell.CreateShortcut("$Startup\Auto-start.lnk")
+
+        # No --headless here: the window must stay visible to choose a mood
+        $Shortcut.TargetPath = "pwsh.exe"
+
+        $Shortcut.Arguments =
+            "-NoProfile -ExecutionPolicy Bypass -File `"$HOME\dotfiles\common\scripts\auto-start\auto-start.ps1`""
+
+        $Shortcut.WorkingDirectory =
+            "$HOME\dotfiles"
+
+        $Shortcut.Save()
+
+        Write-Host "[OK] Auto-start autostart configured" -ForegroundColor Green
+    }
+    catch {
+
+        Write-Host "[WARN] Failed to configure auto-start autostart" `
+            -ForegroundColor Yellow
+    }
+}
+else {
+
+    Write-Host "[SKIP] Auto-start autostart" -ForegroundColor DarkGray
+}
+
+# ------------------------------------
 # Git Configuration
 # ------------------------------------
 

@@ -1,0 +1,31 @@
+{
+  "AlwaysApps": {
+    "Firefox": [
+      "%ProgramFiles%\\Firefox Developer Edition\\firefox.exe",
+      "%ProgramFiles%\\Mozilla Firefox\\firefox.exe"
+    ],
+    "Teams": "%LOCALAPPDATA%\\Microsoft\\WindowsApps\\ms-teams.exe",
+    "Outlook": "%LOCALAPPDATA%\\Microsoft\\WindowsApps\\olk.exe",
+    "KeePassXC": "%ProgramFiles%\\KeePassXC\\KeePassXC.exe",
+    "Obsidian": "%LOCALAPPDATA%\\Programs\\Obsidian\\Obsidian.exe",
+    "GitHub Copilot": "%LOCALAPPDATA%\\Programs\\GitHub Copilot\\github.exe"
+  },
+  "BasicApps": {
+    "Discord": [
+      "%LOCALAPPDATA%\\Programs\\Legcord\\Legcord.exe",
+      "%LOCALAPPDATA%\\Programs\\vesktop\\Vesktop.exe"
+    ]
+  },
+  "SemiCodeApps": {
+    "VS Code": "%LOCALAPPDATA%\\Programs\\Microsoft VS Code\\Code.exe",
+    "GitKraken": "%LOCALAPPDATA%\\gitkraken\\gitkraken.exe"
+  },
+  "FullyCodeApps": {
+    "VS Code": "%LOCALAPPDATA%\\Programs\\Microsoft VS Code\\Code.exe",
+    "GitKraken": "%LOCALAPPDATA%\\gitkraken\\gitkraken.exe",
+    "WebStorm": "%LOCALAPPDATA%\\Programs\\WebStorm*\\bin\\webstorm64.exe",
+    "Azure VPN": "%LOCALAPPDATA%\\Microsoft\\WindowsApps\\AzureVpn.exe",
+    "Postman": "%LOCALAPPDATA%\\Postman\\Postman.exe",
+    "Rider": "%LOCALAPPDATA%\\Programs\\JetBrains Rider*\\bin\\rider64.exe"
+  }
+}
