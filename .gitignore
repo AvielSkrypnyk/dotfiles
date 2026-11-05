@@ -42,6 +42,7 @@ common/.config/xfce4/
 *.log
 *.tmp
 *.swp
+*.save
 
 # bunq-suite build and IDE artifacts
 common/scripts/bunq/bunq-suite/**/bin/
