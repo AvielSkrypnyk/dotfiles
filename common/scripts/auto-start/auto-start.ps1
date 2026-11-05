@@ -1,17 +1,17 @@
 # PowerShell script for automatic startup
 # This script will run specified commands or programs automatically when the system starts.
 
-# Startup programs per mood, read from apps.json next to this script
+# Startup programs per profile, read from apps.json next to this script
 $Apps = Get-Content "$PSScriptRoot\apps.json" -Raw | ConvertFrom-Json
 
-function Choose-Mood {
+function Choose-Profile {
     while ($true) {
-        $mood = Read-Host "Choose your mood (1: Basic, 2: Semi-Code, 3: Fully-Code)"
-        switch ($mood) {
+        $choice = Read-Host "Choose your profile (1: Basic, 2: Semi-Code, 3: Fully-Code)"
+        switch ($choice) {
             "1" { return $Apps.BasicApps }
             "2" { return $Apps.SemiCodeApps }
             "3" { return $Apps.FullyCodeApps }
-            default { Write-Host "Invalid choice '$mood'. Enter 1, 2 or 3." -ForegroundColor Yellow}
+            default { Write-Host "Invalid choice '$choice'. Enter 1, 2 or 3." -ForegroundColor Yellow}
         }
     }
 }
@@ -50,29 +50,22 @@ function Start-Programs {
     }
 }
 
-function Exit-Countdown {
-    Write-Host "Exiting powershell in 5 seconds..."
-    Start-Sleep -Seconds 1
-
-    # -ge is greater than or equal to.
-    # For example, 5 -ge 3 returns True, and 3 -ge 3 also returns True.
-    for ($i = 4; $i -ge 1; $i--) {
-        Write-Host "$i..." -ForegroundColor Cyan
-        Start-Sleep -Seconds 1
-    }
-    Write-Host "Exiting now..." -ForegroundColor Cyan
-    Start-Sleep -Seconds 1
-    exit
+function Exit-OnKeyPress {
+    Write-Host "Press any key to close..." -ForegroundColor Cyan
+    # Waits for one key press, without showing the key
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    # exit only ends this script; this closes the whole PowerShell window
+    [Environment]::Exit(0)
 }
 
-# Terminal -> Choose -> Start (skips missing apps) -> Done (closing the terminal)
+# Terminal -> Choose -> Start (skips missing apps) -> Done -> key press closes the terminal
 
 function Main {
-    $programs = Choose-Mood
+    $programs = Choose-Profile
     Start-Programs -Programs $Apps.AlwaysApps
     Start-Programs -Programs $programs
     Write-Host "Done starting programs." -ForegroundColor Green
-    Exit-Countdown
+    Exit-OnKeyPress
 }
 
 Main

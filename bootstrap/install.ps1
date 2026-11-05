@@ -459,7 +459,7 @@ if ($EnableAutoStart -match '^[yY]') {
         $Shortcut =
             $Shell.CreateShortcut("$Startup\Auto-start.lnk")
 
-        # No --headless here: the window must stay visible to choose a mood
+        # No --headless here: the window must stay visible to choose a profile
         $Shortcut.TargetPath = "pwsh.exe"
 
         $Shortcut.Arguments =
