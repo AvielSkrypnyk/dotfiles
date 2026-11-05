@@ -161,8 +161,7 @@ dotfiles/
 │   │   └── starship-style/
 │   │       ├── starship-style
 │   │       └── starship-style.ps1
-│   ├── .zprofile
-│   ├── .zshenv
+│   ├── .stow-local-ignore
 │   └── .zshrc
 │
 ├── docs/
@@ -180,7 +179,6 @@ dotfiles/
 │   └── .config/
 │       └── hypr/
 │           ├── hyprland.lua
-│           ├── hyprland.lua.save
 │           ├── monitors.conf
 │           └── workspaces.conf
 │
@@ -195,10 +193,12 @@ dotfiles/
 │   ├── bin/
 │   │   └── wallpaper-switcher
 │   │
-│   └── scripts/
-│       └── wallpaper-switcher/
-│           ├── README.md
-│           └── wallpaper-switcher
+│   ├── scripts/
+│   │   └── wallpaper-switcher/
+│   │       ├── README.md
+│   │       └── wallpaper-switcher
+│   ├── .stow-local-ignore
+│   └── .zprofile
 │
 ├── unix/
 │   └── .config/
@@ -220,7 +220,6 @@ dotfiles/
     └── scripts/
         └── komorebi/
             ├── README.md
-            ├── requirements.txt
             └── start-komorebi.ps1
 ```
 <!-- /STRUCTURE -->
@@ -460,7 +459,7 @@ Theme    -> Catppuccin Macchiato (Peach)
 
 <!-- STATS -->
 ```text
-Commits     : 131
+Commits     : 133
 Open PRs    : 1
 Last Update : 2026-11-05
 ```
