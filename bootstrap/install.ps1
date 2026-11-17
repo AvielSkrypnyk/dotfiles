@@ -201,6 +201,13 @@ if ($ProfileContent -notmatch "function starship-style") {
         -Value "`nfunction starship-style { & '$StarshipStylePath' @args }`n"
 }
 
+if ($ProfileContent -notmatch "function start-apps") {
+
+    Add-Content `
+        -Path $PROFILE `
+        -Value "`nfunction start-apps { & '$Dotfiles\common\scripts\start-apps\start-apps.ps1' @args }`n"
+}
+
 if ($ProfileContent -notmatch "starship init powershell") {
 
     Add-Content `
@@ -439,6 +446,52 @@ catch {
         -ForegroundColor Cyan
 
     Write-Host "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
+}
+
+# ------------------------------------
+# Start-apps Autostart (optional)
+# ------------------------------------
+
+$EnableStartApps = Read-Host "Open start-apps (choose apps to start) at login? [y/N]"
+
+if ($EnableStartApps -match '^[yY]') {
+
+    try {
+
+        $Startup =
+        "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
+
+        $Shell = New-Object -ComObject WScript.Shell
+
+        $Shortcut =
+            $Shell.CreateShortcut("$Startup\Start-apps.lnk")
+
+        # No --headless here: the window must stay visible to choose a profile
+        $Shortcut.TargetPath = "pwsh.exe"
+
+        $Shortcut.Arguments =
+            "-NoProfile -ExecutionPolicy Bypass -File `"$HOME\dotfiles\common\scripts\start-apps\start-apps.ps1`""
+
+        $Shortcut.WorkingDirectory =
+            "$HOME\dotfiles"
+
+        $Shortcut.Save()
+
+        if (Test-Path "$Startup\Auto-start.lnk") {
+            Remove-Item "$Startup\Auto-start.lnk" -ErrorAction Stop
+        }
+
+        Write-Host "[OK] Start-apps autostart configured" -ForegroundColor Green
+    }
+    catch {
+
+        Write-Host "[WARN] Failed to configure start-apps autostart" `
+            -ForegroundColor Yellow
+    }
+}
+else {
+
+    Write-Host "[SKIP] Start-apps autostart" -ForegroundColor DarkGray
 }
 
 # ------------------------------------

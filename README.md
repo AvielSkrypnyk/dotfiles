@@ -416,6 +416,8 @@ Collection of small CLI utilities.
 
 ### Windows scripts
 
+- [start-apps](common/scripts/start-apps/README.md) -
+  interactively start apps using Basic, Semi-Code, or Fully-Code profiles
 - [komorebi](windows/scripts/komorebi/README.md) -
   helper script for komorebi startup manual
 
