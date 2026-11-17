@@ -160,11 +160,11 @@
         {
             "type": "command",
             "condition": { "system": "Windows" },
-            "shell": "powershell.exe",
-            "param": "-NoProfile",
+            "shell": "pwsh.exe",
+            "param": "-NoProfile -Command",
             "key": "                 Aviel's Dots",
             "keyColor": "magenta",
-            "text": "(Get-Content -LiteralPath (Join-Path $HOME 'dotfiles\\VERSION') -Raw -ErrorAction Stop).Trim()"
+            "text": "& \"$HOME\\dotfiles\\common\\scripts\\check-version\\check-version.ps1\""
         },
         {
             "type": "command",
@@ -173,7 +173,7 @@
             "param": "-c",
             "key": "                 Aviel's Dots",
             "keyColor": "magenta",
-            "text": "cat \"$HOME/dotfiles/VERSION\""
+            "text": "\"$HOME/dotfiles/common/scripts/check-version/check-version.sh\""
         },
         {
             "type": "custom",
