@@ -399,6 +399,11 @@ $HOME/dotfiles/linux/bin
 
 Collection of small CLI utilities.
 
+### dotfiles-version
+
+- [dotfiles-version](common/scripts/check-version/check-version.sh) -
+  compares the local dotfiles version with the latest version on GitHub
+
 ### flac
 
 - [qobuz-meta](common/scripts/flac/qobuz-meta/README.md) -
