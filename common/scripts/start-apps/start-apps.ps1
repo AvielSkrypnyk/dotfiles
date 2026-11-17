@@ -50,22 +50,20 @@ function Start-Programs {
     }
 }
 
-function Exit-OnKeyPress {
-    Write-Host "Press any key to close..." -ForegroundColor Cyan
-    # Waits for one key press, without showing the key
-    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+function Exit-OnEnter {
+    Read-Host "Press Enter to close..." | Out-Null
     # exit only ends this script; this closes the whole PowerShell window
     [Environment]::Exit(0)
 }
 
-# Terminal -> Choose -> Start (skips missing apps) -> Done -> key press closes the terminal
+# Terminal -> Choose -> Start (skips missing apps) -> Done -> Enter closes the terminal
 
 function Main {
     $programs = Choose-Profile
     Start-Programs -Programs $Apps.AlwaysApps
     Start-Programs -Programs $programs
     Write-Host "Done starting programs." -ForegroundColor Green
-    Exit-OnKeyPress
+    Exit-OnEnter
 }
 
 Main

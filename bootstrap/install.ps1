@@ -201,6 +201,13 @@ if ($ProfileContent -notmatch "function starship-style") {
         -Value "`nfunction starship-style { & '$StarshipStylePath' @args }`n"
 }
 
+if ($ProfileContent -notmatch "function start-apps") {
+
+    Add-Content `
+        -Path $PROFILE `
+        -Value "`nfunction start-apps { & '$Dotfiles\common\scripts\start-apps\start-apps.ps1' @args }`n"
+}
+
 if ($ProfileContent -notmatch "starship init powershell") {
 
     Add-Content `
@@ -442,12 +449,12 @@ catch {
 }
 
 # ------------------------------------
-# Auto-start Autostart (optional)
+# Start-apps Autostart (optional)
 # ------------------------------------
 
-$EnableAutoStart = Read-Host "Open auto-start (choose apps to start) at login? [y/N]"
+$EnableStartApps = Read-Host "Open start-apps (choose apps to start) at login? [y/N]"
 
-if ($EnableAutoStart -match '^[yY]') {
+if ($EnableStartApps -match '^[yY]') {
 
     try {
 
@@ -457,30 +464,34 @@ if ($EnableAutoStart -match '^[yY]') {
         $Shell = New-Object -ComObject WScript.Shell
 
         $Shortcut =
-            $Shell.CreateShortcut("$Startup\Auto-start.lnk")
+            $Shell.CreateShortcut("$Startup\Start-apps.lnk")
 
         # No --headless here: the window must stay visible to choose a profile
         $Shortcut.TargetPath = "pwsh.exe"
 
         $Shortcut.Arguments =
-            "-NoProfile -ExecutionPolicy Bypass -File `"$HOME\dotfiles\common\scripts\auto-start\auto-start.ps1`""
+            "-NoProfile -ExecutionPolicy Bypass -File `"$HOME\dotfiles\common\scripts\start-apps\start-apps.ps1`""
 
         $Shortcut.WorkingDirectory =
             "$HOME\dotfiles"
 
         $Shortcut.Save()
 
-        Write-Host "[OK] Auto-start autostart configured" -ForegroundColor Green
+        if (Test-Path "$Startup\Auto-start.lnk") {
+            Remove-Item "$Startup\Auto-start.lnk" -ErrorAction Stop
+        }
+
+        Write-Host "[OK] Start-apps autostart configured" -ForegroundColor Green
     }
     catch {
 
-        Write-Host "[WARN] Failed to configure auto-start autostart" `
+        Write-Host "[WARN] Failed to configure start-apps autostart" `
             -ForegroundColor Yellow
     }
 }
 else {
 
-    Write-Host "[SKIP] Auto-start autostart" -ForegroundColor DarkGray
+    Write-Host "[SKIP] Start-apps autostart" -ForegroundColor DarkGray
 }
 
 # ------------------------------------
