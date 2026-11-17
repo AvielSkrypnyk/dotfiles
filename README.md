@@ -158,9 +158,14 @@ dotfiles/
 │   │   │       ├── README.md
 │   │   │       └── requirements.txt
 │   │   │
-│   │   └── starship-style/
-│   │       ├── starship-style
-│   │       └── starship-style.ps1
+│   │   ├── starship-style/
+│   │   │   ├── starship-style
+│   │   │   └── starship-style.ps1
+│   │   │
+│   │   └── start-apps/
+│   │       ├── apps.json
+│   │       ├── README.md
+│   │       └── start-apps.ps1
 │   ├── .stow-local-ignore
 │   └── .zshrc
 │
@@ -461,8 +466,8 @@ Theme    -> Catppuccin Macchiato (Peach)
 
 <!-- STATS -->
 ```text
-Commits     : 137
-Open PRs    : 1
+Commits     : 140
+Open PRs    : 2
 Last Update : 2026-11-17
 ```
 <!-- /STATS -->
